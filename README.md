@@ -1,178 +1,204 @@
-# 🛒 ShopSculpt.ai - Personalized Walmart Homepage Simulator
+# 🛒 ShopSculpt.ai – Personalized Walmart Homepage Simulator
 
 ---
 
 ## 🚀 Overview
 
-**ShopSculpt.ai** is a personalized shopping web application that dynamically adapts the homepage layout, banners, product recommendations, and smart ads based on each user's shopping persona and behavior.  
+**ShopSculpt.ai** is a dynamic e-commerce web app that delivers **hyper-personalized Walmart-like homepage experiences** for each user.  
+By analyzing user personas, shopping behavior, and browsing patterns, the platform adapts homepage layout, banners, product recommendations, and ads in real-time.
 
-This project aligns with Walmart’s **Content Decision Platform (CDP)** vision by showcasing how hyper-personalized digital shopping experiences can be delivered through AI-driven insights and user behavioral data.
+This project aligns with Walmart’s **Content Decision Platform (CDP)** vision by demonstrating **AI-powered, persona-based shopping personalization**.
 
 ---
 
-## 🗓️ Hackathon Target
+## 🗓️ Hackathon Target (Phase 1 Scope)
 
 - **Demo Date:** 5th July 2025  
-- **Focus for Hackathon:** User-side features with mock AI-based recommendation engine. Admin panel and full database integration are planned for the next phase.
+- **Hackathon Focus:**  
+✅ User-side features  
+✅ AI-based mock recommendation engine  
+✅ Frontend & Backend API integrations  
+
+*Note: Admin panel and production database setup are planned for Post-Hackathon (Phase 2).*
 
 ---
 
-## ✅ Full Feature List (Hackathon Scope)
+## ✅ Features Included for Hackathon Demo
 
-### 👥 User Authentication (Optional)
+### 👥 1. User Authentication (Optional for Demo)
 
-- Email-based OTP verification for login/register (using mock service or external API like Resend/Firebase).
-- Option to skip login for quicker access.
-
----
-
-### 📝 User Onboarding
-
-- Onboarding form after registration.
-- Collect basic user details: Name, Age Group, Shopping Interests.
-- Based on form responses, assign a shopping persona (e.g., Budget Shopper, Parent, Vegan).
+- Email-based OTP login/registration (Using external service like **Firebase/Resend** or mocked for demo)
+- Option to **skip login** for faster user entry (Hackathon flexibility)
 
 ---
 
-### 🏠 Dynamic Persona-Based Homepage
+### 📝 2. User Onboarding Flow
 
-- Layout, banners, product recommendations, and ads change based on the assigned persona.
-- Welcome message personalized for the user.
+- Onboarding form after signup/login
+- Captures:
+  - Full Name
+  - Age Group
+  - Gender
+  - Region
+  - Shopping Interests
+  - Persona Preferences (Max 2)
+  - Price Range Preference (Budget-Friendly / Mid-Range / Premium)
+  - Shopping Frequency (Rarely / Monthly / Weekly / Daily)
 
----
-
-### 📋 Product Categories Page
-
-- Display list of product categories (e.g., Electronics, Grocery, Fashion).
-- Clickable categories to show mock products.
-
----
-
-### 🔍 Search Functionality
-
-- Search box allowing users to type product keywords.
-- Filter mock product data based on search term.
-- Display relevant search results or a "No Results" message.
-
----
-
-### 🛒 Shopping Cart
-
-- Add to cart functionality for all products.
-- Zustand used for effective global state management of cart items.
-- Cart page showing list of items with quantity, price, and total.
-- Remove item from cart option.
+- Assigns user a **shopping persona** like:
+  - Budget Shopper
+  - Vegan Buyer
+  - Parent Shopper  
+  *(Based on form inputs)*
 
 ---
 
-### 💳 Payment Simulation
+### 🏠 3. Dynamic Persona-Based Homepage
 
-- Cart summary page before payment.
-- Dummy payment form with basic input fields (Card number, CVV, etc. - Optional for hackathon).
-- Payment success screen showing order summary.
-
----
-
-### 👤 User Profile Page
-
-- Display user’s name, email, persona type, and shopping interests.
-- Optionally allow user profile editing.
+- Homepage layout, banners, featured products, and ad sections **change dynamically based on user persona**
+- Personalized welcome message
+- Recommended products section
+- Mock predictive shopping tiles and AI-based smart ads
 
 ---
 
-### 📄 About Us Page
+### 📋 4. Product Categories
 
-- Static page with project vision, hackathon goal, and team info.
+- List of clickable product categories like:
+  - Electronics
+  - Grocery
+  - Fashion
+  - Home Essentials  
+- On-click → Displays relevant mock products
 
 ---
 
-## ✅ AI-Powered Recommendation Engine (Hackathon Scope)
+### 🔍 5. Product Search Functionality
 
-### 📈 User Behavior Tracking:
+- Search bar for keyword-based product search
+- Filters mock product data (category-wise or name-wise)
+- Displays results or **“No Products Found”** message
 
-| Data Point | Tracking Method |
+---
+
+### 🛒 6. Shopping Cart Management
+
+- **Add to Cart** for all products
+- **View Cart** page showing:
+  - List of items
+  - Quantity
+  - Individual and total price
+- **Remove from Cart** functionality
+- Global cart state managed with **Zustand**
+
+---
+
+### 💳 7. Payment Simulation (Checkout Flow)
+
+- **Cart Summary** before payment
+- **Dummy Payment Form** (card number, CVV, expiry date - optional)
+- **Payment Success Screen** with order summary
+- Post-payment → Cart cleared and transaction logged (mock)
+
+---
+
+### 👤 8. User Profile Page
+
+- Displays:
+  - User Name
+  - Email
+  - Persona Type
+  - Shopping Interests
+- Optional profile editing (if time permits)
+
+---
+
+### 📄 9. About Us Page
+
+- Static project info
+- Hackathon vision
+- Team member details
+
+---
+
+## ✅ AI-Powered Recommendation Engine (Hackathon Phase)
+
+### 📊 User Behavior Tracking (Mock Data Storage)
+
+| Data | Tracking Method |
 |---|---|
-| Purchase History | Log products after each simulated checkout |
-| Search History | Store user search queries |
-| Product Browsing Time | Track time spent on individual product/category pages |
+| Purchase History | After each simulated checkout |
+| Search History | Log user search keywords |
+| Browsing Time | Track time spent on product/category pages (optional for hackathon) |
 
 ---
 
-### 🤖 AI Recommendation Logic (For Demo):
+### 🤖 AI Recommendation Logic (Heuristic Rule-Based)
 
-A lightweight, rule-based recommendation system using heuristics:
-
-| User Action | Recommendation Weight |
+| User Action | Score |
 |---|---|
-| Viewed Product (for > X seconds) | +2 |
-| Searched for product keywords | +3 |
+| Viewed Product (Over X seconds) | +2 |
+| Searched for Product Keywords | +3 |
 | Added to Cart | +4 |
-| Purchased | +5 |
+| Purchased Product | +5 |
 
 #### Recommendation Flow:
-- Calculate a score for each product based on user history.
-- Display top 3-5 highest scoring products in a **“Recommended for You”** section on:
+- Calculate total product scores per user
+- Return **Top 3–5 Recommended Products**
+- Recommendations appear on:
   - Homepage
-  - Cart page (before checkout)
-  - User profile page (optional)
+  - Cart Page
+  - Profile Page (optional)
 
-**Note:** This is a mock AI simulation for hackathon. Real ML models can replace this logic post-hackathon.
+*This AI logic is simple & demo-friendly. Full ML-based recommendations planned for future.*
 
 ---
 
-## ✅ Tech Stack
+## ✅ Tech Stack (Hackathon Phase)
 
 | Layer | Technology |
 |---|---|
 | Frontend | Next.js (App Router), Tailwind CSS |
 | State Management | Zustand |
-| Backend (Mock) | Next.js API Routes / Static JSON |
-| Database | JSON Mock / Local State for Hackathon |
-| Authentication | Mock OTP flow or external API (Firebase/Resend) |
+| Backend | Next.js API Routes |
+| Database | MongoDB (using Mongoose), or JSON Mock Data |
+| AI | Rule-based recommendation engine |
 | Deployment | Vercel |
 
 ---
 
-## ✅ Hackathon Deliverables (Must-Have for Demo)
+## ✅ Backend API Endpoints (Next.js API Routes)
 
-| Module | Status |
-|---|---|
-| Authentication with OTP | Mock or external API |
-| Onboarding Form | ✅ |
-| Persona-Based Homepage | ✅ |
-| Categories Page | ✅ |
-| Search Functionality | ✅ |
-| Cart | ✅ |
-| Payment Simulation | ✅ |
-| AI Recommendation Engine | ✅ (Heuristic logic) |
-| Deployment | ✅ (Vercel) |
+| Area | Endpoint | Method | Description |
+|---|---|---|---|
+| Auth | `/api/auth/register`, `/api/auth/login` | POST | User registration and login |
+| User | `/api/user/onboarding`, `/api/user/profile` | POST/GET | Save onboarding info, fetch profile |
+| Products | `/api/products`, `/api/products/:id` | GET | Get all / single products |
+| Cart | `/api/cart/update`, `/api/cart/clear` | POST | Update or clear cart |
+| Transaction | `/api/transaction/create`, `/api/transaction/history` | POST/GET | Mock checkout and view order history |
+| AI | `/api/ai/recommendations` | GET | Fetch recommended products |
 
 ---
 
-## ✅ Stretch Goals (Post Hackathon Phase)
+## ✅ Frontend State Management (Zustand)
 
-- Full Admin Panel (Product and Persona Management)
-- Real Database Integration (PostgreSQL / Firebase)
-- ML-based Recommendation Engine
-- Real Payment Gateway Integration
-- Behavior-driven real-time personalization
-- Analytics and Reporting
+- Global state for:
+  - User info
+  - Cart
+  - Search queries
+  - AI recommendations
 
----
-
-## ✅ Demo Flow (Suggested)
-
-1. Login / Signup (OTP or skip)
-2. Fill Onboarding Form → Persona Assignment
-3. See Personalized Homepage
-4. Browse Categories & Search
-5. Add Items to Cart → Simulate Payment
-6. See AI-Based Recommendations Throughout
+- API consumption using **Fetch API** or **Axios**
 
 ---
 
-## ✅ Closing Note
+## ✅  Suggested Demo Flow (For Hackathon Presentation)
 
-**ShopSculpt.ai** is built to showcase how e-commerce personalization can be taken to the next level using AI-driven recommendations and persona-based content delivery.
+- Login / Signup (or Skip)
+- Fill Onboarding Form → Get Persona
+- See Personalized Homepage (Banners + Recommendations)
+- Browse Categories & Search Products
+- Add Items to Cart → Simulate Checkout
+- View Transaction History
+- Experience AI Recommendations throughout
 
----
