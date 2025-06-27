@@ -19,3 +19,12 @@ export const userRegisterSchema = z.object({
     .string()
     .min(6, { message: "Password must be atleast 6 characters" }),
 });
+
+export const userOnboardingSchema = z.object({
+  age: z
+    .number()
+    .min(3, { message: "Please enter a valid age." })
+    .max(110, { message: "Please enter a valid age." }),
+  gender: z.string(),
+  region:z.string()
+});
