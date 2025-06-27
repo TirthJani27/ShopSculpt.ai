@@ -1,8 +1,6 @@
 /**
  * Shopping Cart Page
  * Displays cart items, quantities, pricing, and checkout options
- * Uses cart context for state management
- * Responsive design matching Flipkart-style layout from reference image
  */
 "use client"
 import { useEffect } from "react"

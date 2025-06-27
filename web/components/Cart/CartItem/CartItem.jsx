@@ -1,7 +1,6 @@
 /**
  * Cart Item Component
  * Individual cart item with quantity controls, pricing, and remove functionality
- * Responsive design for mobile and desktop
  */
 "use client"
 import { useState } from "react"

@@ -1,7 +1,6 @@
 /**
  * Services Page
  * Displays Walmart services like photo printing, money services, auto care
- * Responsive layout with service categories and booking options
  */
 "use client"
 import { useState } from "react"

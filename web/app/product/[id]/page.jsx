@@ -1,7 +1,7 @@
 /**
  * Product Detail Page
  * Displays detailed product information, images, pricing, and related products
- * Responsive design matching the provided reference image
+ * This file doesnt fatch data it only displays product from given function.
  */
 "use client"
 import Link from "next/link"

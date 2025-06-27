@@ -1,7 +1,7 @@
 /**
  * Sign Up Page Component
- * User registration form with modern design matching the reference image
- * Includes form validation and responsive layout
+ * User registration form 
+ * Includes form validation 
  */
 "use client"
 import { useState } from "react"
