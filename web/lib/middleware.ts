@@ -12,8 +12,9 @@ function extractToken(req: NextRequest) {
   }
   return undefined;
 }
-
-export async function authUser(req: NextRequest) {
+export async function authUser(
+  req: NextRequest
+): Promise<{ isAuthorized: boolean; user?: InstanceType<typeof User> }> {
   await dbConnect();
 
   const token = extractToken(req);
