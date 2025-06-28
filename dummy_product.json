@@ -1,0 +1,119 @@
+[
+  {
+    "product_id": "P101",
+    "name": "Adidas Running Shoes",
+    "price": 5499,
+    "discount": 10,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751014595/adidas_shoes_fwjhsn.jpg"],
+    "description": "Lightweight and comfortable Adidas shoes ideal for daily running and gym wear.",
+    "priceRating": 3,
+    "feedback": [
+      { "review": "Very comfortable and stylish!", "starRating": 5 }
+    ],
+    "arrival": 2,
+    "categories": ["Fashion", "Footwear", "Fitness"]
+  },
+  {
+    "product_id": "P102",
+    "name": "Apple AirPods Pro (2nd Gen)",
+    "price": 29999,
+    "discount": 15,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751014660/apple_airpods_uph8db.jpg"],
+    "description": "Premium wireless earbuds with active noise cancellation and MagSafe charging case.",
+    "priceRating": 5,
+    "feedback": [
+      { "review": "Sound quality is amazing, very clear!", "starRating": 5 }
+    ],
+    "arrival": 3,
+    "categories": ["Electronics", "Audio", "Apple"]
+  },
+  {
+    "product_id": "P103",
+    "name": "Kitchen Blender - 750W",
+    "price": 2399,
+    "discount": 12,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751014717/blender_kkadql.jpg"],
+    "description": "Durable kitchen blender perfect for smoothies, juices, and dry grinding.",
+    "priceRating": 2,
+    "feedback": [
+      { "review": "Works well, blends in seconds!", "starRating": 4 }
+    ],
+    "arrival": 2,
+    "categories": ["Home Appliances", "Kitchen", "Electronics"]
+  },
+  {
+    "product_id": "P104",
+    "name": "Yonex Badminton Racket",
+    "price": 1899,
+    "discount": 10,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751014690/badminton_ni2g00.jpg"],
+    "description": "Lightweight and durable racket ideal for beginners and recreational players.",
+    "priceRating": 3,
+    "feedback": [
+      { "review": "Excellent grip and balance!", "starRating": 5 }
+    ],
+    "arrival": 2,
+    "categories": ["Sports", "Badminton", "Fitness"]
+  },
+
+  {
+    "product_id": "P105",
+    "name": "Puma Running Shoes",
+    "price": 3299,
+    "discount": 10,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751019487/puma_shoes_vkwaev.jpg"],
+    "description": "Lightweight and durable shoes for everyday running.",
+    "priceRating": 3,
+    "feedback": [{ "review": "Great comfort", "starRating": 4 }],
+    "arrival": 3,
+    "categories": ["Sports", "Footwear"]
+  },
+  {
+    "product_id": "P106",
+    "name": "Boat AirPods Pro",
+    "price": 24999,
+    "discount": 5,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751019427/boat_airdopes_ttrah5.jpg"],
+    "description": "Noise-cancellation, premium wireless sound.",
+    "priceRating": 5,
+    "feedback": [{ "review": "Best audio quality", "starRating": 5 }],
+    "arrival": 2,
+    "categories": ["Electronics", "Audio"]
+  },
+  {
+    "product_id": "P107",
+    "name": "Prestige Non-Stick Pan Set",
+    "price": 1899,
+    "discount": 20,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751019517/nonstick_pan_diskdg.jpg"],
+    "description": "Perfect for oil-free cooking, dishwasher safe.",
+    "priceRating": 3,
+    "feedback": [{ "review": "Very useful in kitchen", "starRating": 4 }],
+    "arrival": 4,
+    "categories": ["Home Essentials", "Kitchen"]
+  },
+  {
+    "product_id": "P108",
+    "name": "Nivea Soft Moisturizing Cream",
+    "price": 299,
+    "discount": 15,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751014717/moisturizer_sample.jpg"],
+    "description": "For soft, smooth skin – suitable for all skin types.",
+    "priceRating": 2,
+    "feedback": [{ "review": "Best moisturizer", "starRating": 5 }],
+    "arrival": 3,
+    "categories": ["Skincare", "Health"]
+  },
+  {
+    "product_id": "P109",
+    "name": "Yonex Badminton Bag",
+    "price": 4499,
+    "discount": 12,
+    "imagesUrl": ["https://res.cloudinary.com/dkonq71qg/image/upload/v1751019545/bag_magfgn.jpg"],
+    "description": "Spacious Yonex bag for carrying rackets and gear comfortably.",
+    "priceRating": 4,
+    "feedback": [{ "review": "Stylish and functional", "starRating": 4 }],
+    "arrival": 2,
+    "categories": ["Sports", "Badminton", "Bags"]
+  }
+]
