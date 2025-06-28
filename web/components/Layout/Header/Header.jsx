@@ -95,8 +95,11 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
+              {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
                 ShopSculpt
+              </Link> */}
+              <Link href="/" className="flex flex-column mb-5 w-50 h-24 mt-6 mr-4 md:mr-8">
+                  <img src="/logo2.png" alt="ShopSclupt" />
               </Link>
             </div>
 
