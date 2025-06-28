@@ -1,0 +1,45 @@
+import { NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
+import dbConnect from "@/lib/dbConnect";
+import User from "@/models/user.model";
+function extractToken(req: NextRequest) {
+  const cookieToken = req.cookies.get("token")?.value;
+  if (cookieToken) return cookieToken;
+
+  const authHeader = req.headers.get("authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return authHeader.substring(7).trim();
+  }
+  return undefined;
+}
+
+export async function authUser(req: NextRequest) {
+  await dbConnect();
+
+  const token = extractToken(req);
+  if (!token) {
+    return { isAuthorized: false };
+  }
+
+  try {
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined in environment variables");
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    let userId: string | undefined;
+
+    if (typeof decoded === "object" && decoded !== null && "id" in decoded) {
+      userId = (decoded as jwt.JwtPayload).id as string;
+    }
+
+    if (!userId) return { isAuthorized: false };
+
+    const user = await User.findById(userId);
+    if (!user) return { isAuthorized: false };
+
+    return { isAuthorized: true, user };
+  } catch (error) {
+    console.error("User JWT verification failed:", error);
+    return { isAuthorized: false };
+  }
+}
