@@ -1,28 +1,23 @@
-import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-
-export interface AuthRequest extends Request {
-  user?: any;
+export interface AuthUser {
+  id: string;
+  email: string;
 }
 
-export const authenticateToken = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+export function verifyToken(authHeader: string | null): AuthUser | null {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return null;
+  }
 
-  if (!token) return res.status(401).json({ error: "Token missing" });
+  const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: "Token invalid" });
-    req.user = user;
-    next();
-  });
-};
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
+    return decoded;
+  } catch (err) {
+    console.error("JWT verification error:", err);
+    return null;
+  }
+}

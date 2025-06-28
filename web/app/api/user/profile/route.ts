@@ -1,10 +1,15 @@
-import express from "express";
-import { authenticateToken, AuthRequest } from "../../../../middleware/authMiddleware";
+import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "@/middleware/authMiddleware";
 
-const router = express.Router();
+export async function GET(req: NextRequest) {
+  const user = verifyToken(req.headers.get("authorization"));
 
-router.get("/profile", authenticateToken, (req: AuthRequest, res) => {
-  res.json({ message: "You are authenticated", user: req.user });
-});
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-export default router;
+  return NextResponse.json({
+    message: "You are authenticated",
+    user,
+  });
+}

@@ -1,40 +1,59 @@
-import express from "express";
+import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { userLoginSchema } from "../../../../lib/schemas/user.schema";
-import { User } from "../../../../models/user.model";
+import { userLoginSchema } from "@/lib/schemas/user.schema";
+import connectToDB from "@/lib/dbConnect";
+import User from "@/models/user.model";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-router.post("/login", async (req, res) => {
-  const parsed = userLoginSchema.safeParse(req.body);
-  if (!parsed.success) {
-    return res.status(400).json({ errors: parsed.error.flatten() });
-  }
-
-  const { email, password } = parsed.data;
-
+export async function POST(req: Request) {
   try {
+    await connectToDB();
+
+    const body = await req.json();
+    const parsed = userLoginSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { errors: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { email, password } = parsed.data;
     const user = await User.findOne({ email });
+
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
-    res.json({ token });
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    return NextResponse.json({ token });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-});
-
-export default router;
+}
