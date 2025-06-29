@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
     await dbConnect();
 
     const { isAuthorized, user } = await authUser(req);
+    
 
     if (!isAuthorized || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

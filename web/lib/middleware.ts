@@ -23,9 +23,9 @@ export async function authUser(
   }
 
   try {
-    if (!process.env.JWT_SECRET) {
+    if (!process.env.JWT_SECRET)
       throw new Error("JWT_SECRET is not defined in environment variables");
-    }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     let userId: string | undefined;
 

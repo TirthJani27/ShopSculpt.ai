@@ -39,9 +39,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET);
 
     return NextResponse.json({ token, user });
   } catch (error) {

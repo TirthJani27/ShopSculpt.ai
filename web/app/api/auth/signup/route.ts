@@ -38,13 +38,7 @@ export async function POST(req: Request) {
       fullname,
     });
     await newUser.save();
-    const token = jwt.sign(
-      { id: newUser._id, email: newUser.email },
-      JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
+    const token = jwt.sign({ id: newUser._id }, JWT_SECRET);
 
     return NextResponse.json(
       { token, message: "User registered successfully", user: newUser },
