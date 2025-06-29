@@ -1,10 +1,26 @@
-import express from "express";
-import { authenticateToken, AuthRequest } from "../../../../middleware/authMiddleware";
+import { authUser } from "@/lib/middleware";
+import { NextRequest, NextResponse } from "next/server";
 
-const router = express.Router();
-
-router.get("/profile", authenticateToken, (req: AuthRequest, res) => {
-  res.json({ message: "You are authenticated", user: req.user });
-});
-
-export default router;
+export async function GET(req: NextRequest) {
+  try {
+    const isAuthorized = await authUser(req);
+    if (!isAuthorized || !isAuthorized.isAuthorized) {
+      return NextResponse.json(
+        { message: "Authentication failed" },
+        { status: 401 }
+      );
+    }
+    const user = isAuthorized.user;
+    return NextResponse.json(
+      {
+        user,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal server error", error },
+      { status: 500 }
+    );
+  }
+}
