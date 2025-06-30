@@ -106,11 +106,10 @@ export default function Header() {
             {/* Search Bar - Hidden on mobile, shown on tablet+ */}
             <div className="hidden md:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
-                <input
+                <input 
                   type="text"
                   placeholder="Search everything at ShopSculpt online and in store"
-                  className="w-full py-3 px-4 pr-12 rounded-full text-black border-2 border-gray-200 focus:outline-none focus:border-blue-500"
-                />
+                  className="w-full py-3 px-4 pr-12 rounded-full text-black border-2 border-gray-200 focus:outline-none focus:border-blue-500"/>
                 <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-yellow-400 hover:bg-yellow-500 p-2 rounded-full">
                   <Search className="w-5 h-5 text-black" />
                 </button>
