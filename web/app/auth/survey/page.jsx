@@ -4,17 +4,24 @@
  * Collects additional user information including interests and personal details
  * Updated to use the new register function from AuthContext
  */
-"use client"
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { MapPin, Calendar, User, Heart, ArrowLeft, CheckCircle } from "lucide-react"
-import { useAuth } from "../../../contexts/AuthContext"
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import {
+  MapPin,
+  Calendar,
+  User,
+  Heart,
+  ArrowLeft,
+  CheckCircle,
+} from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export default function SurveyPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { login, isLoggedIn, register } = useAuth()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login, isLoggedIn, register, user } = useAuth();
 
   const [formData, setFormData] = useState({
     dateOfBirth: "",
@@ -23,24 +30,28 @@ export default function SurveyPage() {
     pinCode: "",
     interests: [],
     aboutMe: "",
-  })
+  });
 
-  const [errors, setErrors] = useState({})
-  const [isLoading, setIsLoading] = useState(false)
-  const [wordCount, setWordCount] = useState(0)
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
 
   // Get user data from URL params (passed from registration)
-  const userData = searchParams.get("userData") ? JSON.parse(decodeURIComponent(searchParams.get("userData"))) : null
+  const userId = searchParams.get("userId");
+  const userData = userId ? { userId } : null;
 
   // Redirect if no user data or already logged in
   useEffect(() => {
+    if (!user) {
+      router.push("/auth/signup");
+    }
     if (!userData) {
-      router.push("/auth/signup")
+      router.push("/auth/signup");
     }
     if (isLoggedIn) {
-      router.push("/profile")
+      router.push("/profile");
     }
-  }, [userData, isLoggedIn, router])
+  }, [userData, isLoggedIn, router]);
 
   // Interest categories with icons
   const interestCategories = [
@@ -52,7 +63,7 @@ export default function SurveyPage() {
     { id: "laptop", label: "Laptops", icon: "💻" },
     { id: "mobile", label: "Mobile Phones", icon: "📱" },
     { id: "others", label: "Others", icon: "🛍️" },
-  ]
+  ];
 
   // Indian states list
   const indianStates = [
@@ -92,22 +103,22 @@ export default function SurveyPage() {
     "Dadra and Nagar Haveli and Daman and Diu",
     "Lakshadweep",
     "Andaman and Nicobar Islands",
-  ]
+  ];
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     // Update word count for aboutMe field
     if (name === "aboutMe") {
       const words = value
         .trim()
         .split(/\s+/)
-        .filter((word) => word.length > 0)
-      setWordCount(words.length)
+        .filter((word) => word.length > 0);
+      setWordCount(words.length);
     }
 
     // Clear error when user starts typing
@@ -115,9 +126,9 @@ export default function SurveyPage() {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
-      }))
+      }));
     }
-  }
+  };
 
   const handleInterestChange = (interestId) => {
     setFormData((prev) => ({
@@ -125,104 +136,106 @@ export default function SurveyPage() {
       interests: prev.interests.includes(interestId)
         ? prev.interests.filter((id) => id !== interestId)
         : [...prev.interests, interestId],
-    }))
+    }));
 
     // Clear interests error
     if (errors.interests) {
       setErrors((prev) => ({
         ...prev,
         interests: "",
-      }))
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     // Date of birth validation
     if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = "Date of birth is required"
+      newErrors.dateOfBirth = "Date of birth is required";
     } else {
-      const birthDate = new Date(formData.dateOfBirth)
-      const today = new Date()
-      const age = today.getFullYear() - birthDate.getFullYear()
+      const birthDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
       if (age < 13) {
-        newErrors.dateOfBirth = "You must be at least 13 years old"
+        newErrors.dateOfBirth = "You must be at least 13 years old";
       }
     }
 
     // Address validation
     if (!formData.address.trim()) {
-      newErrors.address = "Address is required"
+      newErrors.address = "Address is required";
     } else if (formData.address.trim().length < 10) {
-      newErrors.address = "Address must be at least 10 characters"
+      newErrors.address = "Address must be at least 10 characters";
     }
 
     // State validation
     if (!formData.state) {
-      newErrors.state = "State is required"
+      newErrors.state = "State is required";
     }
 
     // Pin code validation
     if (!formData.pinCode) {
-      newErrors.pinCode = "Pin code is required"
+      newErrors.pinCode = "Pin code is required";
     } else if (!/^\d{6}$/.test(formData.pinCode)) {
-      newErrors.pinCode = "Pin code must be 6 digits"
+      newErrors.pinCode = "Pin code must be 6 digits";
     }
 
     // Interests validation (minimum 3)
     if (formData.interests.length < 3) {
-      newErrors.interests = "Please select at least 3 interests"
+      newErrors.interests = "Please select at least 3 interests";
     }
 
     // About me validation
     if (!formData.aboutMe.trim()) {
-      newErrors.aboutMe = "Please tell us about yourself"
+      newErrors.aboutMe = "Please tell us about yourself";
     } else if (wordCount < 10) {
-      newErrors.aboutMe = "Please write at least 10 words"
+      newErrors.aboutMe = "Please write at least 10 words";
     } else if (wordCount > 50) {
-      newErrors.aboutMe = "Please keep it under 50 words"
+      newErrors.aboutMe = "Please keep it under 50 words";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Combine user data with survey data
       const completeUserData = {
         ...userData,
         ...formData,
-      }
+      };
 
       // Register user and get the complete user object
-      const registeredUser = register(completeUserData)
+      const registeredUser = register(completeUserData);
 
       // Update auth context with complete user data
-      login(registeredUser)
+      login(registeredUser);
 
       // Redirect to profile page
-      router.push("/profile")
+      router.push("/profile");
     } catch (error) {
-      console.error("Survey submission error:", error)
-      setErrors({ general: "Failed to complete registration. Please try again." })
+      console.error("Survey submission error:", error);
+      setErrors({
+        general: "Failed to complete registration. Please try again.",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (!userData) {
-    return null // Will redirect
+    return null; // Will redirect
   }
 
   return (
@@ -232,9 +245,13 @@ export default function SurveyPage() {
         <div className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <CheckCircle className="w-6 md:w-8 h-6 md:h-8 text-green-600" />
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Almost Done!</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Almost Done!
+            </h1>
           </div>
-          <p className="text-gray-600 text-sm md:text-base">Help us personalize your shopping experience</p>
+          <p className="text-gray-600 text-sm md:text-base">
+            Help us personalize your shopping experience
+          </p>
           <div className="mt-4 bg-blue-100 rounded-full h-2">
             <div className="bg-blue-600 h-2 rounded-full w-3/4"></div>
           </div>
@@ -253,13 +270,20 @@ export default function SurveyPage() {
 
             {/* Welcome Message */}
             <div className="text-center pb-6 border-b">
-              <h2 className="text-lg md:text-xl font-semibold text-gray-900">Welcome, {userData.name}!</h2>
-              <p className="text-gray-600 mt-2 text-sm md:text-base">Let's get to know you better</p>
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+                Welcome, {userData.name}!
+              </h2>
+              <p className="text-gray-600 mt-2 text-sm md:text-base">
+                Let's get to know you better
+              </p>
             </div>
 
             {/* Date of Birth */}
             <div>
-              <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="dateOfBirth"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 <Calendar className="w-4 h-4 inline mr-2" />
                 Date of Birth
               </label>
@@ -274,12 +298,19 @@ export default function SurveyPage() {
                   errors.dateOfBirth ? "border-red-300" : "border-gray-300"
                 }`}
               />
-              {errors.dateOfBirth && <p className="mt-1 text-sm text-red-600">{errors.dateOfBirth}</p>}
+              {errors.dateOfBirth && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.dateOfBirth}
+                </p>
+              )}
             </div>
 
             {/* Address */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 <MapPin className="w-4 h-4 inline mr-2" />
                 Complete Address
               </label>
@@ -294,13 +325,18 @@ export default function SurveyPage() {
                   errors.address ? "border-red-300" : "border-gray-300"
                 }`}
               />
-              {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
+              {errors.address && (
+                <p className="mt-1 text-sm text-red-600">{errors.address}</p>
+              )}
             </div>
 
             {/* State and Pin Code */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="state"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   State
                 </label>
                 <select
@@ -319,11 +355,16 @@ export default function SurveyPage() {
                     </option>
                   ))}
                 </select>
-                {errors.state && <p className="mt-1 text-sm text-red-600">{errors.state}</p>}
+                {errors.state && (
+                  <p className="mt-1 text-sm text-red-600">{errors.state}</p>
+                )}
               </div>
 
               <div>
-                <label htmlFor="pinCode" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="pinCode"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Pin Code
                 </label>
                 <input
@@ -338,7 +379,9 @@ export default function SurveyPage() {
                     errors.pinCode ? "border-red-300" : "border-gray-300"
                   }`}
                 />
-                {errors.pinCode && <p className="mt-1 text-sm text-red-600">{errors.pinCode}</p>}
+                {errors.pinCode && (
+                  <p className="mt-1 text-sm text-red-600">{errors.pinCode}</p>
+                )}
               </div>
             </div>
 
@@ -353,7 +396,9 @@ export default function SurveyPage() {
                   <label
                     key={category.id}
                     className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
-                      formData.interests.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                      formData.interests.includes(category.id)
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200"
                     }`}
                   >
                     <input
@@ -362,20 +407,29 @@ export default function SurveyPage() {
                       onChange={() => handleInterestChange(category.id)}
                       className="sr-only"
                     />
-                    <span className="text-xl md:text-2xl mb-2">{category.icon}</span>
-                    <span className="text-xs md:text-sm font-medium text-center leading-tight">{category.label}</span>
+                    <span className="text-xl md:text-2xl mb-2">
+                      {category.icon}
+                    </span>
+                    <span className="text-xs md:text-sm font-medium text-center leading-tight">
+                      {category.label}
+                    </span>
                   </label>
                 ))}
               </div>
               <p className="mt-2 text-sm text-gray-600">
                 Selected: {formData.interests.length} / 8 (minimum 3 required)
               </p>
-              {errors.interests && <p className="mt-1 text-sm text-red-600">{errors.interests}</p>}
+              {errors.interests && (
+                <p className="mt-1 text-sm text-red-600">{errors.interests}</p>
+              )}
             </div>
 
             {/* About Me */}
             <div>
-              <label htmlFor="aboutMe" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="aboutMe"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 <User className="w-4 h-4 inline mr-2" />
                 Tell us about yourself (10-50 words)
               </label>
@@ -393,14 +447,23 @@ export default function SurveyPage() {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 gap-2">
                 <span
                   className={`text-sm ${
-                    wordCount < 20 ? "text-red-600" : wordCount > 50 ? "text-red-600" : "text-green-600"
+                    wordCount < 20
+                      ? "text-red-600"
+                      : wordCount > 50
+                      ? "text-red-600"
+                      : "text-green-600"
                   }`}
                 >
-                  {wordCount} words {wordCount < 10 && `(${10 - wordCount} more needed)`}
+                  {wordCount} words{" "}
+                  {wordCount < 10 && `(${10 - wordCount} more needed)`}
                 </span>
-                <span className="text-sm text-gray-500">10-50 words required</span>
+                <span className="text-sm text-gray-500">
+                  10-50 words required
+                </span>
               </div>
-              {errors.aboutMe && <p className="mt-1 text-sm text-red-600">{errors.aboutMe}</p>}
+              {errors.aboutMe && (
+                <p className="mt-1 text-sm text-red-600">{errors.aboutMe}</p>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -433,5 +496,5 @@ export default function SurveyPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

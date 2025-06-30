@@ -1,98 +1,65 @@
-/**
- * Authentication Context
- * Manages user authentication state across the application
- * Provides login, logout, and user state management
- * Updated with user registration validation
- */
-"use client"
-import { createContext, useContext, useState, useEffect } from "react"
+"use client";
 
-const AuthContext = createContext()
+import { createContext, useContext, useEffect, useState } from "react";
+
+/**
+ * AuthContext
+ * Manages single user authentication state across the application
+ * Provides login, logout, and session persistence via localStorage
+ */
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [registeredUsers, setRegisteredUsers] = useState([])
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load registered users and current user session on app load
+  // Load user from localStorage on first app load
   useEffect(() => {
-    const savedUsers = localStorage.getItem("registeredUsers")
-    if (savedUsers) {
-      setRegisteredUsers(JSON.parse(savedUsers))
-    }
-
-    const savedUser = localStorage.getItem("user")
+    const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser))
+      setUser(JSON.parse(savedUser));
     }
-    setIsLoading(false)
-  }, [])
+    setIsLoading(false);
+  }, []);
 
-  // Save registered users to localStorage whenever it changes
-  useEffect(() => {
-    if (registeredUsers.length > 0) {
-      localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers))
-    }
-  }, [registeredUsers])
-
-  const register = (userData) => {
-    // Add user to registered users list
-    const newUser = {
-      ...userData,
-      id: Date.now(),
-      registrationDate: new Date().toISOString(),
-      registrationCompleted: true,
-    }
-
-    setRegisteredUsers((prev) => [...prev, newUser])
-    return newUser
-  }
-
+  /**
+   * Login user and store session in localStorage
+   * @param {Object} userData - User object (e.g., id, email, token, etc.)
+   */
   const login = (userData) => {
-    setUser(userData)
-    localStorage.setItem("user", JSON.stringify(userData))
-  }
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
 
+  /**
+   * Logout user and clear session from localStorage
+   */
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem("user")
-    localStorage.removeItem("wishlist")
-    localStorage.removeItem("cart")
-  }
+    setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("wishlist");
+    localStorage.removeItem("cart");
+  };
 
-  const isUserRegistered = (email) => {
-    return registeredUsers.some((user) => user.email.toLowerCase() === email.toLowerCase())
-  }
-
-  const getUserByEmail = (email) => {
-    return registeredUsers.find((user) => user.email.toLowerCase() === email.toLowerCase())
-  }
-
-  const isLoggedIn = !!user
+  const isLoggedIn = !!user;
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isLoggedIn,
-        isLoading,
-        registeredUsers,
-        login,
-        logout,
-        register,
-        isUserRegistered,
-        getUserByEmail,
-      }}
+      value={{ user, isLoggedIn, isLoading, login, logout }}
     >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
+/**
+ * useAuth
+ * Custom hook to access authentication context
+ */
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
+  return context;
 }

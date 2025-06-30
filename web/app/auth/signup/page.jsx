@@ -3,107 +3,131 @@
  * User registration form with modern design matching the reference image
  * Includes form validation and responsive layout
  */
-"use client"
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Eye, EyeOff, User, Mail, Lock, Key } from "lucide-react"
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, User, Mail, Lock, Key } from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
+import axios from "axios";
 
 export default function SignUpPage() {
-  const router = useRouter()
+  const { login } = useAuth();
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
+    firstname: "",
+    lastname: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
-      }))
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters"
+    if (!formData.firstname.trim()) {
+      newErrors.firstname = "First Name is required";
+    } else if (formData.firstname.trim().length < 3) {
+      newErrors.firstname = "First Name must be at least 3 characters";
+    }
+    if (!formData.lastname.trim()) {
+      newErrors.lastname = "Last Name is required";
+    } else if (formData.lastname.trim().length < 3) {
+      newErrors.lastname = "Last Name must be at least 3 characters";
     }
 
     if (!formData.email) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email"
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required"
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password"
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match"
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     if (!agreedToTerms) {
-      newErrors.terms = "You must agree to the terms of service"
+      newErrors.terms = "You must agree to the terms of service";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    if (!validateForm()) return
-
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // In real app, handle registration here
-      console.log("Registration attempt:", formData)
-
-      // Redirect to survey page with user data
-      const userDataParam = encodeURIComponent(JSON.stringify(formData))
-      router.push(`/auth/survey?userData=${userDataParam}`)
+      const fullname = {
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+      };
+      const res = await axios.post("/api/auth/signup", {
+        email: formData.email,
+        password: formData.password,
+        fullname,
+      });
+      const data = res.data;
+      login(data.user);
+      localStorage.setItem("token", `Bearer ${data.token}`);
+      const userDataParam = encodeURIComponent(JSON.stringify(data.user._id));
+      // Show success toast
+      if (typeof window !== "undefined" && window.toast) {
+        window.toast.success("Registration successful! Redirecting...");
+      }
+      router.push(`/auth/survey?userData=${userDataParam}`);
     } catch (error) {
-      console.error("Registration error:", error)
-      setErrors({ general: "Registration failed. Please try again." })
+      console.error("Registration error:", error);
+      setErrors({ general: "Registration failed. Please try again." });
+      // Show error toast
+      if (typeof window !== "undefined" && window.toast) {
+        window.toast.error("Registration failed. Please try again.");
+      }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="max-w-6xl w-full">
         {/* Page Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">ShopSculpt Account Registration Services</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            ShopSculpt Account Registration Services
+          </h1>
         </div>
 
         {/* Main Registration Card */}
@@ -112,37 +136,71 @@ export default function SignUpPage() {
             {/* Left Side - Form */}
             <div className="p-8 lg:p-12">
               <div className="max-w-md mx-auto">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Sign up</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                  Sign up
+                </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* General Error */}
                   {errors.general && (
                     <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
                       {errors.general}
                     </div>
                   )}
-
-                  {/* Name Field */}
-                  <div>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="h-5 w-5 text-gray-400" />
+                  {/* First Name and Last Name Fields */}
+                  <div className="flex gap-4">
+                    {/* First Name Field */}
+                    <div className="flex-1">
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          id="firstname"
+                          name="firstname"
+                          value={formData.firstname || ""}
+                          onChange={handleInputChange}
+                          className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            errors.firstname
+                              ? "border-red-300"
+                              : "border-gray-300"
+                          }`}
+                          placeholder="First Name"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.name ? "border-red-300" : "border-gray-300"
-                        }`}
-                        placeholder="Your Name"
-                      />
+                      {errors.firstname && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.firstname}
+                        </p>
+                      )}
                     </div>
-                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                    {/* Last Name Field */}
+                    <div className="flex-1">
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          id="lastname"
+                          name="lastname"
+                          value={formData.lastname || ""}
+                          onChange={handleInputChange}
+                          className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            errors.lastname
+                              ? "border-red-300"
+                              : "border-gray-300"
+                          }`}
+                          placeholder="Last Name"
+                        />
+                      </div>
+                      {errors.lastname && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.lastname}
+                        </p>
+                      )}
+                    </div>
                   </div>
-
                   {/* Email Field */}
                   <div>
                     <div className="relative">
@@ -161,9 +219,12 @@ export default function SignUpPage() {
                         placeholder="Your Email"
                       />
                     </div>
-                    {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                    {errors.email && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
-
                   {/* Password Field */}
                   <div>
                     <div className="relative">
@@ -193,9 +254,12 @@ export default function SignUpPage() {
                         )}
                       </button>
                     </div>
-                    {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                    {errors.password && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.password}
+                      </p>
+                    )}
                   </div>
-
                   {/* Confirm Password Field */}
                   <div>
                     <div className="relative">
@@ -209,14 +273,18 @@ export default function SignUpPage() {
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
                         className={`block w-full pl-10 pr-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.confirmPassword ? "border-red-300" : "border-gray-300"
+                          errors.confirmPassword
+                            ? "border-red-300"
+                            : "border-gray-300"
                         }`}
                         placeholder="Repeat your password"
                       />
                       <button
                         type="button"
                         className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-5 w-5 text-gray-400" />
@@ -225,9 +293,12 @@ export default function SignUpPage() {
                         )}
                       </button>
                     </div>
-                    {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
                   </div>
-
                   {/* Terms Agreement */}
                   <div>
                     <div className="flex items-start">
@@ -239,16 +310,22 @@ export default function SignUpPage() {
                         onChange={(e) => setAgreedToTerms(e.target.checked)}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
                       />
-                      <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                      <label
+                        htmlFor="terms"
+                        className="ml-2 block text-sm text-gray-700"
+                      >
                         I agree all statements in{" "}
-                        <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+                        <span className="text-blue-600 hover:text-blue-500">
                           Terms of service
-                        </Link>
+                        </span>
                       </label>
                     </div>
-                    {errors.terms && <p className="mt-1 text-sm text-red-600">{errors.terms}</p>}
+                    {errors.terms && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.terms}
+                      </p>
+                    )}
                   </div>
-
                   {/* Submit Button */}
                   <button
                     type="submit"
@@ -263,12 +340,16 @@ export default function SignUpPage() {
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600">
                     Already have an account?{" "}
-                    <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+                    <Link
+                      href="/auth/login"
+                      className="font-medium text-blue-600 hover:text-blue-500"
+                    >
                       Sign in here
                     </Link>
                   </p>
                   <p className="text-sm text-gray-600">
-                    Almost there! Please complete the survey to finalize your registration.
+                    Almost there! Please complete the survey to finalize your
+                    registration.
                   </p>
                 </div>
               </div>
@@ -280,8 +361,13 @@ export default function SignUpPage() {
                 <div className="text-center">
                   {/* Colorful illustration placeholder - in real app, use the actual illustration */}
                   <img src="/logo3.png" alt="" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Join Our Shopping Community</h3>
-                  <p className="text-gray-600">Create your account and start exploring amazing deals and products</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Join Our Shopping Community
+                  </h3>
+                  <p className="text-gray-600">
+                    Create your account and start exploring amazing deals and
+                    products
+                  </p>
                 </div>
               </div>
             </div>
@@ -296,5 +382,5 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

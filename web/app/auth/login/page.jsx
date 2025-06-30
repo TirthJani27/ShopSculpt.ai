@@ -1,134 +1,125 @@
-/**
- * Enhanced Login Page Component
- * Handles authentication with redirect functionality
- * Updates auth context on successful login
- */
-
-
-/**
- * Enhanced Login Page Component
- * Handles authentication with redirect functionality and user validation
- * Updates auth context on successful login
- * Only allows login for registered users
- */
-"use client"
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
-import { useAuth } from "../../../contexts/AuthContext"
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
+import axios from "axios";
+import { toast } from "sonner";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { login, isLoggedIn, isUserRegistered, getUserByEmail } = useAuth()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login, isLoggedIn } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState({})
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const redirectPath = searchParams.get("redirect") || "/"
+  const redirectPath = searchParams.get("redirect") || "/";
 
-  // Redirect if already logged in
   useEffect(() => {
     if (isLoggedIn) {
-      router.push(redirectPath)
+      router.push(redirectPath);
     }
-  }, [isLoggedIn, router, redirectPath])
+  }, [isLoggedIn, router, redirectPath]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-    // Clear error when user starts typing
+    }));
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
-      }))
+      }));
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email"
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required"
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
+      newErrors.password = "Password must be at least 6 characters";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
+    setErrors({});
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const res = await axios.post("/api/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
-      // Check if user is registered
-      if (!isUserRegistered(formData.email)) {
-        setErrors({
-          email: "Email not found. Please register first or check your email address.",
-        })
-        setIsLoading(false)
-        return
-      }
+      const data = res.data;
 
-      // Get user data
-      const userData = getUserByEmail(formData.email)
+      toast.success("Login successful!");
+      localStorage.setItem("token", `Bearer ${data.token}`);
 
-      // In a real app, you would verify the password here
-      // For demo purposes, we'll just check if it matches the stored password
-      if (userData.password !== formData.password) {
-        setErrors({
-          password: "Incorrect password. Please try again.",
-        })
-        setIsLoading(false)
-        return
-      }
-
-      // Update auth context
-      login(userData)
-
-      // Redirect to intended page
-      router.push(redirectPath)
+      login(data.user);
+      router.push(redirectPath);
     } catch (error) {
-      console.error("Login error:", error)
-      setErrors({ general: "Login failed. Please try again." })
+      console.error("Login Error:", error);
+
+      if (error.response && error.response.data) {
+        const data = error.response.data;
+
+        setErrors(
+          data.field
+            ? { [data.field]: data.error }
+            : { general: data.error || "Login failed" }
+        );
+
+        toast.error(data.error || "Login failed!");
+      } else {
+        setErrors({ general: "Unexpected error. Please try again." });
+        toast.error("Unexpected error. Please try again.");
+      }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl md:text-3xl font-bold text-blue-600 mb-2 block">
+          <Link
+            href="/"
+            className="text-2xl md:text-3xl font-bold text-blue-600 mb-2 block"
+          >
             <img src="/logo3.png" alt="" />
           </Link>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-600 text-sm md:text-base">Sign in to your account</p>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-gray-600 text-sm md:text-base">
+            Sign in to your account
+          </p>
         </div>
 
         {/* Login Form */}
@@ -144,7 +135,10 @@ export default function LoginPage() {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -173,7 +167,10 @@ export default function LoginPage() {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -211,24 +208,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
-              <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
-                Forgot password?
-              </Link>
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
@@ -250,7 +229,10 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link
+                href="/auth/signup"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Sign up here
               </Link>
             </p>
@@ -265,11 +247,8 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-
-
 
 // "use client"
 // import { useState, useEffect } from "react"
