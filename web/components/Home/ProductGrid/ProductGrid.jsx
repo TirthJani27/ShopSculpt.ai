@@ -5,7 +5,7 @@ export default function ProductGrid() {
   const featuredProducts = [
     {
       id: 1,
-      title: "Apple iPhone 14 Pro Max",
+      title: "Apple iPhone 14 Pro",
       price: 1099.0,
       originalPrice: 1199.0,
       rating: 4.5,
@@ -15,7 +15,7 @@ export default function ProductGrid() {
     },
     {
       id: 2,
-      title: 'Samsung 65" 4K Smart TV',
+      title: 'Samsung 65" 4K TV',
       price: 599.99,
       originalPrice: 799.99,
       rating: 4.3,
