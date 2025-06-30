@@ -2,67 +2,54 @@
  * Profile Overview Component
  * Dashboard showing user stats, recent orders, and quick actions
  * Responsive card layout
+ * Updated to use actual user data from auth context
  */
 "use client"
 import Link from "next/link"
 import { Package, ShoppingCart, Heart, TrendingUp, Calendar, DollarSign } from "lucide-react"
+import { useAuth } from "../../../contexts/AuthContext"
+import { useCart } from "../../../contexts/CartContext"
+import { useWishlist } from "../../../contexts/WishlistContext"
 
-export default function ProfileOverview({ user }) {
-  // Mock data - in real app, this would come from API
+export default function ProfileOverview() {
+  const { user } = useAuth()
+  const { cartCount, cartTotal } = useCart()
+  const { wishlistCount } = useWishlist()
+
+  // Stats with real data from contexts
   const stats = [
     {
       label: "Total Orders",
-      value: user.totalOrders,
+      value: "0", // New users start with 0 orders
       icon: Package,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       label: "Total Spent",
-      value: `$${user.totalSpent.toFixed(2)}`,
+      value: "₹0.00", // New users start with ₹0 spent
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       label: "Wishlist Items",
-      value: "12",
+      value: wishlistCount.toString(),
       icon: Heart,
       color: "text-red-600",
       bgColor: "bg-red-50",
     },
     {
       label: "Cart Items",
-      value: "3",
+      value: cartCount.toString(),
       icon: ShoppingCart,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
   ]
 
-  const recentOrders = [
-    {
-      id: "ORD-001",
-      date: "2024-01-15",
-      status: "Delivered",
-      total: 299.99,
-      items: 2,
-    },
-    {
-      id: "ORD-002",
-      date: "2024-01-10",
-      status: "Shipped",
-      total: 149.99,
-      items: 1,
-    },
-    {
-      id: "ORD-003",
-      date: "2024-01-05",
-      status: "Processing",
-      total: 89.99,
-      items: 3,
-    },
-  ]
+  // For new users, no recent orders
+  const recentOrders = []
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -81,7 +68,7 @@ export default function ProfileOverview({ user }) {
     <div className="space-y-6">
       {/* Welcome Message */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">Welcome back, {user.name.split(" ")[0]}!</h2>
+        <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.name ? user.name.split(" ")[0] : "User"}!</h2>
         <p className="text-blue-100">Here's what's happening with your account</p>
       </div>
 
@@ -115,29 +102,37 @@ export default function ProfileOverview({ user }) {
         </div>
 
         <div className="space-y-4">
-          {recentOrders.map((order) => (
-            <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-4">
-                <div className="p-2 bg-white rounded-lg">
-                  <Package className="w-5 h-5 text-gray-600" />
+          {recentOrders.length > 0 ? (
+            recentOrders.map((order) => (
+              <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-white rounded-lg">
+                    <Package className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{order.id}</p>
+                    <p className="text-sm text-gray-600">
+                      {order.items} items • {order.date}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium text-gray-900">{order.id}</p>
-                  <p className="text-sm text-gray-600">
-                    {order.items} items • {order.date}
-                  </p>
+                <div className="text-right">
+                  <p className="font-medium text-gray-900">₹{order.total}</p>
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}
+                  >
+                    {order.status}
+                  </span>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-medium text-gray-900">${order.total}</p>
-                <span
-                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}
-                >
-                  {order.status}
-                </span>
-              </div>
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 mb-2">No orders yet</p>
+              <p className="text-sm text-gray-400">Start shopping to see your orders here!</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -151,6 +146,7 @@ export default function ProfileOverview({ user }) {
           >
             <ShoppingCart className="w-8 h-8 text-blue-600 mb-2" />
             <span className="text-sm font-medium text-gray-900">View Cart</span>
+            {cartCount > 0 && <span className="text-xs text-blue-600 mt-1">{cartCount} items</span>}
           </Link>
           <Link
             href="/wishlist"
@@ -158,6 +154,7 @@ export default function ProfileOverview({ user }) {
           >
             <Heart className="w-8 h-8 text-red-600 mb-2" />
             <span className="text-sm font-medium text-gray-900">Wishlist</span>
+            {wishlistCount > 0 && <span className="text-xs text-red-600 mt-1">{wishlistCount} items</span>}
           </Link>
           <Link
             href="/profile?tab=addresses"

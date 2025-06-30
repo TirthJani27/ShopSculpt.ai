@@ -1,7 +1,7 @@
 /**
  * Sign Up Page Component
- * User registration form 
- * Includes form validation 
+ * User registration form with modern design matching the reference image
+ * Includes form validation and responsive layout
  */
 "use client"
 import { useState } from "react"
@@ -87,8 +87,9 @@ export default function SignUpPage() {
       // In real app, handle registration here
       console.log("Registration attempt:", formData)
 
-      // Redirect to login or dashboard
-      router.push("/auth/login")
+      // Redirect to survey page with user data
+      const userDataParam = encodeURIComponent(JSON.stringify(formData))
+      router.push(`/auth/survey?userData=${userDataParam}`)
     } catch (error) {
       console.error("Registration error:", error)
       setErrors({ general: "Registration failed. Please try again." })
@@ -266,6 +267,9 @@ export default function SignUpPage() {
                       Sign in here
                     </Link>
                   </p>
+                  <p className="text-sm text-gray-600">
+                    Almost there! Please complete the survey to finalize your registration.
+                  </p>
                 </div>
               </div>
             </div>
@@ -275,9 +279,7 @@ export default function SignUpPage() {
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
                   {/* Colorful illustration placeholder - in real app, use the actual illustration */}
-                  <div className="w-80 h-80 mx-auto mb-6 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 rounded-3xl flex items-center justify-center">
-                    <div className="text-white text-6xl font-bold">🛍️</div>
-                  </div>
+                  <img src="/logo2.png" alt="" />
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Join Our Shopping Community</h3>
                   <p className="text-gray-600">Create your account and start exploring amazing deals and products</p>
                 </div>

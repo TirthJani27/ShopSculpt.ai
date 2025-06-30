@@ -49,8 +49,8 @@ export default function CartPage() {
     (sum, item) => sum + ((item.originalPrice || item.price) - item.price) * item.quantity,
     0,
   )
-  const platformFee = 19
-  const securedPackagingFee = 109
+  const platformFee = 9
+  const securedPackagingFee = 19
   const total = subtotal + platformFee + securedPackagingFee
 
   if (cartItems.length === 0) {

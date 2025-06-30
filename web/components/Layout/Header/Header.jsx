@@ -99,7 +99,7 @@ export default function Header() {
                 ShopSculpt
               </Link> */}
               <Link href="/" className="flex flex-column mb-5 w-50 h-24 mt-6 mr-4 md:mr-8">
-                  <img src="/logo2.png" alt="ShopSclupt" />
+                  <img src="/logo3.png" alt="ShopSclupt" />
               </Link>
             </div>
 
@@ -185,8 +185,8 @@ export default function Header() {
         </div>
 
         {/* Navigation Menu */}
-        <nav className={`bg-blue-600 border-t border-blue-500 ${isMenuOpen ? "block" : "hidden md:block"}`}>
-          <div className="max-w-7xl mx-auto px-4">
+        <nav className={`bg-blue-700 border-t border-blue-500 ${isMenuOpen ? "block" : "hidden md:block"}`}>
+          <div className="max-w-7xl  flex flex-col items-center mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-center md:space-x-8 py-2 text-sm">
               <Link href="/" className="py-2 md:py-0 cursor-pointer hover:underline flex items-center space-x-1">
                 <Home className="w-4 h-4" />
@@ -250,4 +250,4 @@ export default function Header() {
       )}
     </>
   )
-}
+} 

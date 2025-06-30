@@ -3,7 +3,7 @@ export default function HeroSection() {
     <section className="bg-gray-50 py-6">
       <div className="max-w-7xl mx-auto px-4">
         {/* Main banner grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
           {/* Large banner */}
           <div className="md:col-span-2 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-6 text-white relative overflow-hidden">
             <div className="relative z-10">
@@ -71,3 +71,9 @@ export default function HeroSection() {
     </section>
   )
 }
+
+
+
+
+
+

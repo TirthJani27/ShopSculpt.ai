@@ -59,10 +59,10 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
 
           {/* Pricing */}
           <div className="flex items-center space-x-3">
-            <span className="text-xl font-bold text-gray-900">₹{item.price.toLocaleString()}</span>
+            <span className="text-xl font-bold text-gray-900">${item.price.toLocaleString()}</span>
             {item.originalPrice && item.originalPrice > item.price && (
               <>
-                <span className="text-sm text-gray-500 line-through">₹{item.originalPrice.toLocaleString()}</span>
+                <span className="text-sm text-gray-500 line-through">${item.originalPrice.toLocaleString()}</span>
                 <span className="text-sm text-green-600 font-medium">{discountPercentage}% off</span>
               </>
             )}

@@ -16,37 +16,37 @@ export default function CartSummary({ subtotal, discount, platformFee, securedPa
         {/* Subtotal */}
         <div className="flex justify-between">
           <span className="text-gray-600">Price ({itemCount} items)</span>
-          <span className="font-medium">₹{subtotal.toLocaleString()}</span>
+          <span className="font-medium">${subtotal.toLocaleString()}</span>
         </div>
 
         {/* Discount */}
         <div className="flex justify-between">
           <span className="text-gray-600">Discount</span>
-          <span className="text-green-600 font-medium">−₹{discount.toLocaleString()}</span>
+          <span className="text-green-600 font-medium">-${discount.toLocaleString()}</span>
         </div>
 
         {/* Platform Fee */}
         <div className="flex justify-between">
           <span className="text-gray-600">Platform Fee</span>
-          <span className="font-medium">₹{platformFee}</span>
+          <span className="font-medium">${platformFee}</span>
         </div>
 
         {/* Secured Packaging Fee */}
         <div className="flex justify-between">
           <span className="text-gray-600">Secured Packaging Fee</span>
-          <span className="font-medium">₹{securedPackagingFee}</span>
+          <span className="font-medium">${securedPackagingFee}</span>
         </div>
 
         {/* Divider */}
         <div className="border-t pt-3">
           <div className="flex justify-between text-lg font-bold">
             <span>Total Amount</span>
-            <span>₹{total.toLocaleString()}</span>
+            <span>${total.toLocaleString()}</span>
           </div>
         </div>
 
         {/* Savings */}
-        <div className="text-green-600 font-medium">You will save ₹{discount.toLocaleString()} on this order</div>
+        <div className="text-green-600 font-medium">You will save ${discount.toLocaleString()} on this order</div>
       </div>
 
       {/* Security Info */}
@@ -68,7 +68,7 @@ export default function CartSummary({ subtotal, discount, platformFee, securedPa
       {/* Free Delivery Info */}
       <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-600">
         <Truck className="w-4 h-4" />
-        <span>Free delivery on orders above ₹499</span>
+        <span>Free delivery on orders above $99</span>
       </div>
     </div>
   )

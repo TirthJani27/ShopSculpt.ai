@@ -1,32 +1,51 @@
 /**
  * Account Settings Component
- * User profile settings, password change, and preferences
+ * User profile settings, name change, email update, interests, and about me management
  * Form validation and responsive design
+ * Updated to allow interests and about me editing with proper validation
  */
 "use client"
 import { useState } from "react"
-import { User, Bell, Shield, Eye, EyeOff } from "lucide-react"
+import { User, Bell, Save, CheckCircle, Heart, Edit3 } from "lucide-react"
+import { useAuth } from "../../../contexts/AuthContext"
 
-export default function AccountSettings({ user }) {
+export default function AccountSettings() {
+  const { user, login } = useAuth() // login function updates user data
   const [activeSection, setActiveSection] = useState("profile")
   const [isLoading, setIsLoading] = useState(false)
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [wordCount, setWordCount] = useState(
+    user?.aboutMe
+      ? user.aboutMe
+          .trim()
+          .split(/\s+/)
+          .filter((word) => word.length > 0).length
+      : 0,
+  )
 
-  // Profile form state
+  // Interest categories with icons
+  const interestCategories = [
+    { id: "gym", label: "Gym Equipments", icon: "🏋️" },
+    { id: "clothing", label: "Clothing", icon: "👕" },
+    { id: "electronics", label: "Electronics", icon: "📱" },
+    { id: "furniture", label: "Furniture", icon: "🛋️" },
+    { id: "iot", label: "IoT Gadgets", icon: "🔌" },
+    { id: "laptop", label: "Laptops", icon: "💻" },
+    { id: "mobile", label: "Mobile Phones", icon: "📱" },
+    { id: "others", label: "Others", icon: "🛍️" },
+  ]
+
+  // Profile form state with actual user data
   const [profileData, setProfileData] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone || "",
-    dateOfBirth: "",
-    gender: "",
-  })
-
-  // Password form state
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    dateOfBirth: user?.dateOfBirth || "",
+    address: user?.address || "",
+    state: user?.state || "",
+    pinCode: user?.pinCode || "",
+    interests: user?.interests || [],
+    aboutMe: user?.aboutMe || "",
   })
 
   // Notification preferences
@@ -37,40 +56,118 @@ export default function AccountSettings({ user }) {
     smsNotifications: false,
   })
 
-  const handleProfileSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+  const [errors, setErrors] = useState({})
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Profile updated:", profileData)
-      // Show success message
-    } catch (error) {
-      console.error("Profile update error:", error)
-    } finally {
-      setIsLoading(false)
+  const handleProfileInputChange = (e) => {
+    const { name, value } = e.target
+    setProfileData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+
+    // Update word count for aboutMe field
+    if (name === "aboutMe") {
+      const words = value
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 0)
+      setWordCount(words.length)
+    }
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }))
     }
   }
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault()
+  const handleInterestChange = (interestId) => {
+    setProfileData((prev) => ({
+      ...prev,
+      interests: prev.interests.includes(interestId)
+        ? prev.interests.filter((id) => id !== interestId)
+        : [...prev.interests, interestId],
+    }))
 
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("New passwords do not match")
-      return
+    // Clear interests error
+    if (errors.interests) {
+      setErrors((prev) => ({
+        ...prev,
+        interests: "",
+      }))
+    }
+  }
+
+  const validateProfileForm = () => {
+    const newErrors = {}
+
+    if (!profileData.name.trim()) {
+      newErrors.name = "Name is required"
+    } else if (profileData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
     }
 
+    if (!profileData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(profileData.email)) {
+      newErrors.email = "Please enter a valid email"
+    }
+
+    if (profileData.phone && !/^\+?[\d\s\-()]{10,}$/.test(profileData.phone)) {
+      newErrors.phone = "Please enter a valid phone number"
+    }
+
+    if (profileData.pinCode && !/^\d{6}$/.test(profileData.pinCode)) {
+      newErrors.pinCode = "Pin code must be 6 digits"
+    }
+
+    // Interests validation (minimum 3)
+    if (profileData.interests.length < 3) {
+      newErrors.interests = "Please select at least 3 interests"
+    }
+
+    // About me validation
+    if (!profileData.aboutMe.trim()) {
+      newErrors.aboutMe = "Please tell us about yourself"
+    } else if (wordCount < 20) {
+      newErrors.aboutMe = "Please write at least 20 words"
+    } else if (wordCount > 50) {
+      newErrors.aboutMe = "Please keep it under 50 words"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!validateProfileForm()) return
+
     setIsLoading(true)
+    setSuccess(false)
 
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Password updated")
-      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
-      // Show success message
+
+      // Update user data in auth context
+      const updatedUser = {
+        ...user,
+        ...profileData,
+      }
+      login(updatedUser)
+
+      setSuccess(true)
+      console.log("Profile updated:", profileData)
+
+      // Hide success message after 3 seconds
+      setTimeout(() => setSuccess(false), 3000)
     } catch (error) {
-      console.error("Password update error:", error)
+      console.error("Profile update error:", error)
+      setErrors({ general: "Failed to update profile. Please try again." })
     } finally {
       setIsLoading(false)
     }
@@ -78,67 +175,97 @@ export default function AccountSettings({ user }) {
 
   const sections = [
     { id: "profile", label: "Profile Information", icon: User },
-    { id: "security", label: "Security", icon: Shield },
+    { id: "interests", label: "Shopping Interests", icon: Heart },
+    { id: "about", label: "About Me", icon: Edit3 },
     { id: "notifications", label: "Notifications", icon: Bell },
   ]
 
   return (
     <div className="bg-white rounded-lg border">
-      <div className="border-b">
-        <nav className="flex space-x-8 px-6">
+      <div className="border-b overflow-x-auto">
+        <nav className="flex space-x-4 md:space-x-8 px-4 md:px-6 min-w-max">
           {sections.map((section) => {
             const Icon = section.icon
             return (
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm ${
+                className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm whitespace-nowrap ${
                   activeSection === section.id
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
-                <Icon className="w-4 h-4" />
-                <span>{section.label}</span>
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                <span className="hidden sm:inline">{section.label}</span>
+                <span className="sm:hidden">{section.label.split(" ")[0]}</span>
               </button>
             )
           })}
         </nav>
       </div>
 
-      <div className="p-6">
+      <div className="p-4 md:p-6">
+        {/* Success Message */}
+        {success && (
+          <div className="mb-6 bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg flex items-center space-x-2">
+            <CheckCircle className="w-5 h-5 flex-shrink-0" />
+            <span>Profile updated successfully!</span>
+          </div>
+        )}
+
         {/* Profile Information */}
         {activeSection === "profile" && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h3>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
+              {/* General Error */}
+              {errors.general && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                  {errors.general}
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Name Field */}
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name
+                    Full Name *
                   </label>
                   <input
                     type="text"
                     id="name"
+                    name="name"
                     value={profileData.name}
-                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={handleProfileInputChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.name ? "border-red-300" : "border-gray-300"
+                    }`}
+                    placeholder="Enter your full name"
                   />
+                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                 </div>
 
+                {/* Email Field */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
+                    Email Address *
                   </label>
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     value={profileData.email}
-                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={handleProfileInputChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.email ? "border-red-300" : "border-gray-300"
+                    }`}
+                    placeholder="Enter your email address"
                   />
+                  {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                 </div>
 
+                {/* Phone Field */}
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number
@@ -146,117 +273,234 @@ export default function AccountSettings({ user }) {
                   <input
                     type="tel"
                     id="phone"
+                    name="phone"
                     value={profileData.phone}
-                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    onChange={handleProfileInputChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.phone ? "border-red-300" : "border-gray-300"
+                    }`}
+                    placeholder="Enter your phone number"
+                  />
+                  {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+                </div>
+
+                {/* Date of Birth Field */}
+                <div>
+                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-2">
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    id="dateOfBirth"
+                    name="dateOfBirth"
+                    value={profileData.dateOfBirth}
+                    onChange={handleProfileInputChange}
+                    max={new Date().toISOString().split("T")[0]}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
-                    Gender
-                  </label>
-                  <select
-                    id="gender"
-                    value={profileData.gender}
-                    onChange={(e) => setProfileData({ ...profileData, gender: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
+              {/* Address Section */}
+              <div className="pt-6 border-t">
+                <h4 className="text-md font-semibold text-gray-900 mb-4">Address Information</h4>
+
+                <div className="space-y-4">
+                  {/* Complete Address */}
+                  <div>
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                      Complete Address
+                    </label>
+                    <textarea
+                      id="address"
+                      name="address"
+                      value={profileData.address}
+                      onChange={handleProfileInputChange}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      placeholder="Enter your complete address"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* State */}
+                    <div>
+                      <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+                        State
+                      </label>
+                      <input
+                        type="text"
+                        id="state"
+                        name="state"
+                        value={profileData.state}
+                        onChange={handleProfileInputChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter your state"
+                      />
+                    </div>
+
+                    {/* Pin Code */}
+                    <div>
+                      <label htmlFor="pinCode" className="block text-sm font-medium text-gray-700 mb-2">
+                        Pin Code
+                      </label>
+                      <input
+                        type="text"
+                        id="pinCode"
+                        name="pinCode"
+                        value={profileData.pinCode}
+                        onChange={handleProfileInputChange}
+                        maxLength={6}
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.pinCode ? "border-red-300" : "border-gray-300"
+                        }`}
+                        placeholder="Enter 6-digit pin code"
+                      />
+                      {errors.pinCode && <p className="mt-1 text-sm text-red-600">{errors.pinCode}</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
-                {isLoading ? "Saving..." : "Save Changes"}
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save Changes</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
         )}
 
-        {/* Security Settings */}
-        {activeSection === "security" && (
+        {/* Shopping Interests */}
+        {activeSection === "interests" && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Security Settings</h3>
-            <form onSubmit={handlePasswordSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showCurrentPassword ? "text" : "password"}
-                    id="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showCurrentPassword ? (
-                      <EyeOff className="w-4 h-4 text-gray-400" />
-                    ) : (
-                      <Eye className="w-4 h-4 text-gray-400" />
-                    )}
-                  </button>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Shopping Interests</h3>
+            <form onSubmit={handleProfileSubmit} className="space-y-6">
+              {/* General Error */}
+              {errors.general && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                  {errors.general}
                 </div>
-              </div>
+              )}
 
               <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  New Password
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  What are you interested in buying? (Select at least 3)
                 </label>
-                <div className="relative">
-                  <input
-                    type={showNewPassword ? "text" : "password"}
-                    id="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showNewPassword ? (
-                      <EyeOff className="w-4 h-4 text-gray-400" />
-                    ) : (
-                      <Eye className="w-4 h-4 text-gray-400" />
-                    )}
-                  </button>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {interestCategories.map((category) => (
+                    <label
+                      key={category.id}
+                      className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                        profileData.interests.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={profileData.interests.includes(category.id)}
+                        onChange={() => handleInterestChange(category.id)}
+                        className="sr-only"
+                      />
+                      <span className="text-xl md:text-2xl mb-2">{category.icon}</span>
+                      <span className="text-xs md:text-sm font-medium text-center leading-tight">{category.label}</span>
+                    </label>
+                  ))}
                 </div>
-              </div>
-
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={passwordData.confirmPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+                <p className="mt-2 text-sm text-gray-600">
+                  Selected: {profileData.interests.length} / 8 (minimum 3 required)
+                </p>
+                {errors.interests && <p className="mt-1 text-sm text-red-600">{errors.interests}</p>}
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
-                {isLoading ? "Updating..." : "Update Password"}
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save Interests</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* About Me */}
+        {activeSection === "about" && (
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">About Me</h3>
+            <form onSubmit={handleProfileSubmit} className="space-y-6">
+              {/* General Error */}
+              {errors.general && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                  {errors.general}
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="aboutMe" className="block text-sm font-medium text-gray-700 mb-2">
+                  Tell us about yourself (20-50 words)
+                </label>
+                <textarea
+                  id="aboutMe"
+                  name="aboutMe"
+                  value={profileData.aboutMe}
+                  onChange={handleProfileInputChange}
+                  rows={4}
+                  placeholder="Share something about your interests, hobbies, or what you're looking for..."
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
+                    errors.aboutMe ? "border-red-300" : "border-gray-300"
+                  }`}
+                />
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 gap-2">
+                  <span
+                    className={`text-sm ${
+                      wordCount < 20 ? "text-red-600" : wordCount > 50 ? "text-red-600" : "text-green-600"
+                    }`}
+                  >
+                    {wordCount} words {wordCount < 20 && `(${20 - wordCount} more needed)`}
+                  </span>
+                  <span className="text-sm text-gray-500">20-50 words required</span>
+                </div>
+                {errors.aboutMe && <p className="mt-1 text-sm text-red-600">{errors.aboutMe}</p>}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save About Me</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -268,8 +512,8 @@ export default function AccountSettings({ user }) {
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Notification Preferences</h3>
             <div className="space-y-6">
               {Object.entries(notifications).map(([key, value]) => (
-                <div key={key} className="flex items-center justify-between">
-                  <div>
+                <div key={key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex-1">
                     <h4 className="font-medium text-gray-900 capitalize">{key.replace(/([A-Z])/g, " $1").trim()}</h4>
                     <p className="text-sm text-gray-600">
                       {key === "orderUpdates" && "Get notified about your order status"}
@@ -278,7 +522,7 @@ export default function AccountSettings({ user }) {
                       {key === "smsNotifications" && "SMS notifications for important updates"}
                     </p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
+                  <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                     <input
                       type="checkbox"
                       checked={value}
@@ -296,3 +540,300 @@ export default function AccountSettings({ user }) {
     </div>
   )
 }
+
+
+
+
+// "use client"
+// import { useState } from "react"
+// import { User, Bell, Shield, Eye, EyeOff } from "lucide-react"
+
+// export default function AccountSettings({ user }) {
+//   const [activeSection, setActiveSection] = useState("profile")
+//   const [isLoading, setIsLoading] = useState(false)
+//   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+//   const [showNewPassword, setShowNewPassword] = useState(false)
+
+//   // Profile form state
+//   const [profileData, setProfileData] = useState({
+//     name: user.name,
+//     email: user.email,
+//     phone: user.phone || "",
+//     dateOfBirth: "",
+//     gender: "",
+//   })
+
+//   // Password form state
+//   const [passwordData, setPasswordData] = useState({
+//     currentPassword: "",
+//     newPassword: "",
+//     confirmPassword: "",
+//   })
+
+//   // Notification preferences
+//   const [notifications, setNotifications] = useState({
+//     orderUpdates: true,
+//     promotions: false,
+//     newsletter: true,
+//     smsNotifications: false,
+//   })
+
+//   const handleProfileSubmit = async (e) => {
+//     e.preventDefault()
+//     setIsLoading(true)
+
+//     try {
+//       // Simulate API call
+//       await new Promise((resolve) => setTimeout(resolve, 1000))
+//       console.log("Profile updated:", profileData)
+//       // Show success message
+//     } catch (error) {
+//       console.error("Profile update error:", error)
+//     } finally {
+//       setIsLoading(false)
+//     }
+//   }
+
+//   const handlePasswordSubmit = async (e) => {
+//     e.preventDefault()
+
+//     if (passwordData.newPassword !== passwordData.confirmPassword) {
+//       alert("New passwords do not match")
+//       return
+//     }
+
+//     setIsLoading(true)
+
+//     try {
+//       // Simulate API call
+//       await new Promise((resolve) => setTimeout(resolve, 1000))
+//       console.log("Password updated")
+//       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
+//       // Show success message
+//     } catch (error) {
+//       console.error("Password update error:", error)
+//     } finally {
+//       setIsLoading(false)
+//     }
+//   }
+
+//   const sections = [
+//     { id: "profile", label: "Profile Information", icon: User },
+//     { id: "security", label: "Security", icon: Shield },
+//     { id: "notifications", label: "Notifications", icon: Bell },
+//   ]
+
+//   return (
+//     <div className="bg-white rounded-lg border">
+//       <div className="border-b">
+//         <nav className="flex space-x-8 px-6">
+//           {sections.map((section) => {
+//             const Icon = section.icon
+//             return (
+//               <button
+//                 key={section.id}
+//                 onClick={() => setActiveSection(section.id)}
+//                 className={`flex items-center space-x-2 py-4 border-b-2 font-medium text-sm ${
+//                   activeSection === section.id
+//                     ? "border-blue-500 text-blue-600"
+//                     : "border-transparent text-gray-500 hover:text-gray-700"
+//                 }`}
+//               >
+//                 <Icon className="w-4 h-4" />
+//                 <span>{section.label}</span>
+//               </button>
+//             )
+//           })}
+//         </nav>
+//       </div>
+
+//       <div className="p-6">
+//         {/* Profile Information */}
+//         {activeSection === "profile" && (
+//           <div>
+//             <h3 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h3>
+//             <form onSubmit={handleProfileSubmit} className="space-y-6">
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                 <div>
+//                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+//                     Full Name
+//                   </label>
+//                   <input
+//                     type="text"
+//                     id="name"
+//                     value={profileData.name}
+//                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+//                     Email Address
+//                   </label>
+//                   <input
+//                     type="email"
+//                     id="email"
+//                     value={profileData.email}
+//                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+//                     Phone Number
+//                   </label>
+//                   <input
+//                     type="tel"
+//                     id="phone"
+//                     value={profileData.phone}
+//                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+//                     Gender
+//                   </label>
+//                   <select
+//                     id="gender"
+//                     value={profileData.gender}
+//                     onChange={(e) => setProfileData({ ...profileData, gender: e.target.value })}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   >
+//                     <option value="">Select Gender</option>
+//                     <option value="male">Male</option>
+//                     <option value="female">Female</option>
+//                     <option value="other">Other</option>
+//                   </select>
+//                 </div>
+//               </div>
+
+//               <button
+//                 type="submit"
+//                 disabled={isLoading}
+//                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50"
+//               >
+//                 {isLoading ? "Saving..." : "Save Changes"}
+//               </button>
+//             </form>
+//           </div>
+//         )}
+
+//         {/* Security Settings */}
+//         {activeSection === "security" && (
+//           <div>
+//             <h3 className="text-lg font-semibold text-gray-900 mb-6">Security Settings</h3>
+//             <form onSubmit={handlePasswordSubmit} className="space-y-6">
+//               <div>
+//                 <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+//                   Current Password
+//                 </label>
+//                 <div className="relative">
+//                   <input
+//                     type={showCurrentPassword ? "text" : "password"}
+//                     id="currentPassword"
+//                     value={passwordData.currentPassword}
+//                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+//                     className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   />
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+//                     className="absolute right-3 top-1/2 transform -translate-y-1/2"
+//                   >
+//                     {showCurrentPassword ? (
+//                       <EyeOff className="w-4 h-4 text-gray-400" />
+//                     ) : (
+//                       <Eye className="w-4 h-4 text-gray-400" />
+//                     )}
+//                   </button>
+//                 </div>
+//               </div>
+
+//               <div>
+//                 <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+//                   New Password
+//                 </label>
+//                 <div className="relative">
+//                   <input
+//                     type={showNewPassword ? "text" : "password"}
+//                     id="newPassword"
+//                     value={passwordData.newPassword}
+//                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+//                     className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                   />
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowNewPassword(!showNewPassword)}
+//                     className="absolute right-3 top-1/2 transform -translate-y-1/2"
+//                   >
+//                     {showNewPassword ? (
+//                       <EyeOff className="w-4 h-4 text-gray-400" />
+//                     ) : (
+//                       <Eye className="w-4 h-4 text-gray-400" />
+//                     )}
+//                   </button>
+//                 </div>
+//               </div>
+
+//               <div>
+//                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+//                   Confirm New Password
+//                 </label>
+//                 <input
+//                   type="password"
+//                   id="confirmPassword"
+//                   value={passwordData.confirmPassword}
+//                   onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+//                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//                 />
+//               </div>
+
+//               <button
+//                 type="submit"
+//                 disabled={isLoading}
+//                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50"
+//               >
+//                 {isLoading ? "Updating..." : "Update Password"}
+//               </button>
+//             </form>
+//           </div>
+//         )}
+
+//         {/* Notification Settings */}
+//         {activeSection === "notifications" && (
+//           <div>
+//             <h3 className="text-lg font-semibold text-gray-900 mb-6">Notification Preferences</h3>
+//             <div className="space-y-6">
+//               {Object.entries(notifications).map(([key, value]) => (
+//                 <div key={key} className="flex items-center justify-between">
+//                   <div>
+//                     <h4 className="font-medium text-gray-900 capitalize">{key.replace(/([A-Z])/g, " $1").trim()}</h4>
+//                     <p className="text-sm text-gray-600">
+//                       {key === "orderUpdates" && "Get notified about your order status"}
+//                       {key === "promotions" && "Receive promotional offers and deals"}
+//                       {key === "newsletter" && "Weekly newsletter with new products"}
+//                       {key === "smsNotifications" && "SMS notifications for important updates"}
+//                     </p>
+//                   </div>
+//                   <label className="relative inline-flex items-center cursor-pointer">
+//                     <input
+//                       type="checkbox"
+//                       checked={value}
+//                       onChange={(e) => setNotifications({ ...notifications, [key]: e.target.checked })}
+//                       className="sr-only peer"
+//                     />
+//                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+//                   </label>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   )
+// }
