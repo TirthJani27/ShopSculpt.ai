@@ -125,7 +125,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl md:text-3xl font-bold text-blue-600 mb-2 block">
-            <img src="/logo2.png" alt="" />
+            <img src="/logo3.png" alt="" />
           </Link>
           <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
           <p className="text-gray-600 text-sm md:text-base">Sign in to your account</p>

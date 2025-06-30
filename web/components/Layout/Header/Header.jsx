@@ -98,8 +98,8 @@ export default function Header() {
               {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
                 ShopSculpt
               </Link> */}
-              <Link href="/" className="flex flex-column mb-5 w-50 h-24 mt-6 mr-4 md:mr-8">
-                  <img src="/logo3.png" alt="ShopSclupt" />
+              <Link href="/" className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
+                  <img src="/logo4.png" alt="ShopSclupt" />
               </Link>
             </div>
 

@@ -178,8 +178,8 @@ export default function SurveyPage() {
     // About me validation
     if (!formData.aboutMe.trim()) {
       newErrors.aboutMe = "Please tell us about yourself"
-    } else if (wordCount < 20) {
-      newErrors.aboutMe = "Please write at least 20 words"
+    } else if (wordCount < 10) {
+      newErrors.aboutMe = "Please write at least 10 words"
     } else if (wordCount > 50) {
       newErrors.aboutMe = "Please keep it under 50 words"
     }
@@ -377,7 +377,7 @@ export default function SurveyPage() {
             <div>
               <label htmlFor="aboutMe" className="block text-sm font-medium text-gray-700 mb-2">
                 <User className="w-4 h-4 inline mr-2" />
-                Tell us about yourself (20-50 words)
+                Tell us about yourself (10-50 words)
               </label>
               <textarea
                 id="aboutMe"
@@ -396,9 +396,9 @@ export default function SurveyPage() {
                     wordCount < 20 ? "text-red-600" : wordCount > 50 ? "text-red-600" : "text-green-600"
                   }`}
                 >
-                  {wordCount} words {wordCount < 20 && `(${20 - wordCount} more needed)`}
+                  {wordCount} words {wordCount < 10 && `(${10 - wordCount} more needed)`}
                 </span>
-                <span className="text-sm text-gray-500">20-50 words required</span>
+                <span className="text-sm text-gray-500">10-50 words required</span>
               </div>
               {errors.aboutMe && <p className="mt-1 text-sm text-red-600">{errors.aboutMe}</p>}
             </div>

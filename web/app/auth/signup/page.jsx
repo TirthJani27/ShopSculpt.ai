@@ -279,7 +279,7 @@ export default function SignUpPage() {
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
                   {/* Colorful illustration placeholder - in real app, use the actual illustration */}
-                  <img src="/logo2.png" alt="" />
+                  <img src="/logo3.png" alt="" />
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Join Our Shopping Community</h3>
                   <p className="text-gray-600">Create your account and start exploring amazing deals and products</p>
                 </div>
