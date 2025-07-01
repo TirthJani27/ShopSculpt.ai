@@ -6,45 +6,56 @@
  * Updated with Sports category
  */
 
-"use client"
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Search, ShoppingCart, User, MapPin, Heart, Menu, X, Home, LogOut } from "lucide-react"
-import { useAuth } from "../../../contexts/AuthContext"
-import { useWishlist } from "../../../contexts/WishlistContext"
-import { useCart } from "../../../contexts/CartContext"
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Search,
+  ShoppingCart,
+  User,
+  MapPin,
+  Heart,
+  Menu,
+  X,
+  Home,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useWishlist } from "../../../contexts/WishlistContext";
+import { useCart } from "../../../contexts/CartContext";
 
 export default function Header() {
-  const router = useRouter()
-  const { isLoggedIn, user, logout } = useAuth()
-  const { wishlistCount } = useWishlist()
-  const { cartCount, cartTotal } = useCart()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [showUserMenu, setShowUserMenu] = useState(false)
-  const [showCartPrompt, setShowCartPrompt] = useState(false)
+  const router = useRouter();
+  const { isLoggedIn, user, logout } = useAuth();
+  const { wishlistCount } = useWishlist();
+  const { cartCount, cartTotal } = useCart();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showCartPrompt, setShowCartPrompt] = useState(false);
 
   const handleCartClick = (e) => {
     if (!isLoggedIn) {
-      e.preventDefault()
-      setShowCartPrompt(true)
+      e.preventDefault();
+      setShowCartPrompt(true);
     }
-  }
+  };
 
   const handleLogout = () => {
-    logout()
-    setShowUserMenu(false)
-    router.push("/")
-  }
+    logout();
+    setShowUserMenu(false);
+    router.push("/");
+  };
 
   return (
     <>
       <header className="bg-blue-600 text-white sticky top-0 z-50">
-        {/* Top Information Bar */}
         <div className="bg-blue-700 py-1">
           <div className="max-w-7xl mx-auto px-4 flex justify-between items-center text-xs">
             <div className="flex items-center space-x-4">
-              <span className="hidden md:block">How do you want your items?</span>
+              <span className="hidden md:block">
+                How do you want your items?
+              </span>
               <div className="flex items-center space-x-1">
                 <MapPin className="w-3 h-3" />
                 <span>Sacramento, 95829</span>
@@ -57,7 +68,7 @@ export default function Header() {
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="hover:underline flex items-center space-x-1"
                   >
-                    <span>Hi, {user?.name?.split(" ")[0] || "User"}</span>
+                    <span>Hi, {user?.fullname?.firstname || "User"}</span>
                   </button>
                   {showUserMenu && (
                     <div className="absolute right-0 top-full mt-1 bg-white text-gray-900 rounded-lg shadow-lg py-2 w-48 z-50">
@@ -98,8 +109,11 @@ export default function Header() {
               {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
                 ShopSculpt
               </Link> */}
-              <Link href="/" className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
-                  <img src="/logo4.png" alt="ShopSclupt" />
+              <Link
+                href="/"
+                className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8"
+              >
+                <img src="/logo4.png" alt="ShopSclupt" />
               </Link>
             </div>
 
@@ -144,7 +158,9 @@ export default function Header() {
                 className="hidden sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded"
               >
                 <User className="w-6 h-6" />
-                <span className="hidden lg:block">{isLoggedIn ? "Account" : "Sign In"}</span>
+                <span className="hidden lg:block">
+                  {isLoggedIn ? "Account" : "Sign In"}
+                </span>
               </Link>
 
               {/* Shopping Cart */}
@@ -163,8 +179,15 @@ export default function Header() {
               </Link>
 
               {/* Mobile Menu Toggle */}
-              <button className="md:hidden p-2 hover:bg-blue-500 rounded" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <button
+                className="md:hidden p-2 hover:bg-blue-500 rounded"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -185,38 +208,72 @@ export default function Header() {
         </div>
 
         {/* Navigation Menu */}
-        <nav className={`bg-blue-700 border-t border-blue-500 ${isMenuOpen ? "block" : "hidden md:block"}`}>
+        <nav
+          className={`bg-blue-700 border-t border-blue-500 ${
+            isMenuOpen ? "block" : "hidden md:block"
+          }`}
+        >
           <div className="max-w-7xl  flex flex-col items-center mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-center md:space-x-8 py-2 text-sm">
-              <Link href="/" className="py-2 md:py-0 cursor-pointer hover:underline flex items-center space-x-1">
+              <Link
+                href="/"
+                className="py-2 md:py-0 cursor-pointer hover:underline flex items-center space-x-1"
+              >
                 <Home className="w-4 h-4" />
                 <span>Home</span>
               </Link>
-              <Link href="/categories/departments" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/departments"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Departments
               </Link>
-              <Link href="/services" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/services"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Services
               </Link>
-              <Link href="/categories/grocery" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/grocery"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Grocery
               </Link>
-              <Link href="/categories/electronics" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/electronics"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Electronics
               </Link>
-              <Link href="/categories/fashion" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/fashion"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Fashion
               </Link>
-              <Link href="/categories/furniture" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/furniture"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Furniture
               </Link>
-              <Link href="/categories/sports" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/sports"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Sports
               </Link>
-              <Link href="/categories/auto" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/categories/auto"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Auto & tires
               </Link>
-              <Link href="/pharmacy" className="py-2 md:py-0 cursor-pointer hover:underline">
+              <Link
+                href="/pharmacy"
+                className="py-2 md:py-0 cursor-pointer hover:underline"
+              >
                 Pharmacy
               </Link>
             </div>
@@ -228,8 +285,13 @@ export default function Header() {
       {showCartPrompt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Sign in to view your cart</h3>
-            <p className="text-gray-600 mb-6">You need to be signed in to access your shopping cart and save items.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Sign in to view your cart
+            </h3>
+            <p className="text-gray-600 mb-6">
+              You need to be signed in to access your shopping cart and save
+              items.
+            </p>
             <div className="flex space-x-4">
               <Link
                 href="/auth/login"
@@ -249,5 +311,5 @@ export default function Header() {
         </div>
       )}
     </>
-  )
-} 
+  );
+}

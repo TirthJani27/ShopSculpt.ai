@@ -1,100 +1,126 @@
-/**
- * Cart Context
- * Manages shopping cart items and operations
- * Requires user authentication to function
- */
-"use client"
-import { createContext, useContext, useState, useEffect } from "react"
-import { useAuth } from "./AuthContext"
+"use client";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
+import axios from "axios";
 
-const CartContext = createContext()
+async function fetchProductById(id) {
+  try {
+    const res = await axios.get(`/api/products/${id}`);
+    return res.data.product;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return null;
+  }
+}
+
+const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const { isLoggedIn, user } = useAuth()
-  const [cartItems, setCartItems] = useState([])
+  const { isLoggedIn, user, setUser } = useAuth();
+  const [cartItems, setCartItems] = useState([]);
 
-  // Load cart from localStorage when user logs in
   useEffect(() => {
-    if (isLoggedIn && user) {
-      const savedCart = localStorage.getItem(`cart_${user.id}`)
-      if (savedCart) {
-        setCartItems(JSON.parse(savedCart))
-      }
-    } else {
-      setCartItems([])
-    }
-  }, [isLoggedIn, user])
-
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    if (isLoggedIn && user) {
-      localStorage.setItem(`cart_${user.id}`, JSON.stringify(cartItems))
-    }
-  }, [cartItems, isLoggedIn, user])
-
-  const addToCart = (product, quantity = 1) => {
-    if (!isLoggedIn) {
-      return { success: false, message: "Please sign in to add items to cart" }
-    }
-
-    setCartItems((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id)
-
-      if (existingItem) {
-        // Update quantity if item already exists
-        return prev.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item))
+    async function loadCart() {
+      if (isLoggedIn && user && Array.isArray(user.cart)) {
+        const items = await Promise.all(
+          user.cart.map(async ({ productId, quantity }) => {
+            const product = await fetchProductById(productId);
+            return { ...product, quantity };
+          })
+        );
+        setCartItems(items);
       } else {
-        // Add new item to cart
-        return [
-          ...prev,
-          {
-            ...product,
-            quantity,
-            addedAt: new Date().toISOString(),
-            // Ensure we have the required cart fields
-            name: product.title || product.name,
-            seller: product.seller || "ShopSculpt",
-            image: product.image || "/placeholder.svg",
-            inStock: product.inStock !== false,
-            deliveryDate: "Tomorrow, Sat",
-          },
-        ]
+        setCartItems([]);
       }
-    })
+    }
+    loadCart();
+  }, [isLoggedIn, user]);
 
-    return { success: true, message: "Added to cart" }
-  }
+  // Helper to update user.cart
+  const updateUserCart = (newCart) => {
+    if (setUser) {
+      setUser({ ...user, cart: newCart });
+    }
+  };
+
+  const addToCart = async (product, quantity = 1) => {
+    if (!isLoggedIn) {
+      return { success: false, message: "Please sign in to add items to cart" };
+    }
+    const existing = user.cart?.find((item) => item.productId === product.id);
+    let newCart;
+    if (existing) {
+      newCart = user.cart.map((item) =>
+        item.productId === product.id
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      );
+    } else
+      newCart = [...(user.cart || []), { productId: product.id, quantity }];
+
+    updateUserCart(newCart);
+    // Update local cartItems state
+    const productDetails = await fetchProductById(product.id);
+    setCartItems((prev) => {
+      const found = prev.find((item) => item.id === product.id);
+      if (found) {
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [...prev, { ...productDetails, quantity }];
+      }
+    });
+    return { success: true, message: "Added to cart" };
+  };
 
   const removeFromCart = (productId) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== productId))
-    return { success: true, message: "Removed from cart" }
-  }
+    const newCart = (user.cart || []).filter(
+      (item) => item.productId !== productId
+    );
+    updateUserCart(newCart);
+    setCartItems((prev) => prev.filter((item) => item.id !== productId));
+    return { success: true, message: "Removed from cart" };
+  };
 
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity === 0) {
-      return removeFromCart(productId)
+      return removeFromCart(productId);
     }
-
-    setCartItems((prev) => prev.map((item) => (item.id === productId ? { ...item, quantity: newQuantity } : item)))
-    return { success: true, message: "Quantity updated" }
-  }
+    const newCart = (user.cart || []).map((item) =>
+      item.productId === productId ? { ...item, quantity: newQuantity } : item
+    );
+    updateUserCart(newCart);
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+    return { success: true, message: "Quantity updated" };
+  };
 
   const clearCart = () => {
-    setCartItems([])
-    return { success: true, message: "Cart cleared" }
-  }
+    updateUserCart([]);
+    setCartItems([]);
+    return { success: true, message: "Cart cleared" };
+  };
 
   const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-  }
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
 
   const getCartCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0)
-  }
+    return cartItems.reduce((count, item) => count + item.quantity, 0);
+  };
 
   const isInCart = (productId) => {
-    return cartItems.some((item) => item.id === productId)
-  }
+    return cartItems.some((item) => item.id === productId);
+  };
 
   return (
     <CartContext.Provider
@@ -113,13 +139,13 @@ export function CartProvider({ children }) {
     >
       {children}
     </CartContext.Provider>
-  )
+  );
 }
 
 export function useCart() {
-  const context = useContext(CartContext)
+  const context = useContext(CartContext);
   if (!context) {
-    throw new Error("useCart must be used within a CartProvider")
+    throw new Error("useCart must be used within a CartProvider");
   }
-  return context
+  return context;
 }

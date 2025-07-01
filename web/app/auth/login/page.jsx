@@ -78,7 +78,6 @@ export default function LoginPage() {
 
       toast.success("Login successful!");
       localStorage.setItem("token", `Bearer ${data.token}`);
-
       login(data.user);
       router.push(redirectPath);
     } catch (error) {

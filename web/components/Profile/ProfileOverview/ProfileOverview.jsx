@@ -4,18 +4,24 @@
  * Responsive card layout
  * Updated to use actual user data from auth context
  */
-"use client"
-import Link from "next/link"
-import { Package, ShoppingCart, Heart, TrendingUp, Calendar, DollarSign } from "lucide-react"
-import { useAuth } from "../../../contexts/AuthContext"
-import { useCart } from "../../../contexts/CartContext"
-import { useWishlist } from "../../../contexts/WishlistContext"
+"use client";
+import Link from "next/link";
+import {
+  Package,
+  ShoppingCart,
+  Heart,
+  TrendingUp,
+  Calendar,
+  DollarSign,
+} from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useCart } from "../../../contexts/CartContext";
+import { useWishlist } from "../../../contexts/WishlistContext";
 
 export default function ProfileOverview() {
-  const { user } = useAuth()
-  const { cartCount, cartTotal } = useCart()
-  const { wishlistCount } = useWishlist()
-
+  const { user } = useAuth();
+  const { cartCount, cartTotal } = useCart();
+  const { wishlistCount } = useWishlist();
   // Stats with real data from contexts
   const stats = [
     {
@@ -27,7 +33,7 @@ export default function ProfileOverview() {
     },
     {
       label: "Total Spent",
-      value: "₹0.00", // New users start with ₹0 spent
+      value: `₹${user?.totalSpendAmount || "0.00"}`, // New users start with ₹0 spent
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-50",
@@ -46,49 +52,58 @@ export default function ProfileOverview() {
       color: "text-purple-600",
       bgColor: "bg-purple-50",
     },
-  ]
+  ];
 
   // For new users, no recent orders
-  const recentOrders = []
+  const recentOrders = [];
 
   const getStatusColor = (status) => {
     switch (status) {
       case "Delivered":
-        return "text-green-600 bg-green-50"
+        return "text-green-600 bg-green-50";
       case "Shipped":
-        return "text-blue-600 bg-blue-50"
+        return "text-blue-600 bg-blue-50";
       case "Processing":
-        return "text-yellow-600 bg-yellow-50"
+        return "text-yellow-600 bg-yellow-50";
       default:
-        return "text-gray-600 bg-gray-50"
+        return "text-gray-600 bg-gray-50";
     }
-  }
+  };
+  const fullName = user?.fullname
+    ? user.fullname.firstname + " " + user.fullname.lastname
+    : "";
 
   return (
     <div className="space-y-6">
       {/* Welcome Message */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.name ? user.name.split(" ")[0] : "User"}!</h2>
-        <p className="text-blue-100">Here's what's happening with your account</p>
+        <h2 className="text-2xl font-bold mb-2">
+          Welcome back, {fullName || "User"}!
+        </h2>
+        <p className="text-blue-100">
+          Here's what's happening with your account
+        </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
             <div key={index} className="bg-white rounded-lg border p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stat.value}
+                  </p>
                 </div>
                 <div className={`p-3 rounded-lg ${stat.bgColor}`}>
                   <Icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -96,7 +111,10 @@ export default function ProfileOverview() {
       <div className="bg-white rounded-lg border p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
-          <Link href="/profile?tab=orders" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link
+            href="/profile?tab=orders"
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
             View All
           </Link>
         </div>
@@ -104,7 +122,10 @@ export default function ProfileOverview() {
         <div className="space-y-4">
           {recentOrders.length > 0 ? (
             recentOrders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div
+                key={order.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="p-2 bg-white rounded-lg">
                     <Package className="w-5 h-5 text-gray-600" />
@@ -119,7 +140,9 @@ export default function ProfileOverview() {
                 <div className="text-right">
                   <p className="font-medium text-gray-900">₹{order.total}</p>
                   <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                      order.status
+                    )}`}
                   >
                     {order.status}
                   </span>
@@ -130,7 +153,9 @@ export default function ProfileOverview() {
             <div className="text-center py-8">
               <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 mb-2">No orders yet</p>
-              <p className="text-sm text-gray-400">Start shopping to see your orders here!</p>
+              <p className="text-sm text-gray-400">
+                Start shopping to see your orders here!
+              </p>
             </div>
           )}
         </div>
@@ -138,7 +163,9 @@ export default function ProfileOverview() {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Quick Actions
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link
             href="/cart"
@@ -146,7 +173,11 @@ export default function ProfileOverview() {
           >
             <ShoppingCart className="w-8 h-8 text-blue-600 mb-2" />
             <span className="text-sm font-medium text-gray-900">View Cart</span>
-            {cartCount > 0 && <span className="text-xs text-blue-600 mt-1">{cartCount} items</span>}
+            {cartCount > 0 && (
+              <span className="text-xs text-blue-600 mt-1">
+                {cartCount} items
+              </span>
+            )}
           </Link>
           <Link
             href="/wishlist"
@@ -154,7 +185,11 @@ export default function ProfileOverview() {
           >
             <Heart className="w-8 h-8 text-red-600 mb-2" />
             <span className="text-sm font-medium text-gray-900">Wishlist</span>
-            {wishlistCount > 0 && <span className="text-xs text-red-600 mt-1">{wishlistCount} items</span>}
+            {wishlistCount > 0 && (
+              <span className="text-xs text-red-600 mt-1">
+                {wishlistCount} items
+              </span>
+            )}
           </Link>
           <Link
             href="/profile?tab=addresses"
@@ -173,5 +208,5 @@ export default function ProfileOverview() {
         </div>
       </div>
     </div>
-  )
+  );
 }

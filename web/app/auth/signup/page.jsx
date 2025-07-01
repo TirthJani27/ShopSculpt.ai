@@ -89,7 +89,6 @@ export default function SignUpPage() {
     setIsLoading(true);
 
     try {
-      // Simulate API call
       const fullname = {
         firstname: formData.firstname,
         lastname: formData.lastname,
@@ -103,11 +102,10 @@ export default function SignUpPage() {
       login(data.user);
       localStorage.setItem("token", `Bearer ${data.token}`);
       const userDataParam = encodeURIComponent(JSON.stringify(data.user._id));
-      // Show success toast
       if (typeof window !== "undefined" && window.toast) {
         window.toast.success("Registration successful! Redirecting...");
       }
-      router.push(`/auth/survey?userData=${userDataParam}`);
+      router.push(`/auth/survey?userId=${userDataParam}`);
     } catch (error) {
       console.error("Registration error:", error);
       setErrors({ general: "Registration failed. Please try again." });
