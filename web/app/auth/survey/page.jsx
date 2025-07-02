@@ -54,19 +54,20 @@ export default function SurveyPage() {
     { id: "others", label: "Others", icon: "🛍️" },
   ]
 
+// Persona category
  const personaCategories = [
   // Lifestyle & Values-Based
   { id: 'eco-conscious', label: 'Eco-Conscious Shopper' },
   { id: 'luxury-seeker', label: 'Luxury Seeker' },
-  { id: 'local-goods', label: 'Local Goods Supporter' },
-  { id: 'ethical-buyer', label: 'Ethical Buyer' },
+  // { id: 'local-goods', label: 'Local Goods Supporter' },
+  // { id: 'ethical-buyer', label: 'Ethical Buyer' },
   { id: 'minimalist', label: 'Minimalist' },
 
   // Life Stage
   { id: 'new-parent', label: 'New Parent' },
   { id: 'college-student', label: 'College Student' },
   { id: 'young-professional', label: 'Young Professional' },
-  { id: 'retired-shopper', label: 'Retired Shopper' },
+  // { id: 'retired-shopper', label: 'Retired Shopper' },
   { id: 'homeowner', label: 'First-Time Homeowner' },
 
   // Interest-Based
@@ -138,15 +139,6 @@ export default function SurveyPage() {
       [name]: value,
     }))
 
-    // Update word count for aboutMe field
-    if (name === "aboutMe") {
-      const words = value
-        .trim()
-        .split(/\s+/)
-        .filter((word) => word.length > 0)
-      setWordCount(words.length)
-    }
-
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
@@ -170,6 +162,24 @@ export default function SurveyPage() {
         ...prev,
         interests: "",
       }))
+    }
+  }
+
+  
+  const handlePersonaChange = (personaId) => {
+    setFormData((prev) => ({
+      ...prev,
+      persona: prev.persona.includes(personaId)
+        ? prev.persona.filter((id) => id !== personaId)
+        : [...prev.persona, personaId],
+    }));
+
+    // Clear persona error
+    if (errors.persona) {
+      setErrors((prev) => ({
+        ...prev,
+        persona: "",
+      }));
     }
   }
 
@@ -424,7 +434,7 @@ export default function SurveyPage() {
                       <button
                         type="button"
                         key={category.id}
-                        onClick={() => handleInterestChange(category.id)}
+                        onClick={() => handlePersonaChange(category.id)}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors
                           ${selected ? "bg-blue-100 text-blue-700 border-blue-500" : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"}
                         `}
@@ -436,7 +446,7 @@ export default function SurveyPage() {
                   })}
                 </div>
               </div>
-              
+
 
             {/* Submit Button */}
             <button
@@ -470,3 +480,4 @@ export default function SurveyPage() {
     </div>
   )
 }
+

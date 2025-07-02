@@ -14,14 +14,6 @@ export default function AccountSettings() {
   const [activeSection, setActiveSection] = useState("profile")
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [wordCount, setWordCount] = useState(
-    user?.aboutMe
-      ? user.aboutMe
-          .trim()
-          .split(/\s+/)
-          .filter((word) => word.length > 0).length
-      : 0,
-  )
 
   // Interest categories with icons
   const interestCategories = [
@@ -34,6 +26,44 @@ export default function AccountSettings() {
     { id: "mobile", label: "Mobile Phones", icon: "📱" },
     { id: "others", label: "Others", icon: "🛍️" },
   ]
+
+ // Persona category
+ const personaCategories = [
+  // Lifestyle & Values-Based
+  { id: 'eco-conscious', label: 'Eco-Conscious Shopper' },
+  { id: 'luxury-seeker', label: 'Luxury Seeker' },
+  // { id: 'local-goods', label: 'Local Goods Supporter' },
+  // { id: 'ethical-buyer', label: 'Ethical Buyer' },
+  { id: 'minimalist', label: 'Minimalist' },
+
+  // Life Stage
+  { id: 'new-parent', label: 'New Parent' },
+  { id: 'college-student', label: 'College Student' },
+  { id: 'young-professional', label: 'Young Professional' },
+  // { id: 'retired-shopper', label: 'Retired Shopper' },
+  { id: 'homeowner', label: 'First-Time Homeowner' },
+
+  // Interest-Based
+  { id: 'tech-enthusiast', label: 'Tech Enthusiast' },
+  { id: 'fashion-lover', label: 'Fashion Lover' },
+  { id: 'fitness-buff', label: 'Fitness Buff' },
+  { id: 'beauty-guru', label: 'Beauty Guru' },
+  { id: 'home-chef', label: 'Home Chef' },
+
+  // Shopping Style
+  { id: 'deal-hunter', label: 'Deal Hunter' },
+  { id: 'impulse-buyer', label: 'Impulse Buyer' },
+  { id: 'brand-loyalist', label: 'Brand Loyalist' },
+  { id: 'seasonal-shopper', label: 'Seasonal Shopper' },
+  { id: 'gift-giver', label: 'Gift Giver' },
+
+  // Health & Dietary
+  { id: 'gluten-free', label: 'Gluten-Free Buyer' },
+  { id: 'organic-only', label: 'Organic Only' },
+  { id: 'keto-friendly', label: 'Keto Friendly Shopper' },
+  { id: 'allergy-conscious', label: 'Allergy-Conscious Shopper' },
+  { id: 'diabetic-friendly', label: 'Diabetic-Friendly Shopper' },
+]
 
   // Profile form state with actual user data
   const [profileData, setProfileData] = useState({
@@ -65,14 +95,6 @@ export default function AccountSettings() {
       [name]: value,
     }))
 
-    // Update word count for aboutMe field
-    if (name === "aboutMe") {
-      const words = value
-        .trim()
-        .split(/\s+/)
-        .filter((word) => word.length > 0)
-      setWordCount(words.length)
-    }
 
     // Clear error when user starts typing
     if (errors[name]) {
@@ -96,6 +118,23 @@ export default function AccountSettings() {
       setErrors((prev) => ({
         ...prev,
         interests: "",
+      }))
+    }
+  }
+
+    const handlePersonaChange = (personaId) => {
+    setProfileData((prev) => ({
+      ...prev,
+      persona: prev.persona.includes(personatId)
+        ? prev.persona.filter((id) => id !== personaId)
+        : [...prev.persona, personaId],
+    }))
+
+    // Clear interests error
+    if (errors.persona) {
+      setErrors((prev) => ({
+        ...prev,
+        persona: "",
       }))
     }
   }
@@ -176,7 +215,7 @@ export default function AccountSettings() {
   const sections = [
     { id: "profile", label: "Profile Information", icon: User },
     { id: "interests", label: "Shopping Interests", icon: Heart },
-    { id: "about", label: "About Me", icon: Edit3 },
+    { id: "persona", label: "Persona", icon: Edit3 },
     { id: "notifications", label: "Notifications", icon: Bell },
   ]
 
@@ -445,10 +484,10 @@ export default function AccountSettings() {
           </div>
         )}
 
-        {/* About Me */}
-        {activeSection === "about" && (
+        {/* Persona  */}
+          {activeSection === "persona" && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">About Me</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Shopping Persona</h3>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
@@ -458,31 +497,32 @@ export default function AccountSettings() {
               )}
 
               <div>
-                <label htmlFor="aboutMe" className="block text-sm font-medium text-gray-700 mb-2">
-                  Tell us about yourself (20-50 words)
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  What are your persona preference? (Select at least 3)
                 </label>
-                <textarea
-                  id="aboutMe"
-                  name="aboutMe"
-                  value={profileData.aboutMe}
-                  onChange={handleProfileInputChange}
-                  rows={4}
-                  placeholder="Share something about your interests, hobbies, or what you're looking for..."
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none ${
-                    errors.aboutMe ? "border-red-300" : "border-gray-300"
-                  }`}
-                />
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 gap-2">
-                  <span
-                    className={`text-sm ${
-                      wordCount < 20 ? "text-red-600" : wordCount > 50 ? "text-red-600" : "text-green-600"
-                    }`}
-                  >
-                    {wordCount} words {wordCount < 20 && `(${20 - wordCount} more needed)`}
-                  </span>
-                  <span className="text-sm text-gray-500">20-50 words required</span>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {personaCategories.map((category) => (
+                    <label
+                      key={category.id}
+                      className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                        profileData.persona.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={profileData.persona.includes(category.id)}
+                        onChange={() => handlePersonaChange(category.id)}
+                        className="sr-only"
+                      />
+                      <span className="text-xl md:text-2xl mb-2">{category.icon}</span>
+                      <span className="text-xs md:text-sm font-medium text-center leading-tight">{category.label}</span>
+                    </label>
+                  ))}
                 </div>
-                {errors.aboutMe && <p className="mt-1 text-sm text-red-600">{errors.aboutMe}</p>}
+                <p className="mt-2 text-sm text-gray-600">
+                  Selected: {profileData.persona.length} / 22 (minimum 3 required)
+                </p>
+                {errors.persona && <p className="mt-1 text-sm text-red-600">{errors.persona}</p>}
               </div>
 
               <button
@@ -498,7 +538,7 @@ export default function AccountSettings() {
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    <span>Save About Me</span>
+                    <span>Save Persona</span>
                   </>
                 )}
               </button>
