@@ -129,7 +129,7 @@ export default function ProductCard({ product }) {
         </Link>
 
         {/* Add to Cart Button */}
-        <button 
+        <button
           onClick={handleAddToCart}
           disabled={isAddingToCart}
           className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${
