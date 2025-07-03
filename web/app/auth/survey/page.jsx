@@ -57,39 +57,39 @@ export default function SurveyPage() {
 // Persona category
  const personaCategories = [
   // Lifestyle & Values-Based
-  { id: 'eco-conscious', label: 'Eco-Conscious Shopper' },
-  { id: 'luxury-seeker', label: 'Luxury Seeker' },
-  // { id: 'local-goods', label: 'Local Goods Supporter' },
-  // { id: 'ethical-buyer', label: 'Ethical Buyer' },
+  { id: 'ecoconscious', label: 'Budget Shopper' },
+  { id: 'luxuryseeker', label: 'Luxury Seeker' },
+  { id: 'localgoods', label: 'Local Goods Supporter' },
+  { id: 'ethicalbuyer', label: 'Ethical Buyer' },
   { id: 'minimalist', label: 'Minimalist' },
 
   // Life Stage
-  { id: 'new-parent', label: 'New Parent' },
-  { id: 'college-student', label: 'College Student' },
-  { id: 'young-professional', label: 'Young Professional' },
-  // { id: 'retired-shopper', label: 'Retired Shopper' },
+  { id: 'newparent', label: 'New Parent' },
+  { id: 'collegestudent', label: 'College Student' },
+  { id: 'youngprofessional', label: 'Young Professional' },
+  { id: 'retiredshopper', label: 'Retired Shopper' },
   { id: 'homeowner', label: 'First-Time Homeowner' },
 
   // Interest-Based
-  { id: 'tech-enthusiast', label: 'Tech Enthusiast' },
-  { id: 'fashion-lover', label: 'Fashion Lover' },
-  { id: 'fitness-buff', label: 'Fitness Buff' },
-  { id: 'beauty-guru', label: 'Beauty Guru' },
-  { id: 'home-chef', label: 'Home Chef' },
+  { id: 'techenthusiast', label: 'Tech Enthusiast' },
+  { id: 'fashionlover', label: 'Fashion Lover' },
+  { id: 'fitnessbuff', label: 'Fitness Buff' },
+  { id: 'beautyguru', label: 'Beauty Guru' },
+  { id: 'homechef', label: 'Home Chef' },
 
   // Shopping Style
-  { id: 'deal-hunter', label: 'Deal Hunter' },
-  { id: 'impulse-buyer', label: 'Impulse Buyer' },
-  { id: 'brand-loyalist', label: 'Brand Loyalist' },
-  { id: 'seasonal-shopper', label: 'Seasonal Shopper' },
-  { id: 'gift-giver', label: 'Gift Giver' },
+  { id: 'dealhunter', label: 'Deal Hunter' },
+  { id: 'impulsebuyer', label: 'Impulse Buyer' },
+  { id: 'brandloyalist', label: 'Brand Loyalist' },
+  { id: 'seasonalshopper', label: 'Seasonal Shopper' },
+  { id: 'giftgiver', label: 'Gift Giver' },
 
   // Health & Dietary
-  { id: 'gluten-free', label: 'Gluten-Free Buyer' },
-  { id: 'organic-only', label: 'Organic Only' },
-  { id: 'keto-friendly', label: 'Keto Friendly Shopper' },
-  { id: 'allergy-conscious', label: 'Allergy-Conscious Shopper' },
-  { id: 'diabetic-friendly', label: 'Diabetic-Friendly Shopper' },
+  { id: 'glutenfree', label: 'Gluten-Free Buyer' },
+  { id: 'organiconly', label: 'Organic Only' },
+  { id: 'ketofriendly', label: 'Keto Friendly Shopper' },
+  { id: 'allergyconscious', label: 'Allergy-Conscious Shopper' },
+  { id: 'diabeticfriendly', label: 'Diabetic-Friendly Shopper' },
 ]
 
   // Indian states list

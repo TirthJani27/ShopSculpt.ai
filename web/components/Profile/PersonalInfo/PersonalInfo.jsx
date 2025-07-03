@@ -39,11 +39,53 @@ export default function PersonalInfo({ onEditClick }) {
     return interests.map((interest) => interestLabels[interest] || interest).join(", ")
   }
 
+    // Format for Persona display.
+    const formatPersona = (persona) => {
+    if (!persona || persona.length === 0) return "None selected"
+
+    const PersonaLabels = {
+     Ecoconscious: "Eco-Conscious Shopper" ,
+     Luxuryseeker: "Luxury Seeker" ,
+     Localgoods: "Local Goods Supporter" ,
+     Ethicalbuyer: "Ethical Buyer", 
+     Minimalist: "Minimalist",
+     Newparent: "New Parent" ,
+     Collegestudent: "College Student" ,
+     Youngprofessional: "Young Professional" ,
+     Retiredshopper: "Retired Shopper" ,
+     homeowner: "First-Time Homeowner",
+
+  // Interest-Based
+     Techenthusiast: "Tech Enthusiast" ,
+     Fashionlover: 'Fashion Lover' ,
+     Fitnessbuff: "Fitness Buff" ,
+     Beautyguru: "Beauty Guru" ,
+     Homechef: "Home Chef" ,
+
+  // Shopping Style
+   Dealhunter: "Deal Hunter" ,
+   Impulsebuyer: "Impulse Buyer", 
+   Brandloyalist: "Brand Loyalist", 
+   Seasonalshopper: "Seasonal Shopper", 
+   Giftgiver: "Gift Giver" ,
+
+  // Health & Dietary
+    Glutenfree: "Gluten-Free Buyer" ,
+    Organiconly: "Organic Only" ,
+    Ketofriendly: "Keto Friendly Shopper" ,
+    Diabeticfriendly: "Diabetic-Friendly Shopper",
+    }
+
+    return persona.map((persona) => PersonaLabels[persona] || persona).join(", ")
+  }
+
   const handleEditClick = () => {
     if (onEditClick) {
       onEditClick("settings")
     }
   }
+
+
 
   return (
     <div className="bg-white rounded-lg border p-4 md:p-6">
@@ -132,13 +174,35 @@ export default function PersonalInfo({ onEditClick }) {
         </div>
       </div>
 
-      {/* About Me Section */}
-      <div className="mt-6">
-        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">About Me</h3>
+      {/* Persona Section */}
+       {/* <div className="mt-8 pt-6 border-t">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Heart className="w-5 h-5 mr-2 text-red-500 flex-shrink-0" />
+          About Persona
+        </h3>
         <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-gray-900 leading-relaxed break-words">{user?.aboutMe || "No description provided"}</p>
+          <p className="text-gray-900 break-words">{formatPersona(user?.persona)}</p>
+        </div>
+      </div> */}
+      {/* Persona Section */}
+      <div className="mt-8 pt-6 border-t">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Heart className="w-5 h-5 mr-2 text-red-500 flex-shrink-0" />
+          About Persona
+        </h3>
+        <div className="bg-gray-50 rounded-lg p-4 flex flex-wrap gap-2">
+          {(Array.isArray(user?.persona) ? user.persona : formatPersona(user?.persona).split(',')).map((item, index) => (
+            <span
+              key={index}
+              className="bg-gray-200 text-uppercase text-grey-900 text-sm font-medium px-3 py-1 rounded-full capitalize"
+            >
+              {item.trim()}
+            </span>
+          ))}
         </div>
       </div>
+
+      
 
       {/* Registration Info */}
       <div className="mt-6 pt-6 border-t">

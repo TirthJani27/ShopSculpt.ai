@@ -1,9 +1,3 @@
-/**
- * Enhanced Login Page Component
- * Handles authentication with redirect functionality
- * Updates auth context on successful login
- */
-
 
 /**
  * Enhanced Login Page Component
