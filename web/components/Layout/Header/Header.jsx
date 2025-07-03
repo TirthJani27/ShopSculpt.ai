@@ -1,11 +1,3 @@
-/**
- * Enhanced Header Component
- * Includes navigation, search, user authentication, and cart functionality
- * Shows sign-in prompt for cart access when not logged in
- * Responsive design for all device sizes
- * Updated with Sports category
- */
-
 "use client";
 import { useState } from "react";
 import Link from "next/link";
@@ -109,11 +101,8 @@ export default function Header() {
               {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
                 ShopSculpt
               </Link> */}
-              <Link
-                href="/"
-                className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8"
-              >
-                <img src="/logo4.png" alt="ShopSclupt" />
+              <Link href="/" className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
+                  <img src="/logo4.png" alt="ShopSclupt" />
               </Link>
             </div>
 

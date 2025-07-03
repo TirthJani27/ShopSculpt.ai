@@ -29,7 +29,6 @@ export function AuthProvider({ children }) {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    isLoggedIn(true);
   };
 
   /**
@@ -38,7 +37,6 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    localStorage.removeItem("token");
     localStorage.removeItem("wishlist");
     localStorage.removeItem("cart");
   };

@@ -21,7 +21,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 export default function SurveyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoggedIn, register, user } = useAuth();
+  const { login, isLoggedIn, register } = useAuth();
 
   const [formData, setFormData] = useState({
     dateOfBirth: "",
@@ -29,7 +29,7 @@ export default function SurveyPage() {
     state: "",
     pinCode: "",
     interests: [],
-    aboutMe: "",
+    persona: [],
   });
 
   const [errors, setErrors] = useState({});
@@ -37,14 +37,12 @@ export default function SurveyPage() {
   const [wordCount, setWordCount] = useState(0);
 
   // Get user data from URL params (passed from registration)
-  const userId = searchParams.get("userId");
-  const userData = userId ? { userId } : null;
+  const userData = searchParams.get("userData")
+    ? JSON.parse(decodeURIComponent(searchParams.get("userData")))
+    : null;
 
   // Redirect if no user data or already logged in
   useEffect(() => {
-    if (!user) {
-      router.push("/auth/signup");
-    }
     if (!userData) {
       router.push("/auth/signup");
     }
@@ -63,6 +61,44 @@ export default function SurveyPage() {
     { id: "laptop", label: "Laptops", icon: "💻" },
     { id: "mobile", label: "Mobile Phones", icon: "📱" },
     { id: "others", label: "Others", icon: "🛍️" },
+  ];
+
+  // Persona category
+  const personaCategories = [
+    // Lifestyle & Values-Based
+    { id: "eco-conscious", label: "Eco-Conscious Shopper" },
+    { id: "luxury-seeker", label: "Luxury Seeker" },
+    // { id: 'local-goods', label: 'Local Goods Supporter' },
+    // { id: 'ethical-buyer', label: 'Ethical Buyer' },
+    { id: "minimalist", label: "Minimalist" },
+
+    // Life Stage
+    { id: "new-parent", label: "New Parent" },
+    { id: "college-student", label: "College Student" },
+    { id: "young-professional", label: "Young Professional" },
+    // { id: 'retired-shopper', label: 'Retired Shopper' },
+    { id: "homeowner", label: "First-Time Homeowner" },
+
+    // Interest-Based
+    { id: "tech-enthusiast", label: "Tech Enthusiast" },
+    { id: "fashion-lover", label: "Fashion Lover" },
+    { id: "fitness-buff", label: "Fitness Buff" },
+    { id: "beauty-guru", label: "Beauty Guru" },
+    { id: "home-chef", label: "Home Chef" },
+
+    // Shopping Style
+    { id: "deal-hunter", label: "Deal Hunter" },
+    { id: "impulse-buyer", label: "Impulse Buyer" },
+    { id: "brand-loyalist", label: "Brand Loyalist" },
+    { id: "seasonal-shopper", label: "Seasonal Shopper" },
+    { id: "gift-giver", label: "Gift Giver" },
+
+    // Health & Dietary
+    { id: "gluten-free", label: "Gluten-Free Buyer" },
+    { id: "organic-only", label: "Organic Only" },
+    { id: "keto-friendly", label: "Keto Friendly Shopper" },
+    { id: "allergy-conscious", label: "Allergy-Conscious Shopper" },
+    { id: "diabetic-friendly", label: "Diabetic-Friendly Shopper" },
   ];
 
   // Indian states list
@@ -112,15 +148,6 @@ export default function SurveyPage() {
       [name]: value,
     }));
 
-    // Update word count for aboutMe field
-    if (name === "aboutMe") {
-      const words = value
-        .trim()
-        .split(/\s+/)
-        .filter((word) => word.length > 0);
-      setWordCount(words.length);
-    }
-
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({
@@ -143,6 +170,23 @@ export default function SurveyPage() {
       setErrors((prev) => ({
         ...prev,
         interests: "",
+      }));
+    }
+  };
+
+  const handlePersonaChange = (personaId) => {
+    setFormData((prev) => ({
+      ...prev,
+      persona: prev.persona.includes(personaId)
+        ? prev.persona.filter((id) => id !== personaId)
+        : [...prev.persona, personaId],
+    }));
+
+    // Clear persona error
+    if (errors.persona) {
+      setErrors((prev) => ({
+        ...prev,
+        persona: "",
       }));
     }
   };
@@ -186,13 +230,9 @@ export default function SurveyPage() {
       newErrors.interests = "Please select at least 3 interests";
     }
 
-    // About me validation
-    if (!formData.aboutMe.trim()) {
-      newErrors.aboutMe = "Please tell us about yourself";
-    } else if (wordCount < 10) {
-      newErrors.aboutMe = "Please write at least 10 words";
-    } else if (wordCount > 50) {
-      newErrors.aboutMe = "Please keep it under 50 words";
+    //Persona validation
+    if (formData.persona.length < 3) {
+      newErrors.persona = "Please Select 3 Options";
     }
 
     setErrors(newErrors);
@@ -386,6 +426,7 @@ export default function SurveyPage() {
             </div>
 
             {/* Interests */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 <Heart className="w-4 h-4 inline mr-2" />
@@ -424,46 +465,36 @@ export default function SurveyPage() {
               )}
             </div>
 
-            {/* About Me */}
+            {/*persona categories - About Me */}
             <div>
-              <label
-                htmlFor="aboutMe"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                <User className="w-4 h-4 inline mr-2" />
-                Tell us about yourself (10-50 words)
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <Heart className="w-4 h-4 inline mr-2" />
+                What are you interested in buying? (Select at least 3)
               </label>
-              <textarea
-                id="aboutMe"
-                name="aboutMe"
-                value={formData.aboutMe}
-                onChange={handleInputChange}
-                rows={4}
-                placeholder="Share something about your interests, hobbies, or what you're looking for..."
-                className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                  errors.aboutMe ? "border-red-300" : "border-gray-300"
-                }`}
-              />
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 gap-2">
-                <span
-                  className={`text-sm ${
-                    wordCount < 20
-                      ? "text-red-600"
-                      : wordCount > 50
-                      ? "text-red-600"
-                      : "text-green-600"
-                  }`}
-                >
-                  {wordCount} words{" "}
-                  {wordCount < 10 && `(${10 - wordCount} more needed)`}
-                </span>
-                <span className="text-sm text-gray-500">
-                  10-50 words required
-                </span>
+
+              <div className="flex flex-wrap gap-2">
+                {personaCategories.map((category) => {
+                  const selected = formData.persona.includes(category.id);
+
+                  return (
+                    <button
+                      type="button"
+                      key={category.id}
+                      onClick={() => handlePersonaChange(category.id)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors
+                          ${
+                            selected
+                              ? "bg-blue-100 text-blue-700 border-blue-500"
+                              : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                          }
+                        `}
+                    >
+                      <span className="text-lg">{category.icon}</span>
+                      {category.label}
+                    </button>
+                  );
+                })}
               </div>
-              {errors.aboutMe && (
-                <p className="mt-1 text-sm text-red-600">{errors.aboutMe}</p>
-              )}
             </div>
 
             {/* Submit Button */}
