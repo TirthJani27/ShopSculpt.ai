@@ -1,23 +1,19 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from recommender import generate_recommendations
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import List
+from load_products import load_products
+from recommender import recommend_products
 
 app = FastAPI()
 
-# CORS middleware to allow frontend access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+PRODUCTS = load_products("products_sample.json")
+
+class User(BaseModel):
+    name: str
+    interestCategory: List[str]
+    persona: str
 
 @app.post("/recommend")
-async def recommend(request: Request):
-    data = await request.json()
-    user = data["user"]
-    products = data["products"]
-
-    recommendations = generate_recommendations(user, products)
-    return {"recommendations": recommendations[:4]}
+def recommend(user: User):
+    result = recommend_products(user, PRODUCTS)
+    return {"recommendations": result}

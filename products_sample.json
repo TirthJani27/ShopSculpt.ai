@@ -1,0 +1,1469 @@
+[
+  {
+    "Name": "Smartphone Nova X7",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 68999,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": [
+      "https://example.com/images/nova-x7-front.jpg",
+      "https://example.com/images/nova-x7-side.jpg"
+    ],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Laptop ZenBook Air 14",
+    "Description": "Best in class with premium features.",
+    "Price": 88999,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Good quality but a bit expensive."
+      },
+      {
+        "ratting": 4.8,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/zenbook-air.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Denim Jeans Classic Fit",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1599,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/jeans-classic.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Perfume Essence Bloom",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 2299,
+    "Discount": 15,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/essence-bloom.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Organic Basmati Rice 5kg",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 699,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Would definitely recommend to others!"
+      },
+      {
+        "ratting": 4.1,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/rice-5kg.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Protein Powder ProMax 1kg",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 1999,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.8,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/promax.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Yoga Mat UltraGrip",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 899,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/yoga-ultragrip.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Smartwatch FitGo Neo",
+    "Description": "Best in class with premium features.",
+    "Price": 4999,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/fitgo-neo.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Modern Bookshelf 5-Layer",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 3799,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 3.8,
+        "description": "Not very satisfied with the performance."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/bookshelf-5.jpg"],
+    "Arrival Dates": 7
+  },
+  {
+    "Name": "Sofa Set Plush King",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 25999,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/sofa-king.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Green Tea Supreme 100 Bags",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 299,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/greentea.jpg"],
+    "Arrival Dates": 1
+  },
+  {
+    "Name": "Wireless Earbuds SoundPro",
+    "Description": "Best in class with premium features.",
+    "Price": 2999,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/soundpro.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Face Cream Herbal Glow",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 499,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/herbal-glow.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Whey Protein ElitePack",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 2899,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.9,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/elitepack.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Sunglasses UVBlocker Pro",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1199,
+    "Discount": 26,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Not very satisfied with the performance."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/uvblocker.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Dining Table Set 4-Seater",
+    "Description": "Best in class with premium features.",
+    "Price": 11499,
+    "Discount": 24,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/dining-set.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Matte Lipstick Duo Pack",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 699,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/lipstick-duo.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Olive Oil Extra Virgin 1L",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 499,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/oliveoil.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Treadmill SprintMax T100",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 32999,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/sprintmax.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Smart TV UltraHD 50inch",
+    "Description": "Best in class with premium features.",
+    "Price": 42999,
+    "Discount": 35,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/uhd-tv.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Bluetooth SoundBar BassX 2.1",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 6499,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/soundbar-bassx.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Premium Hoodie Winter Warm",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 2199,
+    "Discount": 35,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/hoodie-winter.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Herbal Shampoo AloeCare 250ml",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 399,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 3.9,
+        "description": "Not very satisfied with the performance."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/aloe-shampoo.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Wooden Study Desk SoloPro",
+    "Description": "Best in class with premium features.",
+    "Price": 5999,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/solopro-desk.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Raw California Almonds 1kg",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 999,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.8,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/almonds.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Resistance Bands 5 Pack",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 599,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/resistance-bands.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Wireless Charger QuickCharge",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1299,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/quickcharge.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Cotton Summer Kurti Floral",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 999,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/floral-kurti.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Liquid Eyeliner Precision Tip",
+    "Description": "Best in class with premium features.",
+    "Price": 349,
+    "Discount": 15,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/eyeliner.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Mini Coffee Table Urban Wood",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 2899,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 3.7,
+        "description": "Not very satisfied with the performance."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/coffee-table.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Organic Honey Natural 500g",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 479,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.9,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/honey.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Push-Up Bars Steel Frame",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 699,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/pushup-bars.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "USB-C Hub Multiport 6-in-1",
+    "Description": "Best in class with premium features.",
+    "Price": 2299,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/usb-c-hub.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Casual Sneakers WhiteRush",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1499,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/whiterush.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Lip Balm Duo Pack RoseMint",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 299,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/rosemint.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "TV Unit Wooden Modular",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 7499,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/tv-unit.jpg"],
+    "Arrival Dates": 7
+  },
+  {
+    "Name": "Organic Turmeric Powder 200g",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 199,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/turmeric.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Foam Roller Deep Tissue Pro",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 899,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Not very satisfied with the performance."
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/foam-roller.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Noise Cancelling Headphones MaxTune",
+    "Description": "Best in class with premium features.",
+    "Price": 6999,
+    "Discount": 32,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/maxtune.jpg"],
+    "Arrival Dates": 3
+  },
+
+  {
+    "Name": "Graphic T-Shirt StreetVibe",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 799,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/streetvibe-shirt.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Eyelash Curler ProGrip",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 199,
+    "Discount": 15,
+    "Reviews": [
+      {
+        "ratting": 3.8,
+        "description": "Not very satisfied with the performance."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/curler.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "LED Table Lamp TouchControl",
+    "Description": "Best in class with premium features.",
+    "Price": 1099,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/led-lamp.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Kitchen Storage Rack 3-Tier",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1399,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/kitchen-rack.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Whole Wheat Flour 5kg Pack",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 389,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/wheat-flour.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Adjustable Weight Bench SteelCore",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 5599,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/weight-bench.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Bluetooth Keyboard SlimLink",
+    "Description": "Best in class with premium features.",
+    "Price": 1899,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/keyboard.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Maxi Dress Floral Sway",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 1699,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/maxi-dress.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "BB Cream SkinTone SPF 30",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 549,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/bbcream.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Lounge Chair BreezeComfort",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 7499,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/lounge-chair.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Dry Fruits Combo Pack 1.5kg",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 1299,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/dryfruits-combo.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Resistance Tube Set FlexTone",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 799,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/flextone.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Smart Plug WiFi Enabled",
+    "Description": "Best in class with premium features.",
+    "Price": 899,
+    "Discount": 17,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/smartplug.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Cotton Saree Traditional Weave",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1499,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/traditional-saree.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Makeup Brush Set 12 pcs",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 699,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/makeup-brush.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Bookshelf Ladder Style 4-Shelf",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 4299,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/ladder-bookshelf.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Chia Seeds Organic 500g",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 299,
+    "Discount": 14,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/chia-seeds.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Pull-Up Bar Door Frame FitBar",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1199,
+    "Discount": 26,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/pullup-fitbar.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "USB LED Light Strip RGB Remote",
+    "Description": "Best in class with premium features.",
+    "Price": 1299,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/led-strip.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Men's Analog Watch ChronoMax",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 3499,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.7,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/chronomax.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Vitamin C Face Serum 30ml",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 699,
+    "Discount": 15,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/serum-vitc.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Bluetooth Neckband SoundFlex",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1599,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/soundflex.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Wooden Shoe Rack 3-Layer",
+    "Description": "Best in class with premium features.",
+    "Price": 2299,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/shoe-rack.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Organic Brown Sugar 1kg",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 199,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/brown-sugar.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Adjustable Kettlebell FitCore 12kg",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 2499,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/kettlebell-fitcore.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "USB Desk Fan QuietBreeze",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 999,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/quietbreeze-fan.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Men's Formal Shoes LeatherPro",
+    "Description": "Best in class with premium features.",
+    "Price": 2599,
+    "Discount": 27,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/leatherpro-shoes.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Herbal Face Wash NeemGlow",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 349,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/neemglow-wash.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Study Table CompactFit",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 3799,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/compactfit-table.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Organic Oats 1kg Pouch",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 249,
+    "Discount": 15,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/oats.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Yoga Block Foam Support",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 449,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/yoga-block.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Power Bank 20000mAh VoltCharge",
+    "Description": "Best in class with premium features.",
+    "Price": 1899,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/voltcharge.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Slim Fit Blazer Midnight Blue",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 3599,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 4.0,
+        "description": "Good quality but a bit expensive."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/blazer-midnight.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Makeup Remover Micellar Water 400ml",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 349,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/micellar-water.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Bookshelf CubeWood 6 Compartment",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 4999,
+    "Discount": 26,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/cubewood.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Organic Rock Salt 1kg",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 179,
+    "Discount": 8,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Would definitely recommend to others!"
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/rocksalt.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Push-Up Board Color Coded System",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1299,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Delivery was quick, product as expected."
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/pushup-board.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Wireless Mouse SilentClick Pro",
+    "Description": "Best in class with premium features.",
+    "Price": 799,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Amazing product, totally worth it!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/silentclick.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Men's Casual Shirt GreyStone",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1299,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Fits well and looks great!"
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/greystone-shirt.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Lipstick Matte Nude Set",
+    "Description": "Eco-friendly and sustainable materials.",
+    "Price": 499,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Nice texture and long-lasting color."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/matte-nude-lipstick.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Smart LED Bulb ColorChange",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 799,
+    "Discount": 22,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Works perfectly with my Alexa!"
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/colorchange-bulb.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Recliner Chair SoftEase",
+    "Description": "Best in class with premium features.",
+    "Price": 8999,
+    "Discount": 35,
+    "Reviews": [
+      {
+        "ratting": 4.8,
+        "description": "Super comfy and sturdy build."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/softease-recliner.jpg"],
+    "Arrival Dates": 7
+  },
+  {
+    "Name": "Cold Pressed Coconut Oil 1L",
+    "Description": "Ideal for everyday use or special occasions.",
+    "Price": 549,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Great smell and quality."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/coconut-oil.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Adjustable Dumbbells IronGrip 20kg",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 3499,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Perfect for home workouts!"
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/irondumbbells.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Portable Bluetooth Speaker BoomBox",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 2299,
+    "Discount": 28,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Sound is loud and clear."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/boombox.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Ethnic Kurta Set RoyalRed",
+    "Description": "Traditional design with a modern touch.",
+    "Price": 1799,
+    "Discount": 30,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Fabric is good and comfy."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/royalred-kurta.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Face Scrub WalnutGlow 100g",
+    "Description": "Gentle exfoliation with natural ingredients.",
+    "Price": 299,
+    "Discount": 15,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Leaves skin feeling fresh."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/walnut-scrub.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Laptop Stand Foldable FlexiDesk",
+    "Description": "Best in class with premium features.",
+    "Price": 1499,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.6,
+        "description": "Very sturdy and portable."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/flexidesk.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Dining Table Set 4-Seater OakWood",
+    "Description": "Elegant design with a modern finish.",
+    "Price": 15499,
+    "Discount": 32,
+    "Reviews": [
+      {
+        "ratting": 4.8,
+        "description": "Absolutely loved it!"
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/oakwood-dining.jpg"],
+    "Arrival Dates": 6
+  },
+  {
+    "Name": "Organic Quinoa 1kg HealthFirst",
+    "Description": "Ideal for clean eating and weight loss.",
+    "Price": 349,
+    "Discount": 10,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Healthy and fresh."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/quinoa.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Gym Gloves PowerGrip Pro",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 699,
+    "Discount": 25,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Provides excellent grip."
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/gymgloves.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Wireless Charging Pad AirLink",
+    "Description": "Fast and efficient charging pad.",
+    "Price": 999,
+    "Discount": 18,
+    "Reviews": [
+      {
+        "ratting": 4.2,
+        "description": "Convenient and easy to use."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/airlink-pad.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Men’s Cargo Pants RuggedWear",
+    "Description": "Durable, stylish, and affordable.",
+    "Price": 1599,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Looks good and fits well."
+      }
+    ],
+    "Category": "Fashion",
+    "Images": ["https://example.com/images/ruggedwear-cargo.jpg"],
+    "Arrival Dates": 3
+  },
+  {
+    "Name": "Aloe Vera Gel PureSkin 200ml",
+    "Description": "Soothes and moisturizes skin naturally.",
+    "Price": 249,
+    "Discount": 12,
+    "Reviews": [
+      {
+        "ratting": 4.3,
+        "description": "Very refreshing on skin."
+      }
+    ],
+    "Category": "Beauty",
+    "Images": ["https://example.com/images/pureskin-aloe.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Bookshelf Tower Woodline",
+    "Description": "Tall bookshelf for modern spaces.",
+    "Price": 5599,
+    "Discount": 26,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Sturdy and spacious."
+      }
+    ],
+    "Category": "Furniture",
+    "Images": ["https://example.com/images/woodline-bookshelf.jpg"],
+    "Arrival Dates": 5
+  },
+  {
+    "Name": "Flax Seeds Roasted 250g",
+    "Description": "Healthy superfood for your diet.",
+    "Price": 149,
+    "Discount": 8,
+    "Reviews": [
+      {
+        "ratting": 4.1,
+        "description": "Crunchy and fresh."
+      }
+    ],
+    "Category": "Grocery",
+    "Images": ["https://example.com/images/flaxseeds.jpg"],
+    "Arrival Dates": 2
+  },
+  {
+    "Name": "Ab Roller Dual Wheel CoreToner",
+    "Description": "Top-quality and highly recommended product.",
+    "Price": 899,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.4,
+        "description": "Effective core workout tool."
+      }
+    ],
+    "Category": "Gym Related",
+    "Images": ["https://example.com/images/coretoner.jpg"],
+    "Arrival Dates": 4
+  },
+  {
+    "Name": "Smart Extension Board 4-Port",
+    "Description": "With surge protection and USB ports.",
+    "Price": 1399,
+    "Discount": 20,
+    "Reviews": [
+      {
+        "ratting": 4.5,
+        "description": "Very useful and safe."
+      }
+    ],
+    "Category": "Electronic",
+    "Images": ["https://example.com/images/smart-board.jpg"],
+    "Arrival Dates": 2
+  }
+]
