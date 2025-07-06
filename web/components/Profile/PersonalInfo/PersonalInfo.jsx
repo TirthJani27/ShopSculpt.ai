@@ -114,6 +114,14 @@ export default function PersonalInfo({ onEditClick }) {
           </div>
 
           <div className="flex items-start space-x-3">
+            <User className="w-5 h-5 text-gray-400 mt-1 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-gray-600">Gender</p>
+              <p className="text-gray-900 break-words">{user?.gender|| "Not provided"}</p>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3">
             <Mail className="w-5 h-5 text-gray-400 mt-1 flex-shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-gray-600">Email Address</p>
@@ -174,16 +182,6 @@ export default function PersonalInfo({ onEditClick }) {
         </div>
       </div>
 
-      {/* Persona Section */}
-       {/* <div className="mt-8 pt-6 border-t">
-        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Heart className="w-5 h-5 mr-2 text-red-500 flex-shrink-0" />
-          About Persona
-        </h3>
-        <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-gray-900 break-words">{formatPersona(user?.persona)}</p>
-        </div>
-      </div> */}
       {/* Persona Section */}
       <div className="mt-8 pt-6 border-t">
         <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4 flex items-center">

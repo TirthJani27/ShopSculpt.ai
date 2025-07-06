@@ -97,11 +97,18 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
                 <button
                   onClick={() => handleQuantityChange(quantity + 1)}
                   className="p-2 hover:bg-gray-100 rounded-r-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={isRemoving}
+                  disabled={quantity >= 5 || isRemoving}
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Max Quantity Alert */}
+              {quantity >= 5 && (
+                <span className="text-sm text-red-500 font-medium">
+                  Max limit reached
+                </span>
+              )}
 
               <button
                 className="text-gray-600 hover:text-blue-600 font-medium text-sm disabled:opacity-50"

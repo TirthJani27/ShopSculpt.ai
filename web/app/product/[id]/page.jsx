@@ -3,7 +3,10 @@
  * Displays detailed product information, images, pricing, and related products
  * This file doesnt fatch data it only displays product from given function.
  */
+
+
 "use client"
+
 import Link from "next/link"
 import Header from "../../../components/Layout/Header/Header"
 import Footer from "../../../components/Layout/Footer/Footer"
@@ -147,3 +150,5 @@ export default function ProductPage({ params }) {
     </div>
   )
 }
+
+

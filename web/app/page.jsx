@@ -3,6 +3,7 @@
  * Displays the main e-commerce homepage with header, hero section, product grids, and footer
  */
 import Header from "../components/Layout/Header/Header"
+import RecommendedProduct from "../components/RecommendProducts/RecommendProduct"
 import HeroSection from "../components/Home/HeroSection/HeroSection"
 import ProductGrid from "../components/Home/ProductGrid/ProductGrid"
 import Footer from "../components/Layout/Footer/Footer"
@@ -17,6 +18,9 @@ export default function Home() {
       <main>
         {/* Hero Banner Section */}
         <HeroSection />
+
+        {/* Recommended Product*/}
+        <RecommendedProduct />
 
         {/* Featured Products Grid */}
         <ProductGrid />

@@ -4,6 +4,8 @@
  * Collects additional user information including interests and personal details
  * Updated to use the new register function from AuthContext
  */
+
+
 "use client"
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -18,6 +20,7 @@ export default function SurveyPage() {
 
   const [formData, setFormData] = useState({
     dateOfBirth: "",
+    gender: "",
     address: "",
     state: "",
     pinCode: "",
@@ -54,43 +57,43 @@ export default function SurveyPage() {
     { id: "others", label: "Others", icon: "🛍️" },
   ]
 
-// Persona category
- const personaCategories = [
-  // Lifestyle & Values-Based
-  { id: 'ecoconscious', label: 'Budget Shopper' },
-  { id: 'luxuryseeker', label: 'Luxury Seeker' },
-  { id: 'localgoods', label: 'Local Goods Supporter' },
-  { id: 'ethicalbuyer', label: 'Ethical Buyer' },
-  { id: 'minimalist', label: 'Minimalist' },
+  // Persona category
+  const personaCategories = [
+    // Lifestyle & Values-Based
+    { id: 'ecoconscious', label: 'Budget Shopper' },
+    { id: 'luxuryseeker', label: 'Luxury Seeker' },
+    { id: 'localgoods', label: 'Local Goods Supporter' },
+    { id: 'ethicalbuyer', label: 'Ethical Buyer' },
+    { id: 'minimalist', label: 'Minimalist' },
 
-  // Life Stage
-  { id: 'newparent', label: 'New Parent' },
-  { id: 'collegestudent', label: 'College Student' },
-  { id: 'youngprofessional', label: 'Young Professional' },
-  { id: 'retiredshopper', label: 'Retired Shopper' },
-  { id: 'homeowner', label: 'First-Time Homeowner' },
+    // Life Stage
+    { id: 'newparent', label: 'New Parent' },
+    { id: 'collegestudent', label: 'College Student' },
+    { id: 'youngprofessional', label: 'Young Professional' },
+    { id: 'retiredshopper', label: 'Retired Shopper' },
+    { id: 'homeowner', label: 'First-Time Homeowner' },
 
-  // Interest-Based
-  { id: 'techenthusiast', label: 'Tech Enthusiast' },
-  { id: 'fashionlover', label: 'Fashion Lover' },
-  { id: 'fitnessbuff', label: 'Fitness Buff' },
-  { id: 'beautyguru', label: 'Beauty Guru' },
-  { id: 'homechef', label: 'Home Chef' },
+    // Interest-Based
+    { id: 'techenthusiast', label: 'Tech Enthusiast' },
+    { id: 'fashionlover', label: 'Fashion Lover' },
+    { id: 'fitnessbuff', label: 'Fitness Buff' },
+    { id: 'beautyguru', label: 'Beauty Guru' },
+    { id: 'homechef', label: 'Home Chef' },
 
-  // Shopping Style
-  { id: 'dealhunter', label: 'Deal Hunter' },
-  { id: 'impulsebuyer', label: 'Impulse Buyer' },
-  { id: 'brandloyalist', label: 'Brand Loyalist' },
-  { id: 'seasonalshopper', label: 'Seasonal Shopper' },
-  { id: 'giftgiver', label: 'Gift Giver' },
+    // Shopping Style
+    { id: 'dealhunter', label: 'Deal Hunter' },
+    { id: 'impulsebuyer', label: 'Impulse Buyer' },
+    { id: 'brandloyalist', label: 'Brand Loyalist' },
+    { id: 'seasonalshopper', label: 'Seasonal Shopper' },
+    { id: 'giftgiver', label: 'Gift Giver' },
 
-  // Health & Dietary
-  { id: 'glutenfree', label: 'Gluten-Free Buyer' },
-  { id: 'organiconly', label: 'Organic Only' },
-  { id: 'ketofriendly', label: 'Keto Friendly Shopper' },
-  { id: 'allergyconscious', label: 'Allergy-Conscious Shopper' },
-  { id: 'diabeticfriendly', label: 'Diabetic-Friendly Shopper' },
-]
+    // Health & Dietary
+    { id: 'glutenfree', label: 'Gluten-Free Buyer' },
+    { id: 'organiconly', label: 'Organic Only' },
+    { id: 'ketofriendly', label: 'Keto Friendly Shopper' },
+    { id: 'allergyconscious', label: 'Allergy-Conscious Shopper' },
+    { id: 'diabeticfriendly', label: 'Diabetic-Friendly Shopper' },
+  ]
 
   // Indian states list
   const indianStates = [
@@ -165,7 +168,7 @@ export default function SurveyPage() {
     }
   }
 
-  
+
   const handlePersonaChange = (personaId) => {
     setFormData((prev) => ({
       ...prev,
@@ -197,6 +200,12 @@ export default function SurveyPage() {
         newErrors.dateOfBirth = "You must be at least 13 years old"
       }
     }
+
+    // Gender validation
+    if (!formData.gender) {
+        newErrors.gender = "Please select your gender"
+    }
+
 
     // Address validation
     if (!formData.address.trim()) {
@@ -313,11 +322,34 @@ export default function SurveyPage() {
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
                 max={new Date().toISOString().split("T")[0]}
-                className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  errors.dateOfBirth ? "border-red-300" : "border-gray-300"
-                }`}
+                className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.dateOfBirth ? "border-red-300" : "border-gray-300"
+                  }`}
               />
               {errors.dateOfBirth && <p className="mt-1 text-sm text-red-600">{errors.dateOfBirth}</p>}
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <User className="w-4 h-4 inline mr-2" />
+                Gender
+              </label>
+              <div className="flex flex-col   ">
+                {["Male", "Female"].map((option) => (
+                  <label key={option} className="flex items-center space-x-2 text-sm">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={option}
+                      checked={formData.gender === option}
+                      onChange={handleInputChange}
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
             </div>
 
             {/* Address */}
@@ -333,9 +365,8 @@ export default function SurveyPage() {
                 onChange={handleInputChange}
                 rows={3}
                 placeholder="Enter your complete address including street, area, city"
-                className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                  errors.address ? "border-red-300" : "border-gray-300"
-                }`}
+                className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${errors.address ? "border-red-300" : "border-gray-300"
+                  }`}
               />
               {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address}</p>}
             </div>
@@ -351,9 +382,8 @@ export default function SurveyPage() {
                   name="state"
                   value={formData.state}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.state ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.state ? "border-red-300" : "border-gray-300"
+                    }`}
                 >
                   <option value="">Select State</option>
                   {indianStates.map((state) => (
@@ -377,9 +407,8 @@ export default function SurveyPage() {
                   onChange={handleInputChange}
                   placeholder="Enter 6-digit pin code"
                   maxLength={6}
-                  className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.pinCode ? "border-red-300" : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.pinCode ? "border-red-300" : "border-gray-300"
+                    }`}
                 />
                 {errors.pinCode && <p className="mt-1 text-sm text-red-600">{errors.pinCode}</p>}
               </div>
@@ -396,9 +425,8 @@ export default function SurveyPage() {
                 {interestCategories.map((category) => (
                   <label
                     key={category.id}
-                    className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
-                      formData.interests.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
-                    }`}
+                    className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${formData.interests.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -420,32 +448,32 @@ export default function SurveyPage() {
 
 
             {/*persona categories - About Me */}
-             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  <Heart className="w-4 h-4 inline mr-2" />
-                  What are you interested in buying? (Select at least 3)
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <Heart className="w-4 h-4 inline mr-2" />
+                What are you interested in buying? (Select at least 3)
+              </label>
 
-                <div className="flex flex-wrap gap-2">
-                  {personaCategories.map((category) => {
-                    const selected = formData.persona.includes(category.id);
+              <div className="flex flex-wrap gap-2">
+                {personaCategories.map((category) => {
+                  const selected = formData.persona.includes(category.id);
 
-                    return (
-                      <button
-                        type="button"
-                        key={category.id}
-                        onClick={() => handlePersonaChange(category.id)}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors
+                  return (
+                    <button
+                      type="button"
+                      key={category.id}
+                      onClick={() => handlePersonaChange(category.id)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors
                           ${selected ? "bg-blue-100 text-blue-700 border-blue-500" : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"}
                         `}
-                      >
-                        <span className="text-lg">{category.icon}</span>
-                        {category.label}
-                      </button>
-                    );
-                  })}
-                </div>
+                    >
+                      <span className="text-lg">{category.icon}</span>
+                      {category.label}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
 
             {/* Submit Button */}

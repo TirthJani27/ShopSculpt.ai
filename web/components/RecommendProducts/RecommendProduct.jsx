@@ -1,9 +1,13 @@
-import ProductCard from "../../ProductCard/ProductCard"
-import CategorySection from "../../CategorySection/CategorySection"
+"use client";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation } from "swiper/modules";
+import { Star, Heart, ShoppingCart, Check } from "lucide-react"
+import "swiper/css";
+import "swiper/css/navigation";
 
-const featuredProducts = [
-    {
+const products = [
+     {
       id: 1,
       title: "Apple iPhone 16 Pro",
       price: 1099.0,
@@ -63,58 +67,61 @@ const featuredProducts = [
       image: "https://i5.walmartimages.com/seo/Yangming-8-Drawer-Fabric-Dresser-for-Bedroom-Chest-of-Drawer-Organizer-Storage-Cabinet-for-Closet-Entryway-Black_ca8794cd-12dc-4765-b7b7-a57c6130ffef.c0d46ed4f057239ee585f791dbaa6d96.jpeg?odnHeight=2000&odnWidth=2000&odnBg=FFFFFF",
       badge: "In Stock",
     },
-  ]
-  
-export default function ProductGrid() {
-  
+  ];
 
-  const categories = [
-    {
-      title: "Skechers up to 30% off",
-      subtitle: "Shop athletic shoes",
-      products: featuredProducts.slice(0, 4),
-      bgColor: "bg-blue-50",
-    },
-    {
-      title: "Home essentials",
-      subtitle: "Upgrade your space",
-      products: featuredProducts.slice(2, 6),
-      bgColor: "bg-gray-50",
-    },
-    {
-      title: "Electronics deals",
-      subtitle: "Tech for less",
-      products: featuredProducts.slice(1, 5),
-      bgColor: "bg-green-50",
-    },
-  ]
-
+export default function RecommendedProduct() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Featured Products */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Featured products</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
-      {/* Category Sections */}
-      {categories.map((category, index) => (
-        <CategorySection key={index} category={category} />
-      ))}
-
-      {/* Additional product grids */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">More great deals</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {[...featuredProducts, ...featuredProducts.slice(0, 6)].map((product, index) => (
-            <ProductCard key={`more-${index}`} product={{ ...product, id: `more-${index}` }} />
-          ))}
-        </div>
-      </section>
+    <div className="px-10 py-8 ml-14 mr-14">
+      <h2 className="text-2xl font-bold mb-6">Recommended Products</h2>
+      <Swiper
+        modules={[Autoplay, Navigation]}
+        spaceBetween={20}
+        slidesPerView={1}
+        breakpoints={{
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+          1280: { slidesPerView: 4 },
+        }}
+        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        navigation
+        loop
+      >
+        {products.map((product) => (
+          <SwiperSlide key={product.id}>
+            <div className="border rounded-lg p-4 shadow-sm bg-white">
+              <div
+                className={`inline-block px-2 py-1 text-xs text-white rounded-md mb-2 ${product.badgeColor}`}
+              >
+                {product.badge}
+              </div>
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-40 object-contain mb-4"
+              />
+              <h3 className="text-sm font-semibold mb-1">{product.name}</h3>
+              <div className="text-yellow-500 text-sm mb-1">
+                {"★".repeat(product.rating)}
+                {"☆".repeat(5 - product.rating)}{" "}
+                <span className="text-gray-500 ml-1">({product.reviews})</span>
+              </div>
+              <div className="text-lg font-bold">
+                ${product.price.toFixed(2)}
+                <span className="text-sm text-gray-500 line-through ml-2">
+                  ${product.originalPrice.toFixed(2)}
+                </span>
+              </div>
+              <button
+                className={`mt-3 w-full px-4 py-2 rounded text-white font-semibold ${
+                  product.inCart ? "bg-green-600" : "bg-blue-600"
+                }`}
+              >
+                {product.inCart ? "✔ In Cart" : " Add to cart"}
+              </button>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
-  )
+  );
 }
