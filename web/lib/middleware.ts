@@ -1,7 +1,8 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/user.model";
+
 function extractToken(req: NextRequest) {
   const cookieToken = req.cookies.get("token")?.value;
   if (cookieToken) return cookieToken;
@@ -12,6 +13,7 @@ function extractToken(req: NextRequest) {
   }
   return undefined;
 }
+
 export async function authUser(
   req: NextRequest
 ): Promise<{ isAuthorized: boolean; user?: InstanceType<typeof User> }> {
@@ -44,3 +46,24 @@ export async function authUser(
     return { isAuthorized: false };
   }
 }
+
+export function middleware(req: NextRequest) {
+  const token = extractToken(req);
+
+  const protectedPaths = ["/checkout", "/success"];
+  const isProtected = protectedPaths.some((path) =>
+    req.nextUrl.pathname.startsWith(path)
+  );
+
+  if (isProtected && !token) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/checkout/:path*", "/success/:path*"],
+};
