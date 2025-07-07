@@ -2,17 +2,24 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Calendar, Heart, CheckCircle } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  User,
+  Heart,
+  ArrowLeft,
+  CheckCircle,
+} from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
-import axios from "axios";
 
 export default function SurveyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoggedIn, user } = useAuth();
+  const { login, isLoggedIn, register } = useAuth();
 
   const [formData, setFormData] = useState({
     dateOfBirth: "",
+    gender: "",
     address: "",
     state: "",
     pinCode: "",
@@ -25,13 +32,18 @@ export default function SurveyPage() {
   const [wordCount, setWordCount] = useState(0);
 
   // Get user data from URL params (passed from registration)
-  const userData = searchParams.get("userId")
-    ? searchParams.get("userId")
+  const userData = searchParams.get("userData")
+    ? JSON.parse(decodeURIComponent(searchParams.get("userData")))
     : null;
 
   // Redirect if no user data or already logged in
   useEffect(() => {
-    if (!userData) router.push("/auth/signup");
+    if (!userData) {
+      router.push("/auth/signup");
+    }
+    if (isLoggedIn) {
+      router.push("/profile");
+    }
   }, [userData, isLoggedIn, router]);
 
   // Interest categories with icons
@@ -189,6 +201,11 @@ export default function SurveyPage() {
       }
     }
 
+    // Gender validation
+    if (!formData.gender) {
+      newErrors.gender = "Please select your gender";
+    }
+
     // Address validation
     if (!formData.address.trim()) {
       newErrors.address = "Address is required";
@@ -230,42 +247,20 @@ export default function SurveyPage() {
     setIsLoading(true);
 
     try {
-      const completeUserData = {
-        ...user,
-        dob: formData.dateOfBirth,
-        region: formData.address,
-        interestCategory: formData.interests,
-        persona: formData.persona,
-        gender: "Male",
-        priceRange: "Mid_Range",
-        pincode,
-        state,
-        shoppingFrequency: "Monthly",
-      };
-      console.log(completeUserData);
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "/api/user/onboarding",
-        {
-          dob: formData.dateOfBirth,
-          region: formData.address,
-          interestCategory: formData.interests,
-          persona: formData.persona,
-          gender: "Male",
-          priceRange: "Mid_Range",
-          shoppingFrequency: "Monthly",
-        },
-        {
-          headers: {
-            authorization: `${token}`,
-          },
-        }
-      );
-      if (res.status !== 200)
-        throw new Error("Failed to submit onboarding data");
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Optionally update auth context here if needed
-      login(user);
+      // Combine user data with survey data
+      const completeUserData = {
+        ...userData,
+        ...formData,
+      };
+
+      // Register user and get the complete user object
+      const registeredUser = register(completeUserData);
+
+      // Update auth context with complete user data
+      login(registeredUser);
 
       // Redirect to profile page
       router.push("/profile");
@@ -312,15 +307,17 @@ export default function SurveyPage() {
                 {errors.general}
               </div>
             )}
+
             {/* Welcome Message */}
             <div className="text-center pb-6 border-b">
               <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-                Welcome!
+                Welcome, {userData.name}!
               </h2>
               <p className="text-gray-600 mt-2 text-sm md:text-base">
                 Let's get to know you better
               </p>
             </div>
+
             {/* Date of Birth */}
             <div>
               <label
@@ -334,26 +331,8 @@ export default function SurveyPage() {
                 type="date"
                 id="dateOfBirth"
                 name="dateOfBirth"
-                value={
-                  formData.dateOfBirth
-                    ? new Date(formData.dateOfBirth).toISOString().split("T")[0]
-                    : ""
-                }
-                onChange={(e) => {
-                  const dateValue = e.target.value
-                    ? new Date(e.target.value)
-                    : "";
-                  setFormData((prev) => ({
-                    ...prev,
-                    dateOfBirth: dateValue,
-                  }));
-                  if (errors.dateOfBirth) {
-                    setErrors((prev) => ({
-                      ...prev,
-                      dateOfBirth: "",
-                    }));
-                  }
-                }}
+                value={formData.dateOfBirth}
+                onChange={handleInputChange}
                 max={new Date().toISOString().split("T")[0]}
                 className={`w-full px-3 py-2 md:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.dateOfBirth ? "border-red-300" : "border-gray-300"
@@ -365,6 +344,36 @@ export default function SurveyPage() {
                 </p>
               )}
             </div>
+
+            {/* Gender */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <User className="w-4 h-4 inline mr-2" />
+                Gender
+              </label>
+              <div className="flex flex-col   ">
+                {["Male", "Female"].map((option) => (
+                  <label
+                    key={option}
+                    className="flex items-center space-x-2 text-sm"
+                  >
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={option}
+                      checked={formData.gender === option}
+                      onChange={handleInputChange}
+                      className="text-blue-600 focus:ring-blue-500"
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.gender && (
+                <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
+              )}
+            </div>
+
             {/* Address */}
             <div>
               <label
@@ -389,6 +398,7 @@ export default function SurveyPage() {
                 <p className="mt-1 text-sm text-red-600">{errors.address}</p>
               )}
             </div>
+
             {/* State and Pin Code */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -443,7 +453,9 @@ export default function SurveyPage() {
                 )}
               </div>
             </div>
+
             {/* Interests */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 <Heart className="w-4 h-4 inline mr-2" />
@@ -481,6 +493,7 @@ export default function SurveyPage() {
                 <p className="mt-1 text-sm text-red-600">{errors.interests}</p>
               )}
             </div>
+
             {/*persona categories - About Me */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -497,7 +510,7 @@ export default function SurveyPage() {
                       type="button"
                       key={category.id}
                       onClick={() => handlePersonaChange(category.id)}
-                      className={`flex items-center px-3 py-1.5 rounded-full text-sm font-medium border transition-colors
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border transition-colors
                           ${
                             selected
                               ? "bg-blue-100 text-blue-700 border-blue-500"
@@ -512,6 +525,7 @@ export default function SurveyPage() {
                 })}
               </div>
             </div>
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -528,6 +542,17 @@ export default function SurveyPage() {
               )}
             </button>
           </form>
+
+          {/* Back Link */}
+          <div className="text-center mt-6">
+            <Link
+              href="/auth/signup"
+              className="text-sm text-gray-600 hover:text-gray-900 flex items-center justify-center space-x-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Registration</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

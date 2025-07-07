@@ -131,7 +131,7 @@ export default function ProductInfo({ product }) {
             <RotateCcw className="w-5 h-5 text-blue-600" />
             <div>
               <p className="font-medium text-gray-900">Easy Returns</p>
-              <p className="text-gray-600">30-day return policy</p>
+              <p className="text-gray-600">10-day return policy</p>
             </div>
           </div>
           <div className="flex items-center space-x-3 text-sm">

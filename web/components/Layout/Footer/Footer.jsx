@@ -129,7 +129,11 @@ export default function Footer() {
         <div className="border-t border-blue-600 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-6 mb-4 md:mb-0">
-              <span className="text-2xl font-bold">ShopSculpt</span>
+              <span className="">
+                <div className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
+                  <img src="/logo4.png" alt="" />                  
+                </div>
+              </span>
               <div className="flex space-x-4">
                 <Facebook className="w-5 h-5 cursor-pointer hover:text-blue-300" />
                 <Twitter className="w-5 h-5 cursor-pointer hover:text-blue-300" />

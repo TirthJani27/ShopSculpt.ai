@@ -27,10 +27,49 @@ export default function AccountSettings() {
     { id: "others", label: "Others", icon: "🛍️" },
   ];
 
+  // Persona category
+  const personaCategories = [
+    // Lifestyle & Values-Basl: 'Eco-Conscious Shopper' },
+    { id: "eco-conscious", label: "Eco-Conscious Shopper" },
+    { id: "luxury-seeker", label: "Luxury Seeker" },
+    { id: "local-goods", label: "Local Goods Supporter" },
+    { id: "ethical-buyer", label: "Ethical Buyer" },
+    { id: "minimalist", label: "Minimalist" },
+
+    // Life Stage
+    { id: "new-parent", label: "New Parent" },
+    { id: "college-student", label: "College Student" },
+    { id: "young-professional", label: "Young Professional" },
+    { id: "retired-shopper", label: "Retired Shopper" },
+    { id: "homeowner", label: "First-Time Homeowner" },
+
+    // Interest-Based
+    { id: "tech-enthusiast", label: "Tech Enthusiast" },
+    { id: "fashion-lover", label: "Fashion Lover" },
+    { id: "fitness-buff", label: "Fitness Buff" },
+    { id: "beauty-guru", label: "Beauty Guru" },
+    { id: "home-chef", label: "Home Chef" },
+
+    // Shopping Style
+    { id: "deal-hunter", label: "Deal Hunter" },
+    { id: "impulse-buyer", label: "Impulse Buyer" },
+    { id: "brand-loyalist", label: "Brand Loyalist" },
+    { id: "seasonal-shopper", label: "Seasonal Shopper" },
+    { id: "gift-giver", label: "Gift Giver" },
+
+    // Health & Dietary
+    { id: "gluten-free", label: "Gluten-Free Buyer" },
+    { id: "organic-only", label: "Organic Only" },
+    { id: "keto-friendly", label: "Keto Friendly Shopper" },
+    { id: "allergy-conscious", label: "Allergy-Conscious Shopper" },
+    { id: "diabetic-friendly", label: "Diabetic-Friendly Shopper" },
+  ];
+
   // Profile form state with actual user data
   const [profileData, setProfileData] = useState({
     firstname: user?.fullname.firstname || "",
     lastname: user?.fullname.lastname || "",
+    gnder: user?.gender || "",
     email: user?.email || "",
     phone: user?.phone || "",
     dateOfBirth: user?.dob || "",
@@ -38,7 +77,7 @@ export default function AccountSettings() {
     state: user?.state || "",
     pinCode: user?.pinCode || "",
     interests: user?.interestCategory || [],
-    aboutMe: user?.aboutMe || "",
+    persona: user?.persona || [],
   });
 
   // Notification preferences
@@ -96,12 +135,12 @@ export default function AccountSettings() {
   const handlePersonaChange = (personaId) => {
     setProfileData((prev) => ({
       ...prev,
-      persona: prev.persona.includes(personatId)
+      persona: prev.persona.includes(personaId)
         ? prev.persona.filter((id) => id !== personaId)
         : [...prev.persona, personaId],
     }));
 
-    // Clear interests error
+    // Clear Persona error
     if (errors.persona) {
       setErrors((prev) => ({
         ...prev,
@@ -138,13 +177,8 @@ export default function AccountSettings() {
       newErrors.interests = "Please select at least 3 interests";
     }
 
-    // About me validation
-    if (!profileData.aboutMe.trim()) {
-      newErrors.aboutMe = "Please tell us about yourself";
-    } else if (wordCount < 20) {
-      newErrors.aboutMe = "Please write at least 20 words";
-    } else if (wordCount > 50) {
-      newErrors.aboutMe = "Please keep it under 50 words";
+    if (profileData.persona.length < 3) {
+      newErrors.persona = "Please select at least 3 persona";
     }
 
     setErrors(newErrors);
@@ -186,7 +220,7 @@ export default function AccountSettings() {
   const sections = [
     { id: "profile", label: "Profile Information", icon: User },
     { id: "interests", label: "Shopping Interests", icon: Heart },
-    { id: "persona", label: "Persona", icon: Edit3 },
+    { id: "persona", label: "Shopping Persona", icon: Heart },
     { id: "notifications", label: "Notifications", icon: Bell },
   ];
 
@@ -260,6 +294,36 @@ export default function AccountSettings() {
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Gender *
+                  </label>
+                  <div className="flex items-center gap-6">
+                    {["male", "female"].map((option) => (
+                      <label
+                        key={option}
+                        className="flex items-center gap-2 text-sm text-gray-700"
+                      >
+                        <input
+                          type="radio"
+                          name="gender"
+                          value={option}
+                          checked={profileData.gender === option}
+                          onChange={handleProfileInputChange}
+                          className={`h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 ${
+                            errors.gender ? "ring-2 ring-red-400" : ""
+                          }`}
+                        />
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.gender && (
+                    <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
                   )}
                 </div>
 
@@ -503,7 +567,7 @@ export default function AccountSettings() {
           </div>
         )}
 
-        {/* Persona  */}
+        {/* Shopping Persona */}
         {activeSection === "persona" && (
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
@@ -519,7 +583,7 @@ export default function AccountSettings() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  What are your persona preference? (Select at least 3)
+                  What are your Persona? (Select at least 3)
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {personaCategories.map((category) => (
@@ -547,7 +611,7 @@ export default function AccountSettings() {
                   ))}
                 </div>
                 <p className="mt-2 text-sm text-gray-600">
-                  Selected: {profileData.persona.length} / 22 (minimum 3
+                  Selected: {profileData.persona.length} / 25 (minimum 3
                   required)
                 </p>
                 {errors.persona && (
