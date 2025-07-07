@@ -1,9 +1,3 @@
-/**
- * User Profile Page
- * Displays user account information, orders, cart, and account settings
- * Responsive dashboard layout with navigation tabs
- * Updated to handle edit profile navigation and use actual user data
- */
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,10 +24,29 @@ export default function ProfilePage() {
 
   // Update tab when URL changes
   useEffect(() => {
-    if (tabFromUrl) {
-      setActiveTab(tabFromUrl);
-    }
+    if (tabFromUrl) setActiveTab(tabFromUrl);
   }, [tabFromUrl]);
+
+  // Check if user exists, else move to signup
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!isLoading && !user && token) {
+      axios
+        .get("/api/user/profile", {
+          headers: {
+            Authorization: `${token}`,
+          },
+        })
+        .then((response) => {
+          if (!response.data.user) {
+            router.push("/auth/signup?redirect=/profile");
+          }
+        })
+        .catch(() => {
+          router.push("/auth/signup?redirect=/profile");
+        });
+    }
+  }, [user, isLoading, router]);
 
   // Redirect to login if not authenticated
   useEffect(() => {

@@ -40,7 +40,6 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("wishlist");
     localStorage.removeItem("cart");
   };
-
   const isLoggedIn = !!user;
 
   return (

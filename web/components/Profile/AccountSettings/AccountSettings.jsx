@@ -4,16 +4,16 @@
  * Form validation and responsive design
  * Updated to allow interests and about me editing with proper validation
  */
-"use client"
-import { useState } from "react"
-import { User, Bell, Save, CheckCircle, Heart, Edit3 } from "lucide-react"
-import { useAuth } from "../../../contexts/AuthContext"
+"use client";
+import { useState } from "react";
+import { User, Bell, Save, CheckCircle, Heart, Edit3 } from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export default function AccountSettings() {
-  const { user, login } = useAuth() // login function updates user data
-  const [activeSection, setActiveSection] = useState("profile")
-  const [isLoading, setIsLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const { user, login } = useAuth(); // login function updates user data
+  const [activeSection, setActiveSection] = useState("profile");
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // Interest categories with icons
   const interestCategories = [
@@ -25,20 +25,21 @@ export default function AccountSettings() {
     { id: "laptop", label: "Laptops", icon: "💻" },
     { id: "mobile", label: "Mobile Phones", icon: "📱" },
     { id: "others", label: "Others", icon: "🛍️" },
-  ]
+  ];
 
   // Profile form state with actual user data
   const [profileData, setProfileData] = useState({
-    name: user?.name || "",
+    firstname: user?.fullname.firstname || "",
+    lastname: user?.fullname.lastname || "",
     email: user?.email || "",
     phone: user?.phone || "",
-    dateOfBirth: user?.dateOfBirth || "",
-    address: user?.address || "",
+    dateOfBirth: user?.dob || "",
+    address: user?.region || "",
     state: user?.state || "",
     pinCode: user?.pinCode || "",
-    interests: user?.interests || [],
+    interests: user?.interestCategory || [],
     aboutMe: user?.aboutMe || "",
-  })
+  });
 
   // Notification preferences
   const [notifications, setNotifications] = useState({
@@ -46,24 +47,24 @@ export default function AccountSettings() {
     promotions: false,
     newsletter: true,
     smsNotifications: false,
-  })
+  });
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
   const handleProfileInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setProfileData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     // Update word count for aboutMe field
     if (name === "aboutMe") {
       const words = value
         .trim()
         .split(/\s+/)
-        .filter((word) => word.length > 0)
-      setWordCount(words.length)
+        .filter((word) => word.length > 0);
+      setWordCount(words.length);
     }
 
     // Clear error when user starts typing
@@ -71,9 +72,9 @@ export default function AccountSettings() {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
-      }))
+      }));
     }
-  }
+  };
 
   const handleInterestChange = (interestId) => {
     setProfileData((prev) => ({
@@ -81,120 +82,120 @@ export default function AccountSettings() {
       interests: prev.interests.includes(interestId)
         ? prev.interests.filter((id) => id !== interestId)
         : [...prev.interests, interestId],
-    }))
+    }));
 
     // Clear interests error
     if (errors.interests) {
       setErrors((prev) => ({
         ...prev,
         interests: "",
-      }))
+      }));
     }
-  }
+  };
 
-    const handlePersonaChange = (personaId) => {
+  const handlePersonaChange = (personaId) => {
     setProfileData((prev) => ({
       ...prev,
       persona: prev.persona.includes(personatId)
         ? prev.persona.filter((id) => id !== personaId)
         : [...prev.persona, personaId],
-    }))
+    }));
 
     // Clear interests error
     if (errors.persona) {
       setErrors((prev) => ({
         ...prev,
         persona: "",
-      }))
+      }));
     }
-  }
+  };
 
   const validateProfileForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!profileData.name.trim()) {
-      newErrors.name = "Name is required"
+      newErrors.name = "Name is required";
     } else if (profileData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters"
+      newErrors.name = "Name must be at least 2 characters";
     }
 
     if (!profileData.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(profileData.email)) {
-      newErrors.email = "Please enter a valid email"
+      newErrors.email = "Please enter a valid email";
     }
 
     if (profileData.phone && !/^\+?[\d\s\-()]{10,}$/.test(profileData.phone)) {
-      newErrors.phone = "Please enter a valid phone number"
+      newErrors.phone = "Please enter a valid phone number";
     }
 
     if (profileData.pinCode && !/^\d{6}$/.test(profileData.pinCode)) {
-      newErrors.pinCode = "Pin code must be 6 digits"
+      newErrors.pinCode = "Pin code must be 6 digits";
     }
 
     // Interests validation (minimum 3)
     if (profileData.interests.length < 3) {
-      newErrors.interests = "Please select at least 3 interests"
+      newErrors.interests = "Please select at least 3 interests";
     }
 
     // About me validation
     if (!profileData.aboutMe.trim()) {
-      newErrors.aboutMe = "Please tell us about yourself"
+      newErrors.aboutMe = "Please tell us about yourself";
     } else if (wordCount < 20) {
-      newErrors.aboutMe = "Please write at least 20 words"
+      newErrors.aboutMe = "Please write at least 20 words";
     } else if (wordCount > 50) {
-      newErrors.aboutMe = "Please keep it under 50 words"
+      newErrors.aboutMe = "Please keep it under 50 words";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleProfileSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!validateProfileForm()) return
+    if (!validateProfileForm()) return;
 
-    setIsLoading(true)
-    setSuccess(false)
+    setIsLoading(true);
+    setSuccess(false);
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Update user data in auth context
       const updatedUser = {
         ...user,
         ...profileData,
-      }
-      login(updatedUser)
+      };
+      login(updatedUser);
 
-      setSuccess(true)
-      console.log("Profile updated:", profileData)
+      setSuccess(true);
+      console.log("Profile updated:", profileData);
 
       // Hide success message after 3 seconds
-      setTimeout(() => setSuccess(false), 3000)
+      setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      console.error("Profile update error:", error)
-      setErrors({ general: "Failed to update profile. Please try again." })
+      console.error("Profile update error:", error);
+      setErrors({ general: "Failed to update profile. Please try again." });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const sections = [
     { id: "profile", label: "Profile Information", icon: User },
     { id: "interests", label: "Shopping Interests", icon: Heart },
     { id: "persona", label: "Persona", icon: Edit3 },
     { id: "notifications", label: "Notifications", icon: Bell },
-  ]
+  ];
 
   return (
     <div className="bg-white rounded-lg border">
       <div className="border-b overflow-x-auto">
         <nav className="flex space-x-4 md:space-x-8 px-4 md:px-6 min-w-max">
           {sections.map((section) => {
-            const Icon = section.icon
+            const Icon = section.icon;
             return (
               <button
                 key={section.id}
@@ -209,7 +210,7 @@ export default function AccountSettings() {
                 <span className="hidden sm:inline">{section.label}</span>
                 <span className="sm:hidden">{section.label.split(" ")[0]}</span>
               </button>
-            )
+            );
           })}
         </nav>
       </div>
@@ -226,7 +227,9 @@ export default function AccountSettings() {
         {/* Profile Information */}
         {activeSection === "profile" && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Profile Information
+            </h3>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
@@ -238,7 +241,10 @@ export default function AccountSettings() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name Field */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Full Name *
                   </label>
                   <input
@@ -252,12 +258,17 @@ export default function AccountSettings() {
                     }`}
                     placeholder="Enter your full name"
                   />
-                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
 
                 {/* Email Field */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Email Address *
                   </label>
                   <input
@@ -271,12 +282,17 @@ export default function AccountSettings() {
                     }`}
                     placeholder="Enter your email address"
                   />
-                  {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  )}
                 </div>
 
                 {/* Phone Field */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Phone Number
                   </label>
                   <input
@@ -290,12 +306,17 @@ export default function AccountSettings() {
                     }`}
                     placeholder="Enter your phone number"
                   />
-                  {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                  )}
                 </div>
 
                 {/* Date of Birth Field */}
                 <div>
-                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="dateOfBirth"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Date of Birth
                   </label>
                   <input
@@ -312,12 +333,17 @@ export default function AccountSettings() {
 
               {/* Address Section */}
               <div className="pt-6 border-t">
-                <h4 className="text-md font-semibold text-gray-900 mb-4">Address Information</h4>
+                <h4 className="text-md font-semibold text-gray-900 mb-4">
+                  Address Information
+                </h4>
 
                 <div className="space-y-4">
                   {/* Complete Address */}
                   <div>
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
                       Complete Address
                     </label>
                     <textarea
@@ -334,7 +360,10 @@ export default function AccountSettings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* State */}
                     <div>
-                      <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="state"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         State
                       </label>
                       <input
@@ -350,7 +379,10 @@ export default function AccountSettings() {
 
                     {/* Pin Code */}
                     <div>
-                      <label htmlFor="pinCode" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="pinCode"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         Pin Code
                       </label>
                       <input
@@ -365,7 +397,11 @@ export default function AccountSettings() {
                         }`}
                         placeholder="Enter 6-digit pin code"
                       />
-                      {errors.pinCode && <p className="mt-1 text-sm text-red-600">{errors.pinCode}</p>}
+                      {errors.pinCode && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.pinCode}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -395,7 +431,9 @@ export default function AccountSettings() {
         {/* Shopping Interests */}
         {activeSection === "interests" && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Shopping Interests</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Shopping Interests
+            </h3>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
@@ -413,7 +451,9 @@ export default function AccountSettings() {
                     <label
                       key={category.id}
                       className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
-                        profileData.interests.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                        profileData.interests.includes(category.id)
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200"
                       }`}
                     >
                       <input
@@ -422,15 +462,24 @@ export default function AccountSettings() {
                         onChange={() => handleInterestChange(category.id)}
                         className="sr-only"
                       />
-                      <span className="text-xl md:text-2xl mb-2">{category.icon}</span>
-                      <span className="text-xs md:text-sm font-medium text-center leading-tight">{category.label}</span>
+                      <span className="text-xl md:text-2xl mb-2">
+                        {category.icon}
+                      </span>
+                      <span className="text-xs md:text-sm font-medium text-center leading-tight">
+                        {category.label}
+                      </span>
                     </label>
                   ))}
                 </div>
                 <p className="mt-2 text-sm text-gray-600">
-                  Selected: {profileData.interests.length} / 8 (minimum 3 required)
+                  Selected: {profileData.interests.length} / 8 (minimum 3
+                  required)
                 </p>
-                {errors.interests && <p className="mt-1 text-sm text-red-600">{errors.interests}</p>}
+                {errors.interests && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.interests}
+                  </p>
+                )}
               </div>
 
               <button
@@ -455,9 +504,11 @@ export default function AccountSettings() {
         )}
 
         {/* Persona  */}
-          {activeSection === "persona" && (
+        {activeSection === "persona" && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Shopping Persona</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Shopping Persona
+            </h3>
             <form onSubmit={handleProfileSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
@@ -475,7 +526,9 @@ export default function AccountSettings() {
                     <label
                       key={category.id}
                       className={`flex flex-col items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
-                        profileData.persona.includes(category.id) ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                        profileData.persona.includes(category.id)
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200"
                       }`}
                     >
                       <input
@@ -484,15 +537,22 @@ export default function AccountSettings() {
                         onChange={() => handlePersonaChange(category.id)}
                         className="sr-only"
                       />
-                      <span className="text-xl md:text-2xl mb-2">{category.icon}</span>
-                      <span className="text-xs md:text-sm font-medium text-center leading-tight">{category.label}</span>
+                      <span className="text-xl md:text-2xl mb-2">
+                        {category.icon}
+                      </span>
+                      <span className="text-xs md:text-sm font-medium text-center leading-tight">
+                        {category.label}
+                      </span>
                     </label>
                   ))}
                 </div>
                 <p className="mt-2 text-sm text-gray-600">
-                  Selected: {profileData.persona.length} / 22 (minimum 3 required)
+                  Selected: {profileData.persona.length} / 22 (minimum 3
+                  required)
                 </p>
-                {errors.persona && <p className="mt-1 text-sm text-red-600">{errors.persona}</p>}
+                {errors.persona && (
+                  <p className="mt-1 text-sm text-red-600">{errors.persona}</p>
+                )}
               </div>
 
               <button
@@ -519,24 +579,40 @@ export default function AccountSettings() {
         {/* Notification Settings */}
         {activeSection === "notifications" && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">Notification Preferences</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">
+              Notification Preferences
+            </h3>
             <div className="space-y-6">
               {Object.entries(notifications).map(([key, value]) => (
-                <div key={key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div
+                  key={key}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                >
                   <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 capitalize">{key.replace(/([A-Z])/g, " $1").trim()}</h4>
+                    <h4 className="font-medium text-gray-900 capitalize">
+                      {key.replace(/([A-Z])/g, " $1").trim()}
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      {key === "orderUpdates" && "Get notified about your order status"}
-                      {key === "promotions" && "Receive promotional offers and deals"}
-                      {key === "newsletter" && "Weekly newsletter with new products"}
-                      {key === "smsNotifications" && "SMS notifications for important updates"}
+                      {key === "orderUpdates" &&
+                        "Get notified about your order status"}
+                      {key === "promotions" &&
+                        "Receive promotional offers and deals"}
+                      {key === "newsletter" &&
+                        "Weekly newsletter with new products"}
+                      {key === "smsNotifications" &&
+                        "SMS notifications for important updates"}
                     </p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                     <input
                       type="checkbox"
                       checked={value}
-                      onChange={(e) => setNotifications({ ...notifications, [key]: e.target.checked })}
+                      onChange={(e) =>
+                        setNotifications({
+                          ...notifications,
+                          [key]: e.target.checked,
+                        })
+                      }
                       className="sr-only peer"
                     />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -548,5 +624,5 @@ export default function AccountSettings() {
         )}
       </div>
     </div>
-  )
+  );
 }

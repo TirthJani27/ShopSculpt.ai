@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema(
       firstname: { type: String, required: true },
       lastname: { type: String },
     },
-    age: { type: Number, default: 10 },
     dob: { type: Date },
     gender: {
       type: String,
@@ -30,7 +29,7 @@ const userSchema = new mongoose.Schema(
     },
     region: String,
     interestCategory: [String],
-    persona: [String], // Max 2 personas
+    persona: [String],
     priceRange: {
       type: String,
       enum: ["Budget_Friendly", "Mid_Range", "Premium"],

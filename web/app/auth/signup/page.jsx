@@ -101,15 +101,17 @@ export default function SignUpPage() {
       const data = res.data;
       login(data.user);
       localStorage.setItem("token", `Bearer ${data.token}`);
-      const userDataParam = encodeURIComponent(JSON.stringify(data.user._id));
+      const userId = encodeURIComponent(data.user._id);
+
       if (typeof window !== "undefined" && window.toast) {
-        window.toast.success("Registration successful! Redirecting...");
+        window.toast.success(
+          "Registration successful! Redirecting to survey..."
+        );
       }
-      router.push(`/auth/survey?userId=${userDataParam}`);
+      router.push(`/auth/survey?userId=${userId}`);
     } catch (error) {
       console.error("Registration error:", error);
       setErrors({ general: "Registration failed. Please try again." });
-      // Show error toast
       if (typeof window !== "undefined" && window.toast) {
         window.toast.error("Registration failed. Please try again.");
       }

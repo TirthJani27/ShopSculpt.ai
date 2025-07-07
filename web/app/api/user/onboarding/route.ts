@@ -24,13 +24,15 @@ export async function POST(req: NextRequest) {
     await dbConnect();
     const user = isAuthorized.user;
     const {
-      age,
+      dob,
       gender,
       region,
       interestCategory,
       persona,
       priceRange,
       shoppingFrequency,
+      state,
+      pincode,
     } = parseResult.data;
     const currentUser = await User.findById(user._id);
     if (!currentUser) {
@@ -39,13 +41,15 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-    currentUser.age = age;
+    currentUser.dob = dob;
     currentUser.gender = gender;
     currentUser.region = region;
     currentUser.interestCategory = interestCategory;
     currentUser.persona = persona;
     currentUser.priceRange = priceRange;
     currentUser.shoppingFrequency = shoppingFrequency;
+    currentUser.state = state;
+    currentUser.pincode = pincode;
     await currentUser.save();
     return NextResponse.json(
       { message: "User onboarding data updated successfully" },

@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, User, MapPin, Heart } from "lucide-react"
+import { Search, ShoppingCart, User, MapPin, Heart } from "lucide-react";
 
 export default function Header() {
   return (
@@ -70,7 +70,9 @@ export default function Header() {
           <div className="flex items-center space-x-8 py-2 text-sm">
             <span className="cursor-pointer hover:underline">Departments</span>
             <span className="cursor-pointer hover:underline">Services</span>
-            <span className="cursor-pointer hover:underline">Grocery & essentials</span>
+            <span className="cursor-pointer hover:underline">
+              Grocery & essentials
+            </span>
             <span className="cursor-pointer hover:underline">Electronics</span>
             <span className="cursor-pointer hover:underline">Furniture</span>
             <span className="cursor-pointer hover:underline">Fashion</span>
@@ -80,5 +82,5 @@ export default function Header() {
         </div>
       </nav>
     </header>
-  )
+  );
 }

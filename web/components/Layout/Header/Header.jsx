@@ -34,9 +34,10 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    logout();
-    setShowUserMenu(false);
-    router.push("/");
+    if (window.confirm("Are you sure you want to sign out?")) {
+      logout();
+      window.location.href = "/";
+    }
   };
 
   return (
@@ -50,7 +51,7 @@ export default function Header() {
               </span>
               <div className="flex items-center space-x-1">
                 <MapPin className="w-3 h-3" />
-                <span>Sacramento, 95829</span>
+                <span>Sacraasmento, 95829</span>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -101,8 +102,11 @@ export default function Header() {
               {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
                 ShopSculpt
               </Link> */}
-              <Link href="/" className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
-                  <img src="/logo4.png" alt="ShopSclupt" />
+              <Link
+                href="/"
+                className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8"
+              >
+                <img src="/logo4.png" alt="ShopSclupt" />
               </Link>
             </div>
 

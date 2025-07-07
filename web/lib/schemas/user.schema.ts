@@ -21,19 +21,17 @@ export const userRegisterSchema = z.object({
 });
 
 export const userOnboardingSchema = z.object({
-  age: z
-    .number()
-    .min(10, "Age must be at least 10")
-    .max(100, "Age must be realistic"),
   gender: z.enum(["Male", "Female", "Other", "PreferNotToSay"]),
-  region: z.string().min(2, "Region is required"),
+  region: z.string().min(10, "Region is required"),
   interestCategory: z
     .array(z.string())
     .min(1, "At least one interest category is required"),
-  persona: z
-    .array(z.string())
-    .min(1, "At least one persona required")
-    .max(2, "Maximum 2 personas allowed"),
+  persona: z.array(z.string()).min(3, "At least one persona required"),
   priceRange: z.enum(["Budget_Friendly", "Mid_Range", "Premium"]),
   shoppingFrequency: z.enum(["Rarely", "Monthly", "Weekly", "Daily"]),
+  dob: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Invalid date format",
+  }),
+  pincode: z.string().min(6, "Min 6 numbers").max(6, "Max 6 numbers"),
+  state: z.string(),
 });
