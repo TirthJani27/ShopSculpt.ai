@@ -41,53 +41,53 @@ export default function PersonalInfo({ onEditClick }) {
       .join(", ");
   };
 
-    // Format for Persona display.
-    const formatPersona = (persona) => {
-    if (!persona || persona.length === 0) return "None selected"
+  // Format for Persona display.
+  const formatPersona = (persona) => {
+    if (!persona || persona.length === 0) return "None selected";
 
     const PersonaLabels = {
-     Ecoconscious: "Eco-Conscious Shopper" ,
-     Luxuryseeker: "Luxury Seeker" ,
-     Localgoods: "Local Goods Supporter" ,
-     Ethicalbuyer: "Ethical Buyer", 
-     Minimalist: "Minimalist",
-     Newparent: "New Parent" ,
-     Collegestudent: "College Student" ,
-     Youngprofessional: "Young Professional" ,
-     Retiredshopper: "Retired Shopper" ,
-     homeowner: "First-Time Homeowner",
+      Ecoconscious: "Eco-Conscious Shopper",
+      Luxuryseeker: "Luxury Seeker",
+      Localgoods: "Local Goods Supporter",
+      Ethicalbuyer: "Ethical Buyer",
+      Minimalist: "Minimalist",
+      Newparent: "New Parent",
+      Collegestudent: "College Student",
+      Youngprofessional: "Young Professional",
+      Retiredshopper: "Retired Shopper",
+      homeowner: "First-Time Homeowner",
 
-  // Interest-Based
-     Techenthusiast: "Tech Enthusiast" ,
-     Fashionlover: 'Fashion Lover' ,
-     Fitnessbuff: "Fitness Buff" ,
-     Beautyguru: "Beauty Guru" ,
-     Homechef: "Home Chef" ,
+      // Interest-Based
+      Techenthusiast: "Tech Enthusiast",
+      Fashionlover: "Fashion Lover",
+      Fitnessbuff: "Fitness Buff",
+      Beautyguru: "Beauty Guru",
+      Homechef: "Home Chef",
 
-  // Shopping Style
-   Dealhunter: "Deal Hunter" ,
-   Impulsebuyer: "Impulse Buyer", 
-   Brandloyalist: "Brand Loyalist", 
-   Seasonalshopper: "Seasonal Shopper", 
-   Giftgiver: "Gift Giver" ,
+      // Shopping Style
+      Dealhunter: "Deal Hunter",
+      Impulsebuyer: "Impulse Buyer",
+      Brandloyalist: "Brand Loyalist",
+      Seasonalshopper: "Seasonal Shopper",
+      Giftgiver: "Gift Giver",
 
-  // Health & Dietary
-    Glutenfree: "Gluten-Free Buyer" ,
-    Organiconly: "Organic Only" ,
-    Ketofriendly: "Keto Friendly Shopper" ,
-    Diabeticfriendly: "Diabetic-Friendly Shopper",
-    }
+      // Health & Dietary
+      Glutenfree: "Gluten-Free Buyer",
+      Organiconly: "Organic Only",
+      Ketofriendly: "Keto Friendly Shopper",
+      Diabeticfriendly: "Diabetic-Friendly Shopper",
+    };
 
-    return persona.map((persona) => PersonaLabels[persona] || persona).join(", ")
-  }
+    return persona
+      .map((persona) => PersonaLabels[persona] || persona)
+      .join(", ");
+  };
 
   const handleEditClick = () => {
     if (onEditClick) {
       onEditClick("settings");
     }
   };
-
-
 
   return (
     <div className="bg-white rounded-lg border p-4 md:p-6">
@@ -125,7 +125,9 @@ export default function PersonalInfo({ onEditClick }) {
             <User className="w-5 h-5 text-gray-400 mt-1 flex-shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-gray-600">Gender</p>
-              <p className="text-gray-900 break-words">{user?.gender|| "Not provided"}</p>
+              <p className="text-gray-900 break-words">
+                {user?.gender || "Not provided"}
+              </p>
             </div>
           </div>
 
@@ -185,7 +187,7 @@ export default function PersonalInfo({ onEditClick }) {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">Pin Code</p>
-              <p className="text-gray-900">{user?.pinCode || "Not provided"}</p>
+              <p className="text-gray-900">{user?.pincode || "Not provided"}</p>
             </div>
           </div>
         </div>
@@ -211,7 +213,10 @@ export default function PersonalInfo({ onEditClick }) {
           About Persona
         </h3>
         <div className="bg-gray-50 rounded-lg p-4 flex flex-wrap gap-2">
-          {(Array.isArray(user?.persona) ? user.persona : formatPersona(user?.persona).split(',')).map((item, index) => (
+          {(Array.isArray(user?.persona)
+            ? user.persona
+            : formatPersona(user?.persona).split(",")
+          ).map((item, index) => (
             <span
               key={index}
               className="bg-gray-200 text-uppercase text-grey-900 text-sm font-medium px-3 py-1 rounded-full capitalize"
@@ -221,8 +226,6 @@ export default function PersonalInfo({ onEditClick }) {
           ))}
         </div>
       </div>
-
-      
 
       {/* Registration Info */}
       <div className="mt-6 pt-6 border-t">

@@ -81,40 +81,34 @@ export default function SignUpPage() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsLoading(true);
 
     try {
-      const fullname = {
-        firstname: formData.firstname,
-        lastname: formData.lastname,
-      };
       const res = await axios.post("/api/auth/signup", {
         email: formData.email,
         password: formData.password,
-        fullname,
+        fullname: {
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+        },
       });
-      const data = res.data;
-      login(data.user);
-      localStorage.setItem("token", `Bearer ${data.token}`);
-      const userId = encodeURIComponent(data.user._id);
 
-      if (typeof window !== "undefined" && window.toast) {
-        window.toast.success(
-          "Registration successful! Redirecting to survey..."
-        );
-      }
-      router.push(`/auth/survey?userId=${userId}`);
+      const { user, token } = res.data;
+      login(user);
+      localStorage.setItem("token", `Bearer ${token}`);
+      router.push(`/auth/survey?userId=${encodeURIComponent(user._id)}`);
+      window.toast?.success(
+        "Registered successfully! Let's complete your profile."
+      );
     } catch (error) {
-      console.error("Registration error:", error);
-      setErrors({ general: "Registration failed. Please try again." });
-      if (typeof window !== "undefined" && window.toast) {
-        window.toast.error("Registration failed. Please try again.");
-      }
+      const message =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
+      setErrors({ general: message });
+      window.toast?.error(message);
     } finally {
       setIsLoading(false);
     }

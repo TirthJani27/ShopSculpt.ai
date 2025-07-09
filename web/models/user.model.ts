@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema(
       firstname: { type: String, required: true },
       lastname: { type: String },
     },
+    phone: { type: String },
+    pincode: { type: String },
+    state: { type: String },
     dob: { type: Date },
     gender: {
       type: String,

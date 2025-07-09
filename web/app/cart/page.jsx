@@ -2,29 +2,30 @@
  * Shopping Cart Page
  * Displays cart items, quantities, pricing, and checkout options
  */
-"use client"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import Header from "../../components/Layout/Header/Header"
-import Footer from "../../components/Layout/Footer/Footer"
-import CartItem from "../../components/Cart/CartItem/CartItem"
-import CartSummary from "../../components/Cart/CartSummary/CartSummary"
-import { ShoppingBag, ArrowLeft } from "lucide-react"
-import { useAuth } from "../../contexts/AuthContext"
-import { useCart } from "../../contexts/CartContext"
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Header from "../../components/Layout/Header/Header";
+import Footer from "../../components/Layout/Footer/Footer";
+import CartItem from "../../components/Cart/CartItem/CartItem";
+import CartSummary from "../../components/Cart/CartSummary/CartSummary";
+import { ShoppingBag, ArrowLeft } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
 
 export default function CartPage() {
-  const router = useRouter()
-  const { isLoggedIn, isLoading } = useAuth()
-  const { cartItems, updateQuantity, removeFromCart, cartTotal, cartCount } = useCart()
+  const router = useRouter();
+  const { isLoggedIn, isLoading } = useAuth();
+  const { cartItems, updateQuantity, removeFromCart, cartTotal, cartCount } =
+    useCart();
 
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
-      router.push("/auth/login?redirect=/cart")
+      router.push("/auth/login?redirect=/cart");
     }
-  }, [isLoggedIn, isLoading, router])
+  }, [isLoggedIn, isLoading, router]);
 
   // Show loading state
   if (isLoading) {
@@ -35,23 +36,24 @@ export default function CartPage() {
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Don't render if not logged in (will redirect)
   if (!isLoggedIn) {
-    return null
+    return null;
   }
 
   // Calculate totals
-  const subtotal = cartTotal
+  const subtotal = cartTotal;
   const totalDiscount = cartItems.reduce(
-    (sum, item) => sum + ((item.originalPrice || item.price) - item.price) * item.quantity,
-    0,
-  )
-  const platformFee = 9
-  const securedPackagingFee = 19
-  const total = subtotal + platformFee + securedPackagingFee
+    (sum, item) =>
+      sum + ((item.originalPrice || item.price) - item.price) * item.quantity,
+    0
+  );
+  const platformFee = 9;
+  const securedPackagingFee = 19;
+  const total = subtotal + platformFee + securedPackagingFee;
 
   if (cartItems.length === 0) {
     return (
@@ -60,16 +62,23 @@ export default function CartPage() {
         <main className="max-w-4xl mx-auto px-4 py-12">
           <div className="text-center">
             <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-6" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-            <p className="text-gray-600 mb-8">Add some products to get started</p>
-            <Link href="/" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Your cart is empty
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Add some products to get started
+            </p>
+            <Link
+              href="/"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium"
+            >
               Continue Shopping
             </Link>
           </div>
         </main>
         <Footer />
       </div>
-    )
+    );
   }
 
   return (
@@ -83,7 +92,9 @@ export default function CartPage() {
             <Link href="/" className="md:hidden">
               <ArrowLeft className="w-6 h-6 text-gray-600" />
             </Link>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">My Cart ({cartCount} items)</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              My Cart ({cartCount} items)
+            </h1>
           </div>
         </div>
 
@@ -94,19 +105,31 @@ export default function CartPage() {
             {/* Delivery Address Section */}
             <div className="bg-white rounded-lg border p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">From Saved Addresses</h3>
-                <button className="text-blue-600 hover:text-blue-700 font-medium">Enter Delivery Pincode</button>
+                <h3 className="font-semibold text-gray-900">
+                  From Saved Addresses
+                </h3>
+                <button className="text-blue-600 hover:text-blue-700 font-medium">
+                  Enter Delivery Pincode
+                </button>
               </div>
             </div>
 
             {/* Cart Items */}
             {cartItems.map((item) => (
-              <CartItem key={item.id} item={item} onUpdateQuantity={updateQuantity} onRemove={removeFromCart} />
+              <CartItem
+                key={item.id}
+                item={item}
+                onUpdateQuantity={updateQuantity}
+                onRemove={removeFromCart}
+              />
             ))}
 
             {/* Continue Shopping */}
             <div className="bg-white rounded-lg border p-4 md:p-6">
-              <Link href="/" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                href="/"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 ← Continue Shopping
               </Link>
             </div>
@@ -128,5 +151,5 @@ export default function CartPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

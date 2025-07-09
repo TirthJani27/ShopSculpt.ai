@@ -62,6 +62,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Hi there");
 
     if (!validateForm()) return;
 

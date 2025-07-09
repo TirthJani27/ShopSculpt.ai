@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parseResult = userOnboardingSchema.safeParse(body);
     if (!parseResult.success) {
+      console.log(parseResult.error.errors);
+
       return NextResponse.json(
         { message: "Validation failed", errors: parseResult.error.errors },
         { status: 400 }

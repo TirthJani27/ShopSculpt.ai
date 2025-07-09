@@ -18,6 +18,7 @@ export async function authUser(
   await dbConnect();
 
   const token = extractToken(req);
+
   if (!token) {
     return { isAuthorized: false };
   }

@@ -11,11 +11,12 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
+import axios from "axios";
 
 export default function SurveyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoggedIn, register } = useAuth();
+  const { login, isLoggedIn, user } = useAuth();
 
   const [formData, setFormData] = useState({
     dateOfBirth: "",
@@ -29,22 +30,24 @@ export default function SurveyPage() {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [wordCount, setWordCount] = useState(0);
 
   // Get user data from URL params (passed from registration)
-  const userData = searchParams.get("userData")
-    ? JSON.parse(decodeURIComponent(searchParams.get("userData")))
-    : null;
-
+  const userId = searchParams.get("userId");
+  const userData = userId ? { userId } : null;
   // Redirect if no user data or already logged in
   useEffect(() => {
-    if (!userData) {
+    const userId = searchParams.get("userId");
+
+    if (user === null && !isLoggedIn) {
       router.push("/auth/signup");
+      return;
     }
-    if (isLoggedIn) {
-      router.push("/profile");
+
+    if (!userId) {
+      router.push("/auth/signup");
+      return;
     }
-  }, [userData, isLoggedIn, router]);
+  }, [user, isLoggedIn, searchParams, router]);
 
   // Interest categories with icons
   const interestCategories = [
@@ -245,22 +248,55 @@ export default function SurveyPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    const data = {
+      gender: formData.gender,
+      region: formData.address,
+      interestCategory: formData.interests,
+      persona: formData.persona,
+      priceRange: "Mid_Range",
+      shoppingFrequency: "Rarely",
+      dob: formData.dateOfBirth,
+      pincode: formData.pinCode,
+      state: formData.state,
+    };
+    console.log(data);
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Combine user data with survey data
+      const res = await axios.post(
+        "/api/user/onboarding",
+        {
+          gender: formData.gender,
+          region: formData.address,
+          interestCategory: formData.interests,
+          persona: formData.persona,
+          priceRange: "Mid_Range",
+          shoppingFrequency: "Rarely",
+          dob: formData.dateOfBirth,
+          pincode: formData.pinCode,
+          state: formData.state,
+        },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const completeUserData = {
-        ...userData,
-        ...formData,
+        gender: formData.gender,
+        region: formData.address,
+        interestCategory: formData.interests,
+        persona: formData.persona,
+        priceRange: "Mid_Range",
+        shoppingFrequency: "Rarely",
+        dob: formData.dateOfBirth,
+        pincode: formData.pinCode,
+        state: formData.state,
+        ...user,
       };
 
-      // Register user and get the complete user object
-      const registeredUser = register(completeUserData);
-
       // Update auth context with complete user data
-      login(registeredUser);
+      login(completeUserData);
 
       // Redirect to profile page
       router.push("/profile");
@@ -275,7 +311,7 @@ export default function SurveyPage() {
   };
 
   if (!userData) {
-    return null; // Will redirect
+    return null;
   }
 
   return (

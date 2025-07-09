@@ -1,13 +1,8 @@
-/**
- * Account Settings Component
- * User profile settings, name change, email update, interests, and about me management
- * Form validation and responsive design
- * Updated to allow interests and about me editing with proper validation
- */
 "use client";
 import { useState } from "react";
 import { User, Bell, Save, CheckCircle, Heart, Edit3 } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
+import axios from "axios";
 
 export default function AccountSettings() {
   const { user, login } = useAuth(); // login function updates user data
@@ -29,56 +24,56 @@ export default function AccountSettings() {
 
   // Persona category
   const personaCategories = [
-    // Lifestyle & Values-Basl: 'Eco-Conscious Shopper' },
-    { id: "eco-conscious", label: "Eco-Conscious Shopper" },
-    { id: "luxury-seeker", label: "Luxury Seeker" },
-    { id: "local-goods", label: "Local Goods Supporter" },
-    { id: "ethical-buyer", label: "Ethical Buyer" },
+    // Lifestyle & Values-Based
+    { id: "ecoconscious", label: "Budget Shopper" },
+    { id: "luxuryseeker", label: "Luxury Seeker" },
+    { id: "localgoods", label: "Local Goods Supporter" },
+    { id: "ethicalbuyer", label: "Ethical Buyer" },
     { id: "minimalist", label: "Minimalist" },
 
     // Life Stage
-    { id: "new-parent", label: "New Parent" },
-    { id: "college-student", label: "College Student" },
-    { id: "young-professional", label: "Young Professional" },
-    { id: "retired-shopper", label: "Retired Shopper" },
+    { id: "newparent", label: "New Parent" },
+    { id: "collegestudent", label: "College Student" },
+    { id: "youngprofessional", label: "Young Professional" },
+    { id: "retiredshopper", label: "Retired Shopper" },
     { id: "homeowner", label: "First-Time Homeowner" },
 
     // Interest-Based
-    { id: "tech-enthusiast", label: "Tech Enthusiast" },
-    { id: "fashion-lover", label: "Fashion Lover" },
-    { id: "fitness-buff", label: "Fitness Buff" },
-    { id: "beauty-guru", label: "Beauty Guru" },
-    { id: "home-chef", label: "Home Chef" },
+    { id: "techenthusiast", label: "Tech Enthusiast" },
+    { id: "fashionlover", label: "Fashion Lover" },
+    { id: "fitnessbuff", label: "Fitness Buff" },
+    { id: "beautyguru", label: "Beauty Guru" },
+    { id: "homechef", label: "Home Chef" },
 
     // Shopping Style
-    { id: "deal-hunter", label: "Deal Hunter" },
-    { id: "impulse-buyer", label: "Impulse Buyer" },
-    { id: "brand-loyalist", label: "Brand Loyalist" },
-    { id: "seasonal-shopper", label: "Seasonal Shopper" },
-    { id: "gift-giver", label: "Gift Giver" },
+    { id: "dealhunter", label: "Deal Hunter" },
+    { id: "impulsebuyer", label: "Impulse Buyer" },
+    { id: "brandloyalist", label: "Brand Loyalist" },
+    { id: "seasonalshopper", label: "Seasonal Shopper" },
+    { id: "giftgiver", label: "Gift Giver" },
 
     // Health & Dietary
-    { id: "gluten-free", label: "Gluten-Free Buyer" },
-    { id: "organic-only", label: "Organic Only" },
-    { id: "keto-friendly", label: "Keto Friendly Shopper" },
-    { id: "allergy-conscious", label: "Allergy-Conscious Shopper" },
-    { id: "diabetic-friendly", label: "Diabetic-Friendly Shopper" },
+    { id: "glutenfree", label: "Gluten-Free Buyer" },
+    { id: "organiconly", label: "Organic Only" },
+    { id: "ketofriendly", label: "Keto Friendly Shopper" },
+    { id: "allergyconscious", label: "Allergy-Conscious Shopper" },
+    { id: "diabeticfriendly", label: "Diabetic-Friendly Shopper" },
   ];
 
   // Profile form state with actual user data
   const [profileData, setProfileData] = useState({
-    firstname: user?.fullname.firstname || "",
-    lastname: user?.fullname.lastname || "",
-    gnder: user?.gender || "",
+    name: user?.fullname.firstname + " " + user?.fullname.lastname,
+    gender: user?.gender || "",
     email: user?.email || "",
     phone: user?.phone || "",
-    dateOfBirth: user?.dob || "",
+    dateOfBirth: new Date(user?.dob).toISOString().split("T")[0] || "",
     address: user?.region || "",
     state: user?.state || "",
-    pinCode: user?.pinCode || "",
+    pinCode: user?.pincode || "",
     interests: user?.interestCategory || [],
     persona: user?.persona || [],
   });
+  console.log(profileData.persona);
 
   // Notification preferences
   const [notifications, setNotifications] = useState({
@@ -187,31 +182,76 @@ export default function AccountSettings() {
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateProfileForm()) return;
-
-    setIsLoading(true);
+    setErrors({});
     setSuccess(false);
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Section-specific validation
+    if (activeSection === "profile" && !validateProfileForm()) return;
 
-      // Update user data in auth context
+    setIsLoading(true);
+
+    try {
+      let url = "";
+      let payload = {};
+
+      switch (activeSection) {
+        case "profile":
+          url = "/api/user/update/basic-info";
+          payload = {
+            dob: profileData.dateOfBirth,
+            gender: profileData.gender,
+            phone: profileData.phone,
+            state: profileData.state,
+            pincode: profileData.pinCode,
+            address: profileData.address,
+          };
+          break;
+
+        case "interests":
+          if (profileData.interests.length < 3) {
+            setErrors({ interests: "Please select at least 3 interests" });
+            return;
+          }
+          url = "/api/user/update/interest";
+          payload = { interestCategory: profileData.interests };
+          break;
+
+        case "persona":
+          if (profileData.persona.length < 3) {
+            setErrors({ persona: "Please select at least 3 persona" });
+            return;
+          }
+          url = "/api/user/update/persona";
+          payload = { persona: profileData.persona };
+          break;
+
+        case "notifications":
+          return;
+
+        default:
+          setErrors({ general: "Invalid section" });
+          return;
+      }
+
+      const { data } = await axios.put(url, payload, {
+        headers: localStorage.getItem("token"),
+      });
+
+      // Update context
       const updatedUser = {
         ...user,
-        ...profileData,
+        ...payload,
       };
       login(updatedUser);
 
       setSuccess(true);
-      console.log("Profile updated:", profileData);
-
-      // Hide success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      console.error("Profile update error:", error);
-      setErrors({ general: "Failed to update profile. Please try again." });
+      console.error("Update error:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        "Something went wrong. Please try again.";
+      setErrors({ general: errorMsg });
     } finally {
       setIsLoading(false);
     }
@@ -264,6 +304,7 @@ export default function AccountSettings() {
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
               Profile Information
             </h3>
+
             <form onSubmit={handleProfileSubmit} className="space-y-6">
               {/* General Error */}
               {errors.general && (
@@ -273,7 +314,7 @@ export default function AccountSettings() {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Name Field */}
+                {/* Full Name */}
                 <div>
                   <label
                     htmlFor="name"
@@ -285,9 +326,10 @@ export default function AccountSettings() {
                     type="text"
                     id="name"
                     name="name"
+                    disabled
                     value={profileData.name}
                     onChange={handleProfileInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.name ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="Enter your full name"
@@ -303,7 +345,7 @@ export default function AccountSettings() {
                     Gender *
                   </label>
                   <div className="flex items-center gap-6">
-                    {["male", "female"].map((option) => (
+                    {["Male", "Female"].map((option) => (
                       <label
                         key={option}
                         className="flex items-center gap-2 text-sm text-gray-700"
@@ -318,7 +360,7 @@ export default function AccountSettings() {
                             errors.gender ? "ring-2 ring-red-400" : ""
                           }`}
                         />
-                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                        {option}
                       </label>
                     ))}
                   </div>
@@ -327,7 +369,7 @@ export default function AccountSettings() {
                   )}
                 </div>
 
-                {/* Email Field */}
+                {/* Email */}
                 <div>
                   <label
                     htmlFor="email"
@@ -339,19 +381,20 @@ export default function AccountSettings() {
                     type="email"
                     id="email"
                     name="email"
+                    disabled
                     value={profileData.email}
                     onChange={handleProfileInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.email ? "border-red-300" : "border-gray-300"
                     }`}
-                    placeholder="Enter your email address"
+                    placeholder="Enter your email"
                   />
                   {errors.email && (
                     <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                   )}
                 </div>
 
-                {/* Phone Field */}
+                {/* Phone */}
                 <div>
                   <label
                     htmlFor="phone"
@@ -362,10 +405,11 @@ export default function AccountSettings() {
                   <input
                     type="tel"
                     id="phone"
+                    maxLength={10}
                     name="phone"
                     value={profileData.phone}
                     onChange={handleProfileInputChange}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.phone ? "border-red-300" : "border-gray-300"
                     }`}
                     placeholder="Enter your phone number"
@@ -375,7 +419,7 @@ export default function AccountSettings() {
                   )}
                 </div>
 
-                {/* Date of Birth Field */}
+                {/* Date of Birth */}
                 <div>
                   <label
                     htmlFor="dateOfBirth"
@@ -387,10 +431,16 @@ export default function AccountSettings() {
                     type="date"
                     id="dateOfBirth"
                     name="dateOfBirth"
-                    value={profileData.dateOfBirth}
+                    value={
+                      profileData.dateOfBirth
+                        ? new Date(profileData.dateOfBirth)
+                            .toISOString()
+                            .split("T")[0]
+                        : ""
+                    }
                     onChange={handleProfileInputChange}
                     max={new Date().toISOString().split("T")[0]}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -402,7 +452,7 @@ export default function AccountSettings() {
                 </h4>
 
                 <div className="space-y-4">
-                  {/* Complete Address */}
+                  {/* Full Address */}
                   <div>
                     <label
                       htmlFor="address"
@@ -416,7 +466,7 @@ export default function AccountSettings() {
                       value={profileData.address}
                       onChange={handleProfileInputChange}
                       rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                       placeholder="Enter your complete address"
                     />
                   </div>
@@ -436,7 +486,7 @@ export default function AccountSettings() {
                         name="state"
                         value={profileData.state}
                         onChange={handleProfileInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter your state"
                       />
                     </div>
@@ -453,10 +503,10 @@ export default function AccountSettings() {
                         type="text"
                         id="pinCode"
                         name="pinCode"
+                        maxLength={6}
                         value={profileData.pinCode}
                         onChange={handleProfileInputChange}
-                        maxLength={6}
-                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                           errors.pinCode ? "border-red-300" : "border-gray-300"
                         }`}
                         placeholder="Enter 6-digit pin code"
@@ -471,6 +521,7 @@ export default function AccountSettings() {
                 </div>
               </div>
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -601,9 +652,7 @@ export default function AccountSettings() {
                         onChange={() => handlePersonaChange(category.id)}
                         className="sr-only"
                       />
-                      <span className="text-xl md:text-2xl mb-2">
-                        {category.icon}
-                      </span>
+
                       <span className="text-xs md:text-sm font-medium text-center leading-tight">
                         {category.label}
                       </span>

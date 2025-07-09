@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 /**
  * AuthContext
@@ -13,18 +13,23 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user from localStorage on first app load
+  // Load user from localStorage on initial mount
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    try {
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    } catch (error) {
+      console.error("Failed to parse user from localStorage:", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   /**
    * Login user and store session in localStorage
-   * @param {Object} userData - User object (e.g., id, email, token, etc.)
+   * @param {Object} userData - User object (e.g., id, email, token)
    */
   const login = (userData) => {
     setUser(userData);
@@ -32,7 +37,7 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Logout user and clear session from localStorage
+   * Logout user and clear session-related data from localStorage
    */
   const logout = () => {
     setUser(null);
@@ -40,7 +45,9 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("wishlist");
     localStorage.removeItem("cart");
   };
-  const isLoggedIn = !!user;
+
+  // Determine login state
+  const isLoggedIn = useMemo(() => !!user, [user]);
 
   return (
     <AuthContext.Provider
