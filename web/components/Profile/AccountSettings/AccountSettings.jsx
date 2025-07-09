@@ -4,6 +4,8 @@
  * Form validation and responsive design
  * Updated to allow interests and about me editing with proper validation
  */
+
+
 "use client"
 import { useState } from "react"
 import { User, Bell, Save, CheckCircle, Heart, Edit3 } from "lucide-react"
@@ -68,7 +70,7 @@ export default function AccountSettings() {
   // Profile form state with actual user data
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
-    grnder: user?.gender || "",
+    gender: user?.gender || "",
     email: user?.email || "",
     phone: user?.phone || "",
     dateOfBirth: user?.dateOfBirth || "",
@@ -140,42 +142,65 @@ export default function AccountSettings() {
     }
   }
 
+
   const validateProfileForm = () => {
-    const newErrors = {}
+  const newErrors = {}
 
-    if (!profileData.name.trim()) {
-      newErrors.name = "Name is required"
-    } else if (profileData.name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters"
-    }
-
-    if (!profileData.email.trim()) {
-      newErrors.email = "Email is required"
-    } else if (!/\S+@\S+\.\S+/.test(profileData.email)) {
-      newErrors.email = "Please enter a valid email"
-    }
-
-    if (profileData.phone && !/^\+?[\d\s\-()]{10,}$/.test(profileData.phone)) {
-      newErrors.phone = "Please enter a valid phone number"
-    }
-
-    if (profileData.pinCode && !/^\d{6}$/.test(profileData.pinCode)) {
-      newErrors.pinCode = "Pin code must be 6 digits"
-    }
-
-    // Interests validation (minimum 3)
-    if (profileData.interests.length < 3) {
-      newErrors.interests = "Please select at least 3 interests"
-    }
-
-    if (profileData.persona.length < 3) {
-      newErrors.persona = "Please select at least 3 persona"
-    }
-
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+  // Name
+  if (!profileData.name.trim()) {
+    newErrors.name = "Name is required"
+  } else if (profileData.name.trim().length < 2) {
+    newErrors.name = "Name must be at least 2 characters"
   }
+
+  // Email
+  if (!profileData.email.trim()) {
+    newErrors.email = "Email is required"
+  } else if (!/\S+@\S+\.\S+/.test(profileData.email)) {
+    newErrors.email = "Please enter a valid email"
+  }
+
+  // Date of Birth
+  if (!profileData.dateOfBirth) {
+    newErrors.dateOfBirth = "Date of birth is required"
+  }
+
+  // Address
+  if (!profileData.address.trim()) {
+    newErrors.address = "Address is required"
+  }
+
+  // State
+  if (!profileData.state.trim()) {
+    newErrors.state = "State is required"
+  }
+
+  // Pin Code
+  if (!profileData.pinCode.trim()) {
+    newErrors.pinCode = "Pin code is required"
+  } else if (!/^\d{6}$/.test(profileData.pinCode)) {
+    newErrors.pinCode = "Pin code must be 6 digits"
+  }
+
+  // Phone is optional, but validate if present
+  if (profileData.phone && !/^\+?[\d\s\-()]{10,}$/.test(profileData.phone)) {
+    newErrors.phone = "Please enter a valid phone number"
+  }
+
+  // Interests
+  if (profileData.interests.length < 3) {
+    newErrors.interests = "Please select at least 3 interests"
+  }
+
+  // Persona
+  if (profileData.persona.length < 3) {
+    newErrors.persona = "Please select at least 3 persona"
+  }
+
+  setErrors(newErrors)
+  return Object.keys(newErrors).length === 0
+}
+
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault()
@@ -334,6 +359,7 @@ export default function AccountSettings() {
                     type="tel"
                     id="phone"
                     name="phone"
+                    maxLength={10}
                     value={profileData.phone}
                     onChange={handleProfileInputChange}
                     className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.phone ? "border-red-300" : "border-gray-300"

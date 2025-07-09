@@ -96,7 +96,7 @@ export default function Header() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
-                  <img src="/logo4.png" alt="ShopSclupt" />
+                <img src="/logo4.png" alt="ShopSclupt" />
               </Link>
             </div>
 
@@ -159,23 +159,19 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Mobile Menu Toggle */}
-              {/* <button className="md:hidden p-2 hover:bg-blue-500 rounded " onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button> */}
+
 
               <button
-  className="md:hidden p-2 hover:bg-blue-500 rounded transition-all duration-300 ease-in-out"
-  onClick={() => setIsMenuOpen(!isMenuOpen)}
->
-  <div
-    className={`transition-transform duration-300 ease-in-out transform ${
-      isMenuOpen ? "rotate-90 scale-110" : "rotate-0 scale-100"
-    }`}
-  >
-    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-  </div>
-</button>
+                className="md:hidden p-2 hover:bg-blue-500 rounded transition-all duration-300 ease-in-out"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                <div
+                  className={`transition-transform duration-300 ease-in-out transform ${isMenuOpen ? "rotate-90 scale-110" : "rotate-0 scale-100"
+                    }`}
+                >
+                  {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                </div>
+              </button>
 
             </div>
           </div>
