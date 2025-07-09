@@ -79,23 +79,25 @@ export default function ProductCard({ product }) {
 
         {/* Product Image */}
         <Link href={`/product/${product.id}`}>
-          <div className="relative mb-3">
-            <img
-              src={image || "/placeholder.svg"}
-              alt={title}
-              className="w-full h-32 object-cover rounded group-hover:scale-105 transition-transform"
-            />
+          <div className="relative mb-3 w-full h-40 overflow-hidden bg-white rounded flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
+              <img
+                src={image || "/placeholder.svg"}
+                alt={title}
+                className="h-full w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
           </div>
+
         </Link>
 
         {/* Wishlist Button */}
         <button
           onClick={handleWishlistClick}
-          className={`absolute top-2 right-2 p-2 rounded-full shadow-md transition-all ${
-            inWishlist
+          className={`absolute top-2 right-2 p-2 rounded-full shadow-md transition-all ${inWishlist
               ? "bg-red-500 text-white"
               : "bg-white text-gray-600 hover:bg-gray-100 opacity-0 group-hover:opacity-100"
-          }`}
+            }`}
         >
           <Heart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
         </button>
@@ -132,9 +134,8 @@ export default function ProductCard({ product }) {
         <button
           onClick={handleAddToCart}
           disabled={isAddingToCart}
-          className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${
-            inCartAlready ? "bg-green-600 hover:bg-green-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
+          className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${inCartAlready ? "bg-green-600 hover:bg-green-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {isAddingToCart ? (
             <>

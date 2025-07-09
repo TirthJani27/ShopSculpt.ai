@@ -95,9 +95,6 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center">
-              {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
-                ShopSculpt
-              </Link> */}
               <Link href="/" className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8">
                   <img src="/logo4.png" alt="ShopSclupt" />
               </Link>
@@ -120,14 +117,14 @@ export default function Header() {
             {/* Right Side Icons */}
             <div className="flex items-center space-x-2 md:space-x-6">
               {/* Mobile Search Icon */}
-              <button className="md:hidden p-2 hover:bg-blue-500 rounded">
+              <button className=" hidden md:hidden p-2 hover:bg-blue-500 rounded">
                 <Search className="w-6 h-6" />
               </button>
 
               {/* Favorites/Wishlist */}
               <Link
                 href="/wishlist"
-                className="hidden sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded relative"
+                className="sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded relative"
               >
                 <Heart className="w-6 h-6" />
                 <span className="hidden lg:block">Wishlist</span>
@@ -141,7 +138,7 @@ export default function Header() {
               {/* User Account */}
               <Link
                 href={isLoggedIn ? "/profile" : "/auth/login"}
-                className="hidden sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded"
+                className="sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded"
               >
                 <User className="w-6 h-6" />
                 <span className="hidden lg:block">{isLoggedIn ? "Account" : "Sign In"}</span>
@@ -163,9 +160,23 @@ export default function Header() {
               </Link>
 
               {/* Mobile Menu Toggle */}
-              <button className="md:hidden p-2 hover:bg-blue-500 rounded" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {/* <button className="md:hidden p-2 hover:bg-blue-500 rounded " onClick={() => setIsMenuOpen(!isMenuOpen)}>
                 {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
+              </button> */}
+
+              <button
+  className="md:hidden p-2 hover:bg-blue-500 rounded transition-all duration-300 ease-in-out"
+  onClick={() => setIsMenuOpen(!isMenuOpen)}
+>
+  <div
+    className={`transition-transform duration-300 ease-in-out transform ${
+      isMenuOpen ? "rotate-90 scale-110" : "rotate-0 scale-100"
+    }`}
+  >
+    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+  </div>
+</button>
+
             </div>
           </div>
 
@@ -185,15 +196,12 @@ export default function Header() {
         </div>
 
         {/* Navigation Menu */}
-        <nav className={`bg-blue-700 border-t border-blue-500 ${isMenuOpen ? "block" : "hidden md:block"}`}>
+        <nav className={`bg-blue-700 border-t border-blue-500 delay-200 ${isMenuOpen ? "block" : "hidden md:block"}`}>
           <div className="max-w-7xl  flex flex-col items-center mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-center md:space-x-8 py-2 text-sm">
               <Link href="/" className="py-2 md:py-0 cursor-pointer hover:underline flex items-center space-x-1">
                 <Home className="w-4 h-4" />
                 <span>Home</span>
-              </Link>
-              <Link href="/categories/departments" className="py-2 md:py-0 cursor-pointer hover:underline">
-                Departments
               </Link>
               <Link href="/services" className="py-2 md:py-0 cursor-pointer hover:underline">
                 Services
@@ -212,9 +220,6 @@ export default function Header() {
               </Link>
               <Link href="/categories/sports" className="py-2 md:py-0 cursor-pointer hover:underline">
                 Sports
-              </Link>
-              <Link href="/categories/auto" className="py-2 md:py-0 cursor-pointer hover:underline">
-                Auto & tires
               </Link>
               <Link href="/pharmacy" className="py-2 md:py-0 cursor-pointer hover:underline">
                 Pharmacy
