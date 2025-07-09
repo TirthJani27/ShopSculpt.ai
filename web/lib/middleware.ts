@@ -7,6 +7,7 @@ function extractToken(req: NextRequest) {
   if (cookieToken) return cookieToken;
 
   const authHeader = req.headers.get("authorization");
+
   if (authHeader && authHeader.startsWith("Bearer ")) {
     return authHeader.substring(7).trim();
   }

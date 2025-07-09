@@ -1,4 +1,3 @@
-
 "use client";
 import {
   User,
@@ -40,10 +39,10 @@ export default function ProfileSidebar({ activeTab, setActiveTab }) {
           month: "short",
         });
       } catch {
-        return "2024";
+        return "2025";
       }
     }
-    return "2024";
+    return "2025";
   };
 
   return (
@@ -86,7 +85,7 @@ export default function ProfileSidebar({ activeTab, setActiveTab }) {
               <Icon className="w-4 md:w-5 h-4 md:h-5 flex-shrink-0" />
               <span className="font-medium truncate">{item.label}</span>
             </button>
-          )
+          );
         })}
       </nav>
 
@@ -101,8 +100,5 @@ export default function ProfileSidebar({ activeTab, setActiveTab }) {
         </button>
       </div>
     </aside>
-  )
+  );
 }
-
-
-

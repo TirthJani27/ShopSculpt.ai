@@ -61,3 +61,11 @@ export const userUpdateSchema = z.object({
     .regex(/^\d{6}$/, "Invalid pincode")
     .optional(),
 });
+
+export const personaUpdateSchema = z.object({
+  persona: z.array(z.string()).min(1, "Select at least one persona"),
+});
+
+export const interestUpdateSchema = z.object({
+  interestCategory: z.array(z.string()).min(1, "Select at least one interest"),
+});

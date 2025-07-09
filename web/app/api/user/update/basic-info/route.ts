@@ -21,7 +21,6 @@ export async function PUT(req: NextRequest) {
     }
 
     const session = await authUser(req);
-    console.log(session);
 
     if (!session || !session.user) {
       return NextResponse.json(

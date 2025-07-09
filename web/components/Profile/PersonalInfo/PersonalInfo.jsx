@@ -201,7 +201,7 @@ export default function PersonalInfo({ onEditClick }) {
         </h3>
         <div className="bg-gray-50 rounded-lg p-4">
           <p className="text-gray-900 break-words">
-            {formatInterests(user?.interests)}
+            {formatInterests(user?.interestCategory)}
           </p>
         </div>
       </div>
@@ -231,8 +231,7 @@ export default function PersonalInfo({ onEditClick }) {
       <div className="mt-6 pt-6 border-t">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
           <div>
-            <span className="font-medium">Member Since:</span>{" "}
-            {formatDate(user?.registrationDate)}
+            <span className="font-medium">Member Since:</span> {2025}
           </div>
           <div>
             <span className="font-medium">Account Status:</span>

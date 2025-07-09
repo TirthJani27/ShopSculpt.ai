@@ -203,7 +203,7 @@ export default function AccountSettings() {
             phone: profileData.phone,
             state: profileData.state,
             pincode: profileData.pinCode,
-            address: profileData.address,
+            region: profileData.address,
           };
           break;
 
@@ -233,11 +233,15 @@ export default function AccountSettings() {
           return;
       }
 
+      const token = localStorage.getItem("token");
+
+      console.log(token);
       const { data } = await axios.put(url, payload, {
-        headers: localStorage.getItem("token"),
+        headers: {
+          Authorization: token,
+        },
       });
 
-      // Update context
       const updatedUser = {
         ...user,
         ...payload,
