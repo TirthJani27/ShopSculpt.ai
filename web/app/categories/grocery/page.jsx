@@ -1,99 +1,70 @@
-/**
- * Grocery Category Page
- * Displays grocery and essential items with department filtering
- * Responsive layout with grocery-specific categories
- */
-"use client"
-import { useState } from "react"
-import Header from "../../../components/Layout/Header/Header"
-import Footer from "../../../components/Layout/Footer/Footer"
-import ProductCard from "../../../components/ProductCard/ProductCard"
-import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter"
-import { Search, Filter, Grid, List, ChevronDown, Truck } from "lucide-react"
+"use client";
+
+import { useEffect, useState } from "react";
+import Header from "../../../components/Layout/Header/Header";
+import Footer from "../../../components/Layout/Footer/Footer";
+import ProductCard from "../../../components/ProductCard/ProductCard";
+import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
+import { Search, Filter, Grid, List, ChevronDown, Truck } from "lucide-react";
 
 export default function GroceryPage() {
-  const [viewMode, setViewMode] = useState("grid")
-  const [sortBy, setSortBy] = useState("featured")
-  const [showFilters, setShowFilters] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortBy, setSortBy] = useState("featured");
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [groceryProducts, setGroceryProducts] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(6);
 
-  // Mock grocery products data
-  const groceryProducts = [
-    {
-      id: "grocery-1",
-      title: "Organic Bananas (2 lbs)",
-      price: 2.99,
-      originalPrice: 3.49,
-      rating: 4.5,
-      reviews: 1234,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Organic",
-      category: "Fresh Produce",
-    },
-    {
-      id: "grocery-2",
-      title: "Whole Milk (1 Gallon)",
-      price: 3.99,
-      rating: 4.3,
-      reviews: 856,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Fresh",
-      category: "Dairy",
-    },
-    {
-      id: "grocery-3",
-      title: "Bread Loaf - Whole Wheat",
-      price: 2.49,
-      originalPrice: 2.99,
-      rating: 4.4,
-      reviews: 567,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Save 50¢",
-      category: "Bakery",
-    },
-    {
-      id: "grocery-4",
-      title: "Ground Beef (1 lb)",
-      price: 5.99,
-      rating: 4.6,
-      reviews: 432,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Fresh",
-      category: "Meat & Seafood",
-    },
-    {
-      id: "grocery-5",
-      title: "Pasta - Spaghetti",
-      price: 1.99,
-      originalPrice: 2.49,
-      rating: 4.2,
-      reviews: 789,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Pantry Staple",
-      category: "Pantry",
-    },
-    {
-      id: "grocery-6",
-      title: "Greek Yogurt (32 oz)",
-      price: 4.99,
-      originalPrice: 5.99,
-      rating: 4.7,
-      reviews: 1123,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Protein Rich",
-      category: "Dairy",
-    },
-  ]
+  useEffect(() => {
+    const fetchGroceryProducts = async () => {
+      try {
+        const res = await fetch("/api/product/category/Grocery");
+        const data = await res.json();
+        const transformed = data.map((p) => ({
+          id: p._id,
+          title: p.name,
+          price: p.price,
+          originalPrice: p.discount
+            ? p.price / (1 - p.discount / 100)
+            : p.price,
+          rating: p.reviews?.[0]?.rating || 4.5,
+          reviews: p.reviews?.length || 0,
+          image: p.images?.[0] || "/placeholder.svg",
+          badge:
+            p.discount >= 30
+              ? "Hot Deal"
+              : p.discount > 0
+              ? `Save ${p.discount}%`
+              : "Fresh",
+          category: p.category || "General",
+        }));
+        setGroceryProducts(transformed);
+      } catch (err) {
+        console.error("Failed to fetch grocery products", err);
+      }
+    };
+
+    fetchGroceryProducts();
+  }, []);
+
+  const filteredProducts = groceryProducts.filter((p) =>
+    p.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+
+  const handleLoadMore = () => setVisibleCount((prev) => prev + 6);
 
   const categories = [
     { name: "All Grocery", count: groceryProducts.length },
-    { name: "Fresh Produce", count: 1 },
-    { name: "Dairy", count: 2 },
-    { name: "Bakery", count: 1 },
-    { name: "Meat & Seafood", count: 1 },
-    { name: "Pantry", count: 1 },
-    { name: "Frozen Foods", count: 0 },
-  ]
+    ...Array.from(
+      groceryProducts.reduce((map, product) => {
+        const cat = product.category || "Uncategorized";
+        map.set(cat, (map.get(cat) || 0) + 1);
+        return map;
+      }, new Map())
+    ).map(([name, count]) => ({ name, count })),
+  ];
 
   const sortOptions = [
     { value: "featured", label: "Featured" },
@@ -101,7 +72,7 @@ export default function GroceryPage() {
     { value: "price-high", label: "Price: High to Low" },
     { value: "rating", label: "Customer Rating" },
     { value: "alphabetical", label: "A to Z" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -111,11 +82,15 @@ export default function GroceryPage() {
         {/* Page Header */}
         <div className="mb-8">
           <nav className="text-sm text-gray-600 mb-4">
-            <span>Home</span> <span className="mx-2">/</span>{" "}
+            <span>Home</span> <span className="mx-2">/</span>
             <span className="text-gray-900">Grocery & Essentials</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Grocery & Essentials</h1>
-          <p className="text-gray-600">Fresh groceries and everyday essentials delivered to your door</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Grocery & Essentials
+          </h1>
+          <p className="text-gray-600">
+            Fresh groceries and everyday essentials delivered to your door
+          </p>
         </div>
 
         {/* Delivery Banner */}
@@ -137,7 +112,6 @@ export default function GroceryPage() {
         {/* Search and Filter Bar */}
         <div className="bg-white rounded-lg border p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search */}
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -149,9 +123,7 @@ export default function GroceryPage() {
               />
             </div>
 
-            {/* Controls */}
             <div className="flex items-center space-x-4">
-              {/* Sort Dropdown */}
               <div className="relative">
                 <select
                   value={sortBy}
@@ -167,7 +139,6 @@ export default function GroceryPage() {
                 <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
 
-              {/* View Mode Toggle */}
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
@@ -183,7 +154,6 @@ export default function GroceryPage() {
                 </button>
               </div>
 
-              {/* Filter Toggle - Mobile */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="md:hidden flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-lg"
@@ -196,34 +166,36 @@ export default function GroceryPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar Filters */}
           <div className={`lg:col-span-1 ${showFilters ? "block" : "hidden lg:block"}`}>
             <CategoryFilter categories={categories} />
           </div>
 
-          {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">{groceryProducts.length} results</p>
+              <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
             <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
-              {groceryProducts.map((product) => (
+              {visibleProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
 
-            {/* Load More Button */}
-            <div className="text-center mt-8">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
-                Load More Products
-              </button>
-            </div>
+            {visibleCount < filteredProducts.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium"
+                >
+                  Load More Products
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
 
       <Footer />
     </div>
-  )
+  );
 }

@@ -1,10 +1,6 @@
-/**
- * Sports Category Page
- * Displays sports equipment, apparel, and accessories
- * Responsive layout with sports-specific categories and filters
- */
 "use client"
-import { useState } from "react"
+
+import { useEffect, useState } from "react"
 import Header from "../../../components/Layout/Header/Header"
 import Footer from "../../../components/Layout/Footer/Footer"
 import ProductCard from "../../../components/ProductCard/ProductCard"
@@ -16,83 +12,54 @@ export default function SportsPage() {
   const [sortBy, setSortBy] = useState("featured")
   const [showFilters, setShowFilters] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
+  const [sportsProducts, setSportsProducts] = useState([])
+  const [visibleCount, setVisibleCount] = useState(6)
 
-  // Mock sports products data
-  const sportsProducts = [
-    {
-      id: "sports-1",
-      title: "Sports Equipment Set",
-      price: 29.99,
-      originalPrice: 39.99,
-      rating: 4.6,
-      reviews: 1234,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Best Seller",
-      category: "Equipment",
-    },
-    {
-      id: "sports-2",
-      title: "Performance Apparel",
-      price: 49.99,
-      originalPrice: 69.99,
-      rating: 4.8,
-      reviews: 2156,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Top Rated",
-      category: "Apparel",
-    },
-    {
-      id: "sports-3",
-      title: "Protective Gear Pack",
-      price: 149.99,
-      originalPrice: 199.99,
-      rating: 4.7,
-      reviews: 892,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Save $50",
-      category: "Accessories",
-    },
-    {
-      id: "sports-4",
-      title: "Training Shoes",
-      price: 89.99,
-      originalPrice: 119.99,
-      rating: 4.5,
-      reviews: 1567,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Popular",
-      category: "Footwear",
-    },
-    {
-      id: "sports-5",
-      title: "Fitness Tracker",
-      price: 79.99,
-      rating: 4.4,
-      reviews: 543,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Strength",
-      category: "Electronics",
-    },
-    {
-      id: "sports-6",
-      title: "Sports Bag",
-      price: 24.99,
-      originalPrice: 34.99,
-      rating: 4.6,
-      reviews: 789,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Durable",
-      category: "Accessories",
-    },
-  ]
+  useEffect(() => {
+    const fetchSportsProducts = async () => {
+      try {
+        const res = await fetch("/api/product/category/Gym Related")
+        const data = await res.json()
+        const transformed = data.map((p) => ({
+          id: p._id,
+          title: p.name,
+          price: p.price,
+          originalPrice: p.discount
+            ? p.price / (1 - p.discount / 100)
+            : p.price,
+          rating: p.reviews?.[0]?.rating || 4.5,
+          reviews: p.reviews?.length || 0,
+          image: p.images?.[0] || "/placeholder.svg",
+          badge:
+            p.discount >= 30
+              ? "Hot Deal"
+              : p.discount > 0
+              ? `Save ${p.discount}%`
+              : "Popular",
+          category: p.category || "General",
+        }))
+        setSportsProducts(transformed)
+      } catch (err) {
+        console.error("Failed to fetch sports products", err)
+      }
+    }
+
+    fetchSportsProducts()
+  }, [])
+
+  const filteredProducts = sportsProducts.filter((p) =>
+    p.title.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const categories = [
     { name: "All Sports", count: sportsProducts.length },
-    { name: "Equipment", count: 1 },
-    { name: "Apparel", count: 1 },
-    { name: "Accessories", count: 2 },
-    { name: "Footwear", count: 1 },
-    { name: "Electronics", count: 1 },
+    ...Array.from(
+      sportsProducts.reduce((map, product) => {
+        const cat = product.category || "Uncategorized"
+        map.set(cat, (map.get(cat) || 0) + 1)
+        return map
+      }, new Map())
+    ).map(([name, count]) => ({ name, count })),
   ]
 
   const sortOptions = [
@@ -111,7 +78,8 @@ export default function SportsPage() {
         {/* Page Header */}
         <div className="mb-8">
           <nav className="text-sm text-gray-600 mb-4">
-            <span>Home</span> <span className="mx-2">/</span> <span className="text-gray-900">Sports</span>
+            <span>Home</span> <span className="mx-2">/</span>{" "}
+            <span className="text-gray-900">Sports</span>
           </nav>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Sports & Outdoors</h1>
           <p className="text-gray-600">Gear up for your favorite sports and outdoor activities</p>
@@ -125,7 +93,9 @@ export default function SportsPage() {
                 <Trophy className="w-8 h-8" />
                 <h2 className="text-3xl font-bold">Champion Your Game</h2>
               </div>
-              <p className="text-lg mb-6">Professional-grade equipment for every sport and fitness level</p>
+              <p className="text-lg mb-6">
+                Professional-grade equipment for every sport and fitness level
+              </p>
               <button className="bg-white text-orange-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100">
                 Shop Pro Gear
               </button>
@@ -166,7 +136,7 @@ export default function SportsPage() {
                 <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
 
-              {/* View Mode Toggle */}
+              {/* View Toggle */}
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
@@ -203,21 +173,25 @@ export default function SportsPage() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">{sportsProducts.length} results</p>
+              <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
             <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
-              {sportsProducts.map((product) => (
+              {filteredProducts.slice(0, visibleCount).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
 
-            {/* Load More Button */}
-            <div className="text-center mt-8">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
-                Load More Products
-              </button>
-            </div>
+            {visibleCount < filteredProducts.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 6)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium"
+                >
+                  Load More Products
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
