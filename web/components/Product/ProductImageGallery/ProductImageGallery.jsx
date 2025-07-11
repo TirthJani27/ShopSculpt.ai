@@ -3,21 +3,21 @@
  * Displays product images with thumbnail navigation
  * Responsive design with zoom functionality
  */
-"use client"
-import { useState } from "react"
-import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react"
+"use client";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
 export default function ProductImageGallery({ images, productName }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isZoomed, setIsZoomed] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length)
-  }
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
-  }
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   return (
     <div className="space-y-4">
@@ -66,7 +66,9 @@ export default function ProductImageGallery({ images, productName }) {
               key={index}
               onClick={() => setCurrentImageIndex(index)}
               className={`aspect-square rounded-lg border-2 overflow-hidden ${
-                index === currentImageIndex ? "border-blue-500" : "border-gray-200 hover:border-gray-300"
+                index === currentImageIndex
+                  ? "border-blue-500"
+                  : "border-gray-200 hover:border-gray-300"
               }`}
             >
               <img
@@ -86,5 +88,5 @@ export default function ProductImageGallery({ images, productName }) {
         </div>
       )}
     </div>
-  )
+  );
 }

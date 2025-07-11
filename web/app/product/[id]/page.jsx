@@ -1,114 +1,145 @@
-/**
- * Product Detail Page
- * Displays detailed product information, images, pricing, and related products
- * This file doesnt fatch data it only displays product from given function.
- */
+"use client";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
+import Header from "../../../components/Layout/Header/Header";
+import Footer from "../../../components/Layout/Footer/Footer";
+import ProductImageGallery from "../../../components/Product/ProductImageGallery/ProductImageGallery";
+import ProductInfo from "../../../components/Product/ProductInfo/ProductInfo";
+import ProductReviews from "../../../components/Product/ProductReviews/ProductReviews";
+import RelatedProducts from "../../../components/Product/RelatedProducts/RelatedProducts";
+import { ArrowLeft } from "lucide-react";
 
-"use client"
+function discounted(product) {
+  const originalPrice = product.price;
+  const discountedPrice = (originalPrice * product.discount) / 100;
+  const price = originalPrice - discountedPrice;
+  product.originalPrice = originalPrice;
+  product.price = price;
+  product.savedAmount = discountedPrice;
+}
 
-import Link from "next/link"
-import Header from "../../../components/Layout/Header/Header"
-import Footer from "../../../components/Layout/Footer/Footer"
-import ProductImageGallery from "../../../components/Product/ProductImageGallery/ProductImageGallery"
-import ProductInfo from "../../../components/Product/ProductInfo/ProductInfo"
-import ProductReviews from "../../../components/Product/ProductReviews/ProductReviews"
-import RelatedProducts from "../../../components/Product/RelatedProducts/RelatedProducts"
-import { ArrowLeft } from "lucide-react"
-
-export default function ProductPage({ params }) {
-  // Mock product data - in real app, this would come from API
-  const product = {
-    id: params.id,
-    name: "Modern Platform Bed Frame with Headboard",
-    price: 299.99,
-    originalPrice: 399.99,
-    discount: 25,
-    rating: 4.5,
-    reviewCount: 1234,
-    inStock: true,
-    images: [
-      "/placeholder.svg?height=500&width=500",
-      "/placeholder.svg?height=500&width=500",
-      "/placeholder.svg?height=500&width=500",
-      "/placeholder.svg?height=500&width=500",
-    ],
-    description:
-      "Transform your bedroom with this sleek and modern platform bed frame. Features a stylish upholstered headboard and sturdy construction.",
-    features: [
-      "Solid wood construction",
-      "Easy assembly",
-      "No box spring required",
-      "Weight capacity: 500 lbs",
-      "Available in multiple sizes",
-    ],
-    specifications: {
-      Material: "Solid Wood",
-      Color: "Natural Oak",
-      Dimensions: '60" W x 80" L x 45" H',
-      Weight: "85 lbs",
-      "Assembly Required": "Yes",
-    },
+function averageRatings(product) {
+  let temp = 0;
+  for (let i = 0; i < product.reviews.length; i++) {
+    temp += product.reviews[i].rating;
   }
+  temp = temp / product.reviews.length;
+  product.averageRating = temp;
+  product.reviewCount = product.reviews.length;
+}
+
+export default function ProductPage() {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await axios.get(`http://localhost:3000/api/product/${id}`);
+        const res2 = await axios.get(`http://localhost:3000/api/reviews/${id}`);
+        console.log(res2.data.reviews);
+
+        const prod = {
+          id,
+          ...res.data.product,
+          reviews: res2.data.reviews,
+        };
+
+        discounted(prod);
+        averageRatings(prod);
+
+        setProduct(prod);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+      }
+    }
+
+    if (id) fetchData();
+  }, [id]);
+
+  if (!product)
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.4)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+        }}
+      >
+        <div
+          style={{
+            width: 60,
+            height: 60,
+            border: "6px solid #f3f3f3",
+            borderTop: "6px solid #3498db",
+            borderRadius: "75%",
+            animation: "spin 1s linear infinite",
+          }}
+        />
+        <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg);}
+          100% { transform: rotate(360deg);}
+        }
+      `}</style>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
       <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Breadcrumb Navigation */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-          <Link href="/" className="hover:text-blue-600">
-            Home
-          </Link>
-          <span>/</span>
-          <Link href="/categories/furniture" className="hover:text-blue-600">
-            Furniture
-          </Link>
-          <span>/</span>
-          <Link href="/categories/bedroom" className="hover:text-blue-600">
-            Bedroom
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900">{product.name}</span>
-        </nav>
-
-        {/* Back Button - Mobile */}
         <button className="md:hidden flex items-center space-x-2 text-blue-600 mb-4">
           <ArrowLeft className="w-4 h-4" />
           <span>Back to results</span>
         </button>
 
-        {/* Product Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Product Images - Left Column */}
           <div className="lg:col-span-1">
-            <ProductImageGallery images={product.images} productName={product.name} />
+            <ProductImageGallery
+              images={product.images}
+              productName={product.name}
+            />
           </div>
 
-          {/* Product Information - Middle Column */}
           <div className="lg:col-span-1">
             <ProductInfo product={product} />
           </div>
 
-          {/* Purchase Options - Right Column */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg border p-6 sticky top-24">
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-3xl font-bold text-gray-900">${product.price}</span>
-                    <span className="text-lg text-gray-500 line-through">${product.originalPrice}</span>
-                    <span className="bg-red-100 text-red-800 text-sm px-2 py-1 rounded">{product.discount}% off</span>
+                    <span className="text-3xl font-bold text-gray-900">
+                      ₹{product.price}
+                    </span>
+                    <span className="text-lg text-gray-500 line-through">
+                      ₹{product.originalPrice}
+                    </span>
+                    <span className="bg-red-100 text-red-800 text-sm px-2 py-1 rounded">
+                      {product.discount}% off
+                    </span>
                   </div>
                   <p className="text-green-600 text-sm font-medium">
-                    You save ${(product.originalPrice - product.price).toFixed(2)}
+                    You save ₹{product.savedAmount.toFixed(2)}
                   </p>
                 </div>
 
                 <div className="border-t pt-4">
                   <p className="text-green-600 font-medium mb-2">✓ In Stock</p>
-                  <p className="text-sm text-gray-600 mb-4">Free shipping on orders over $35</p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Free shipping on orders over ₹350
+                  </p>
 
                   <div className="space-y-3">
                     <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
@@ -135,20 +166,19 @@ export default function ProductPage({ params }) {
           </div>
         </div>
 
-        {/* Product Reviews Section */}
         <div className="mt-12">
-          <ProductReviews productId={product.id} rating={product.rating} reviewCount={product.reviewCount} />
+          <ProductReviews
+            product={product}
+            rating={product.rating}
+            reviewCount={product.reviewCount}
+          />
         </div>
 
-        {/* Related Products */}
         <div className="mt-12">
           <RelatedProducts currentProductId={product.id} />
         </div>
       </main>
-
       <Footer />
     </div>
-  )
+  );
 }
-
-

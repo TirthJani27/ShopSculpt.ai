@@ -8,7 +8,6 @@ export async function GET(
 ) {
   try {
     await dbConnect();
-
     const { id } = params;
     const product = await Product.findById(id);
 

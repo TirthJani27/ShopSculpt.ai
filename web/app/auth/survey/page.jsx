@@ -91,7 +91,7 @@ export default function SurveyPage() {
     { id: "seasonalshopper", label: "Seasonal Shopper" },
     { id: "giftgiver", label: "Gift Giver" },
 
-    // Health & Dietary
+    // Health & Dietary 
     { id: "glutenfree", label: "Gluten-Free Buyer" },
     { id: "organiconly", label: "Organic Only" },
     { id: "ketofriendly", label: "Keto Friendly Shopper" },
