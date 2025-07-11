@@ -1,10 +1,6 @@
-/**
- * Electronics Category Page
- * Displays electronics products with filtering, sorting, and search
- * Responsive grid layout with category navigation
- */
 "use client"
-import { useState } from "react"
+
+import { useEffect, useState } from "react"
 import Header from "../../../components/Layout/Header/Header"
 import Footer from "../../../components/Layout/Footer/Footer"
 import ProductCard from "../../../components/ProductCard/ProductCard"
@@ -16,84 +12,60 @@ export default function ElectronicsPage() {
   const [sortBy, setSortBy] = useState("featured")
   const [showFilters, setShowFilters] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
+  const [electronicsProducts, setElectronicsProducts] = useState([])
+  const [visibleCount, setVisibleCount] = useState(6)
 
-  // Mock electronics products data
-  const electronicsProducts = [
-    {
-      id: "elec-1",
-      title: 'Samsung 65" 4K Smart TV',
-      price: 599.99,
-      originalPrice: 799.99,
-      rating: 4.5,
-      reviews: 1234,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Best Seller",
-      category: "TVs",
-    },
-    {
-      id: "elec-2",
-      title: "Apple iPhone 15 Pro Max",
-      price: 1199.99,
-      originalPrice: 1299.99,
-      rating: 4.8,
-      reviews: 2156,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "New",
-      category: "Smartphones",
-    },
-    {
-      id: "elec-3",
-      title: "Sony WH-1000XM5 Headphones",
-      price: 349.99,
-      originalPrice: 399.99,
-      rating: 4.7,
-      reviews: 892,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Save $50",
-      category: "Audio",
-    },
-    {
-      id: "elec-4",
-      title: "MacBook Air M2",
-      price: 1099.99,
-      originalPrice: 1199.99,
-      rating: 4.6,
-      reviews: 1567,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Popular",
-      category: "Laptops",
-    },
-    {
-      id: "elec-5",
-      title: "Nintendo Switch OLED",
-      price: 349.99,
-      rating: 4.8,
-      reviews: 3421,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Hot Deal",
-      category: "Gaming",
-    },
-    {
-      id: "elec-6",
-      title: 'iPad Pro 12.9"',
-      price: 1099.99,
-      originalPrice: 1199.99,
-      rating: 4.7,
-      reviews: 987,
-      image: "/placeholder.svg?height=300&width=300",
-      badge: "Save $100",
-      category: "Tablets",
-    },
-  ]
+  useEffect(() => {
+    const fetchElectronics = async () => {
+      try {
+        const res = await fetch("/api/product/category/Electronic")
+        const data = await res.json()
+
+        const transformed = data.map((p) => ({
+          id: p._id,
+          title: p.name,
+          price: p.price,
+          originalPrice: p.discount ? p.price / (1 - p.discount / 100) : p.price,
+          rating: p.reviews?.[0]?.rating || 4.5,
+          reviews: p.reviews?.length || 0,
+          image: p.images?.[0] || "/placeholder.svg",
+          badge:
+            p.discount >= 30
+              ? "Hot Deal"
+              : p.discount > 0
+              ? `Save ${p.discount}%`
+              : "Best Seller",
+          category: p.category || "General",
+        }))
+
+        setElectronicsProducts(transformed)
+      } catch (err) {
+        console.error("Failed to fetch electronics", err)
+      }
+    }
+
+    fetchElectronics()
+  }, [])
+
+  const filteredProducts = electronicsProducts.filter((p) =>
+    p.title.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount)
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 6)
+  }
 
   const categories = [
     { name: "All Electronics", count: electronicsProducts.length },
-    { name: "TVs", count: 1 },
-    { name: "Smartphones", count: 1 },
-    { name: "Audio", count: 1 },
-    { name: "Laptops", count: 1 },
-    { name: "Gaming", count: 1 },
-    { name: "Tablets", count: 1 },
+    ...Array.from(
+      electronicsProducts.reduce((map, product) => {
+        const cat = product.category || "Uncategorized"
+        map.set(cat, (map.get(cat) || 0) + 1)
+        return map
+      }, new Map())
+    ).map(([name, count]) => ({ name, count })),
   ]
 
   const sortOptions = [
@@ -112,10 +84,13 @@ export default function ElectronicsPage() {
         {/* Page Header */}
         <div className="mb-8">
           <nav className="text-sm text-gray-600 mb-4">
-            <span>Home</span> <span className="mx-2">/</span> <span className="text-gray-900">Electronics</span>
+            <span>Home</span> <span className="mx-2">/</span>{" "}
+            <span className="text-gray-900">Electronics</span>
           </nav>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Electronics</h1>
-          <p className="text-gray-600">Discover the latest in technology and electronics</p>
+          <p className="text-gray-600">
+            Discover the latest in technology and electronics
+          </p>
         </div>
 
         {/* Search and Filter Bar */}
@@ -188,21 +163,26 @@ export default function ElectronicsPage() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">{electronicsProducts.length} results</p>
+              <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
             <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
-              {electronicsProducts.map((product) => (
+              {visibleProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
 
             {/* Load More Button */}
-            <div className="text-center mt-8">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
-                Load More Products
-              </button>
-            </div>
+            {visibleCount < filteredProducts.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium"
+                >
+                  Load More Products
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
