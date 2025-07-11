@@ -12,10 +12,12 @@ function getRandomDate() {
 
 export default function ProductReviews({ product }) {
   const [filterBy, setFilterBy] = useState("all");
-  const rating = product.averageRating;
-  const reviewCount = product.reviews.length;
+  const [showAll, setShowAll] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3);
 
+  const rating = product.averageRating;
   const reviews = product.reviews;
+  const reviewCount = reviews.length;
 
   const renderStars = (rating) => {
     return [...Array(5)].map((_, i) => (
@@ -54,6 +56,14 @@ export default function ProductReviews({ product }) {
       ? reviews
       : reviews.filter((review) => review.rating === parseInt(filterBy));
 
+  const visibleReviews = showAll
+    ? filteredReviews
+    : filteredReviews.slice(0, visibleCount);
+
+  const toggleShowAll = () => {
+    setShowAll(!showAll);
+  };
+
   return (
     <div className="bg-white rounded-lg border p-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -62,7 +72,6 @@ export default function ProductReviews({ product }) {
 
       {/* Rating Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-        {/* Overall Rating */}
         <div>
           <div className="flex items-center space-x-4 mb-4">
             <div className="text-4xl font-bold text-gray-900">{rating}</div>
@@ -76,7 +85,6 @@ export default function ProductReviews({ product }) {
             </div>
           </div>
 
-          {/* Rating Distribution */}
           <div className="space-y-2">
             {[5, 4, 3, 2, 1].map((stars) => (
               <div key={stars} className="flex items-center space-x-2">
@@ -100,7 +108,6 @@ export default function ProductReviews({ product }) {
           </div>
         </div>
 
-        {/* Write Review Button */}
         <div className="flex flex-col justify-center">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Share your experience
@@ -117,7 +124,10 @@ export default function ProductReviews({ product }) {
           <div className="relative">
             <select
               value={filterBy}
-              onChange={(e) => setFilterBy(e.target.value)}
+              onChange={(e) => {
+                setFilterBy(e.target.value);
+                setShowAll(false); // Reset to collapsed view on filter change
+              }}
               className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {filterOptions.map((option) => (
@@ -131,16 +141,16 @@ export default function ProductReviews({ product }) {
         </div>
 
         <p className="text-sm text-gray-600">
-          {filteredReviews.length} of {reviews.length} reviews
+          {visibleReviews.length} of {filteredReviews.length} reviews
         </p>
       </div>
 
       {/* Reviews List */}
       <div className="space-y-6">
-        {filteredReviews.map((review) => (
+        {visibleReviews.map((review) => (
           <div
             key={review.id}
-            className="border-b border-gray-200  last:border-b-0"
+            className="border-b border-gray-200 last:border-b-0"
           >
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -168,6 +178,18 @@ export default function ProductReviews({ product }) {
           </div>
         ))}
       </div>
+
+      {/* Toggle Button */}
+      {filteredReviews.length > visibleCount && (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={toggleShowAll}
+            className="text-blue-600 font-medium hover:underline"
+          >
+            {showAll ? "Show Less" : "Load More Reviews"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
