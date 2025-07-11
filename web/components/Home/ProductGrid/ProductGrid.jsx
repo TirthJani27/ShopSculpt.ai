@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,19 +9,17 @@ export default function ProductGrid() {
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [groceryProducts, setGroceryProducts] = useState([]);
   const [electronicsProducts, setElectronicsProducts] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        // Fetch recommended products
         const recRes = await fetch("/api/product/recommended");
         const recommended = await recRes.json();
 
-        // Fetch grocery category
         const groceryRes = await fetch("/api/product/category/Grocery");
         const grocery = await groceryRes.json();
 
-        // Fetch electronics category
         const electronicsRes = await fetch("/api/product/category/Electronic");
         const electronics = await electronicsRes.json();
 
@@ -50,8 +49,10 @@ export default function ProductGrid() {
         setRecommendedProducts(transform(recommended));
         setGroceryProducts(transform(grocery));
         setElectronicsProducts(transform(electronics));
+        setLoading(false);
       } catch (err) {
         console.error("Failed to load products from DB:", err);
+        setLoading(false);
       }
     };
 
@@ -79,33 +80,39 @@ export default function ProductGrid() {
     },
   ];
 
+  const SkeletonCard = () => (
+    <div className="bg-gray-100 animate-pulse h-64 rounded-xl" />
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Featured Products */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">Featured Products</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {recommendedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            : recommendedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
         </div>
       </section>
 
-      {/* Category Sections */}
-      {categories.map((category, index) => (
-        <CategorySection key={index} category={category} />
-      ))}
+      {!loading &&
+        categories.map((category, index) => (
+          <CategorySection key={index} category={category} />
+        ))}
 
-      {/* Additional Product Grid */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">More Great Deals</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {recommendedProducts.map((product, index) => (
-            <ProductCard
-              key={`more-${index}`}
-              product={{ ...product, id: `more-${index}` }}
-            />
-          ))}
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            : recommendedProducts.map((product, index) => (
+                <ProductCard
+                  key={`more-${index}`}
+                  product={{ ...product, id: `more-${index}` }}
+                />
+              ))}
         </div>
       </section>
     </div>

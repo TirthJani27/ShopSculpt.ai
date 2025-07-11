@@ -1,82 +1,87 @@
-
+"use client"
 import Link from "next/link"
-
 
 export default function HeroSection() {
   return (
-    <section className="bg-gray-50 py-6">
+    <section className="bg-gray-50 py-10">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Main banner grid */}
-        <div className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-          {/* Large banner */}
-          <div className="md:col-span-2 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-6 text-white relative overflow-hidden">
-            <div className="relative z-10">
-              <h2 className="text-2xl font-bold mb-2">Yes to savings on top-rated tech</h2>
-              <p className="text-blue-100 mb-4">Shop now</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+
+          <Link href="/categories/electronics" className="block">
+            <div className="bg-white rounded-2xl p-6 border transition h-full  hover:shadow-[0_6px_24px_rgba(0,0,255,0.3)]">
+              <img
+                src="/tech.png"
+                alt="Electronics"
+                className="w-full h-40 object-cover rounded-xl mb-4"
+              />
+              <h3 className="font-bold text-lg mb-1">Electronics</h3>
+              <p className="text-sm text-gray-600">20% off tech accessories</p>
             </div>
-            <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-          </div>
-
-          {/* Smaller banners */}
-          <Link href="/categories/electronics" className="">
-          
-          <div className="bg-white rounded-2xl p-4 border">
-            <img
-              src="/tech.png"
-              alt="Product"
-              className="w-full h-24 object-cover rounded-xl mb-2"
-            />
-            <h3 className="font-semibold text-sm">20% off tech accessories</h3>
-            <p className="text-xs text-gray-600">Shop now</p>
-          </div>
           </Link>
 
-          <Link href="/categories/fashion" className="">
-          <div className="bg-white rounded-2xl p-4 border">
-            <img
-              src="/beauty.png"
-              alt="Product"
-              className="w-full h-24 object-cover rounded-xl mb-2"
-            />
-            <h3 className="font-semibold text-sm">Beauty must-haves</h3>
-            <p className="text-xs text-gray-600">Shop now</p>
-          </div>
+          <Link href="/categories/beauty" className="block">
+            <div className="bg-white rounded-2xl p-6 border transition h-full  hover:shadow-[0_6px_24px_rgba(0,0,255,0.3)]">
+              <img
+                src="/beauty.png"
+                alt="Beauty"
+                className="w-full h-40 object-cover rounded-xl mb-4"
+              />
+              <h3 className="font-bold text-lg mb-1">Cosmetics</h3>
+              <p className="text-sm text-gray-600">Beauty must-haves</p>
+            </div>
           </Link>
-          </div>
 
-        {/* Secondary banner row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <div className="bg-green-600 rounded-2xl p-4 text-white">
-            <h3 className="font-bold text-sm mb-1">Free shipping, no order minimum</h3>
-            <p className="text-xs">Sign up or sign in</p>
-          </div>
+          <Link href="/categories/furniture" className="block">
+            <div className="bg-white rounded-2xl p-6 border transition h-full  hover:shadow-[0_6px_24px_rgba(0,0,255,0.3)]">
+              <img
+                src="/furniture.png"
+                alt="Home & Kitchen"
+                className="w-full h-40 object-cover rounded-xl mb-4"
+              />
+              <h3 className="font-bold text-lg mb-1">Home Decor</h3>
+              <p className="text-sm text-gray-600">Upgrade your space</p>
+            </div>
+          </Link>
 
-          <div className="bg-red-500 rounded-2xl p-4 text-white">
-            <h3 className="font-bold text-sm mb-1">Rollback</h3>
-            <p className="text-xs">Great deals</p>
-          </div>
+          <Link href="/categories/sports" className="block">
+            <div className="bg-white rounded-2xl p-6 border transition h-full  hover:shadow-[0_6px_24px_rgba(0,0,255,0.3)]">
+              <img
+                src="/sports.png"
+                alt="Sports & Fitness"
+                className="w-full h-40 object-cover rounded-xl mb-4"
+              />
+              <h3 className="font-bold text-lg mb-1">Sports & Fitness</h3>
+              <p className="text-sm text-gray-600">Gear up and save</p>
+            </div>
+          </Link>
 
-          <div className="bg-yellow-400 rounded-2xl p-4 text-black">
-            <h3 className="font-bold text-sm mb-1">Flash Deals</h3>
-            <p className="text-xs">Limited time</p>
-          </div>
+          <Link href="/categories/grocery" className="block">
+            <div className="bg-white rounded-2xl p-6 border transition h-full  hover:shadow-[0_6px_24px_rgba(0,0,255,0.3)]">
+              <img
+                src="/grocerry.png"
+                alt="Groceries"
+                className="w-full h-40 object-cover rounded-xl mb-4"
+              />
+              <h3 className="font-bold text-lg mb-1">Groceries</h3>
+              <p className="text-sm text-gray-600">Instant Delivery</p>
+            </div>
+          </Link>
 
-          <div className="bg-purple-600 rounded-2xl p-4 text-white">
-            <h3 className="font-bold text-sm mb-1">New arrivals</h3>
-            <p className="text-xs">Check them out</p>
-          </div>
+          <Link href="/categories/fashion" className="block">
+            <div className="bg-white rounded-2xl p-6 border transition h-full  hover:shadow-[0_6px_24px_rgba(0,0,255,0.3)]">
+              <img
+                src="/clothing.png"
+                alt="Clothing & Accessories"
+                className="w-full h-40 object-cover rounded-xl mb-4"
+              />
+              <h3 className="font-bold text-lg mb-1">Clothing & Accessories</h3>
+              <p className="text-sm text-gray-600">Trendy & affordable</p>
+            </div>
+          </Link>
 
-          <div className="bg-orange-500 rounded-2xl p-4 text-white">
-            <h3 className="font-bold text-sm mb-1">Clearance</h3>
-            <p className="text-xs">Up to 50% off</p>
-          </div>
-
-          <div className="bg-teal-600 rounded-2xl p-4 text-white">
-            <h3 className="font-bold text-sm mb-1">Home essentials</h3>
-            <p className="text-xs">Shop now</p>
-          </div>
         </div>
       </div>
     </section>
   )
 }
+
