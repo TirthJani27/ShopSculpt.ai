@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     await dbConnect();
-    const { productId } = params;
+    const { productId } =await params;
 
     const reviews = await Review.find({ productId }).sort({ createdAt: -1 });
 
