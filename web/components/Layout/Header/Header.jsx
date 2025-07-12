@@ -262,10 +262,10 @@ export default function Header() {
                 Sports
               </Link>
               <Link
-                href="/pharmacy"
+                href="/categories/beauty"
                 className="py-2 md:py-0 cursor-pointer hover:underline"
               >
-                Pharmacy
+                Beauty
               </Link>
             </div>
           </div>
