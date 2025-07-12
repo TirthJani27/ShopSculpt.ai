@@ -1,6 +1,7 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { create } from "zustand";
 import axios from "axios";
 
 import Header from "../../../components/Layout/Header/Header";
@@ -31,6 +32,7 @@ function averageRatings(product) {
 }
 
 export default function ProductPage() {
+  const router = useRouter();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
 
@@ -145,7 +147,10 @@ export default function ProductPage() {
                     <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-colors">
                       Add to Cart
                     </button>
-                    <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors">
+                    <button
+                      onClick={() => router.push("/payment")}
+                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors"
+                    >
                       Buy Now
                     </button>
                   </div>

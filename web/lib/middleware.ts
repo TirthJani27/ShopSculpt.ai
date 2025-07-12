@@ -8,6 +8,13 @@ function extractToken(req: NextRequest) {
   if (cookieToken) return cookieToken;
 
   const authHeader = req.headers.get("authorization");
+  console.log("Authorization Header:", authHeader);
+  const token = authHeader?.split(" ")[1];
+  
+  if (!token) {
+    console.log("Token not found");
+    return { isAuthorized: false, user: null };
+  }
 
   if (authHeader && authHeader.startsWith("Bearer ")) {
     return authHeader.substring(7).trim();
@@ -30,12 +37,12 @@ export async function authUser(
     if (!process.env.JWT_SECRET)
       throw new Error("JWT_SECRET is not defined in environment variables");
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     let userId: string | undefined;
 
-    if (typeof decoded === "object" && decoded !== null && "id" in decoded) {
-      userId = (decoded as jwt.JwtPayload).id as string;
-    }
+    // if (typeof decoded === "object" && decoded !== null && "id" in decoded) {
+    //   userId = (decoded as jwt.JwtPayload).id as string;
+    // }
 
     if (!userId) return { isAuthorized: false };
 

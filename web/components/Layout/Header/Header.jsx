@@ -216,12 +216,6 @@ export default function Header() {
                 <span>Home</span>
               </Link>
               <Link
-                href="/categories/departments"
-                className="py-2 md:py-0 cursor-pointer hover:underline"
-              >
-                Departments
-              </Link>
-              <Link
                 href="/services"
                 className="py-2 md:py-0 cursor-pointer hover:underline"
               >
@@ -258,16 +252,10 @@ export default function Header() {
                 Sports
               </Link>
               <Link
-                href="/categories/auto"
+                href="/categories/beauty"
                 className="py-2 md:py-0 cursor-pointer hover:underline"
               >
-                Auto & tires
-              </Link>
-              <Link
-                href="/pharmacy"
-                className="py-2 md:py-0 cursor-pointer hover:underline"
-              >
-                Pharmacy
+                Beauty
               </Link>
             </div>
           </div>
