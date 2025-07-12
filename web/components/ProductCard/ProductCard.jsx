@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { Star, Heart, ShoppingCart, Check } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -7,7 +7,7 @@ import { useWishlist } from "../../contexts/WishlistContext";
 import { useCart } from "../../contexts/CartContext";
 
 /**
- * Custom hook that shortens text only when it overflows the container
+ * Hook to truncate text if it overflows
  */
 function useTruncateIfOverflow(text, maxLength = 40) {
   const [displayText, setDisplayText] = useState(text);
@@ -17,7 +17,6 @@ function useTruncateIfOverflow(text, maxLength = 40) {
     const checkOverflow = () => {
       const el = spanRef.current;
       if (!el) return;
-
       if (el.scrollWidth > el.clientWidth) {
         setDisplayText(text.slice(0, maxLength).trim() + "…");
       } else {
@@ -43,16 +42,19 @@ export default function ProductCard({ product }) {
   const { isLoggedIn } = useAuth();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { addToCart, isInCart } = useCart();
+
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  const { title, price, originalPrice, rating, reviews, image, badge } =
-    product;
+  const { title, price, originalPrice, image, badge } = product;
   const inWishlist = isInWishlist(product.id);
   const inCartAlready = isInCart(product.id);
-
   const { displayText, spanRef } = useTruncateIfOverflow(title, 45);
+
+  
+  const randomRating = useMemo(() => (Math.random() * 2 + 3).toFixed(1), []);
+  const randomReviews = useMemo(() => Math.floor(Math.random() * 799 + 1), []);
 
   const showToastMessage = (message) => {
     setToastMessage(message);
@@ -63,12 +65,7 @@ export default function ProductCard({ product }) {
   const handleWishlistClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (!isLoggedIn) {
-      showToastMessage("Please sign in to add items to wishlist");
-      return;
-    }
-
+    if (!isLoggedIn) return showToastMessage("Please sign in to add to wishlist");
     const result = inWishlist
       ? removeFromWishlist(product.id)
       : addToWishlist(product);
@@ -78,14 +75,9 @@ export default function ProductCard({ product }) {
   const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (!isLoggedIn) {
-      showToastMessage("Please sign in to add items to cart");
-      return;
-    }
-
+    if (!isLoggedIn) return showToastMessage("Please sign in to add to cart");
     setIsAddingToCart(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((r) => setTimeout(r, 500));
     const result = addToCart(product);
     showToastMessage(result.message);
     setIsAddingToCart(false);
@@ -132,21 +124,22 @@ export default function ProductCard({ product }) {
               {displayText}
             </h3>
 
-            {rating && (
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-3 h-3 ${
-                      i < Math.floor(rating)
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-                <span className="text-xs text-gray-600">({reviews})</span>
-              </div>
-            )}
+            {/* ⭐ Random Rating display */}
+            <div className="flex items-center space-x-1">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-3 h-3 ${
+                    i < Math.floor(randomRating)
+                      ? "text-yellow-400 fill-current"
+                      : i < randomRating
+                      ? "text-yellow-300"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+              <span className="text-xs text-gray-600">({randomReviews})</span>
+            </div>
 
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-gray-900">

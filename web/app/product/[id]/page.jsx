@@ -1,3 +1,4 @@
+
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,6 +21,7 @@ function discounted(product) {
   product.savedAmount = discountedPrice;
 }
 
+
 function averageRatings(product) {
   let temp = 0;
   for (let i = 0; i < product.reviews.length; i++) {
@@ -39,7 +41,6 @@ export default function ProductPage() {
       try {
         const res = await axios.get(`http://localhost:3000/api/product/${id}`);
         const res2 = await axios.get(`http://localhost:3000/api/reviews/${id}`);
-        console.log(res2.data.reviews);
 
         const prod = {
           id,
@@ -49,8 +50,14 @@ export default function ProductPage() {
 
         discounted(prod);
         averageRatings(prod);
-
         setProduct(prod);
+
+        //  Store viewed product ID in localStorage
+        const viewed = JSON.parse(localStorage.getItem("viewedProducts")) || [];
+        if (!viewed.includes(id)) {
+          const updated = [...viewed, id].slice(-10); // keep only last 10
+          localStorage.setItem("viewedProducts", JSON.stringify(updated));
+        }
       } catch (err) {
         console.error("Error fetching product:", err);
       }
@@ -81,16 +88,16 @@ export default function ProductPage() {
             height: 60,
             border: "6px solid #f3f3f3",
             borderTop: "6px solid #3498db",
-            borderRadius: "75%",
+            borderRadius: "50%",
             animation: "spin 1s linear infinite",
           }}
         />
         <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg);}
-          100% { transform: rotate(360deg);}
-        }
-      `}</style>
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
 
@@ -105,10 +112,7 @@ export default function ProductPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
-            <ProductImageGallery
-              images={product.images}
-              productName={product.name}
-            />
+            <ProductImageGallery images={product.images} productName={product.name} />
           </div>
 
           <div className="lg:col-span-1">
@@ -154,7 +158,7 @@ export default function ProductPage() {
                 <div className="border-t pt-4 text-sm text-gray-600">
                   <div className="flex justify-between py-1">
                     <span>Delivery:</span>
-                    <span className="font-medium">2-3 business days</span>
+                    <span className="font-medium">2–3 business days</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Pickup:</span>
@@ -169,7 +173,7 @@ export default function ProductPage() {
         <div className="mt-12">
           <ProductReviews
             product={product}
-            rating={product.rating}
+            rating={product.averageRating}
             reviewCount={product.reviewCount}
           />
         </div>
