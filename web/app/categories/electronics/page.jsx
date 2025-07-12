@@ -1,31 +1,34 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Header from "../../../components/Layout/Header/Header"
-import Footer from "../../../components/Layout/Footer/Footer"
-import ProductCard from "../../../components/ProductCard/ProductCard"
-import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter"
-import { Search, Filter, Grid, List, ChevronDown } from "lucide-react"
+import { useEffect, useState } from "react";
+import Header from "../../../components/Layout/Header/Header";
+import Footer from "../../../components/Layout/Footer/Footer";
+import ProductCard from "../../../components/ProductCard/ProductCard";
+import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
+import { Search, Filter, Grid, List, ChevronDown } from "lucide-react";
 
 export default function ElectronicsPage() {
-  const [viewMode, setViewMode] = useState("grid")
-  const [sortBy, setSortBy] = useState("featured")
-  const [showFilters, setShowFilters] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [electronicsProducts, setElectronicsProducts] = useState([])
-  const [visibleCount, setVisibleCount] = useState(6)
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortBy, setSortBy] = useState("featured");
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [electronicsProducts, setElectronicsProducts] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchElectronics = async () => {
       try {
-        const res = await fetch("/api/product/category/Electronic")
-        const data = await res.json()
+        const res = await fetch("/api/product/category/Electronic");
+        const data = await res.json();
 
         const transformed = data.map((p) => ({
           id: p._id,
           title: p.name,
           price: p.price,
-          originalPrice: p.discount ? p.price / (1 - p.discount / 100) : p.price,
+          originalPrice: p.discount
+            ? p.price / (1 - p.discount / 100)
+            : p.price,
           rating: p.reviews?.[0]?.rating || 4.5,
           reviews: p.reviews?.length || 0,
           image: p.images?.[0] || "/placeholder.svg",
@@ -36,37 +39,39 @@ export default function ElectronicsPage() {
               ? `Save ${p.discount}%`
               : "Best Seller",
           category: p.category || "General",
-        }))
+        }));
 
-        setElectronicsProducts(transformed)
+        setElectronicsProducts(transformed);
       } catch (err) {
-        console.error("Failed to fetch electronics", err)
+        console.error("Failed to fetch electronics", err);
+      } finally {
+        setIsLoading(false); 
       }
-    }
+    };
 
-    fetchElectronics()
-  }, [])
+    fetchElectronics();
+  }, []);
 
   const filteredProducts = electronicsProducts.filter((p) =>
     p.title.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount)
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 6)
-  }
+    setVisibleCount((prev) => prev + 6);
+  };
 
   const categories = [
     { name: "All Electronics", count: electronicsProducts.length },
     ...Array.from(
       electronicsProducts.reduce((map, product) => {
-        const cat = product.category || "Uncategorized"
-        map.set(cat, (map.get(cat) || 0) + 1)
-        return map
+        const cat = product.category || "Uncategorized";
+        map.set(cat, (map.get(cat) || 0) + 1);
+        return map;
       }, new Map())
     ).map(([name, count]) => ({ name, count })),
-  ]
+  ];
 
   const sortOptions = [
     { value: "featured", label: "Featured" },
@@ -74,7 +79,7 @@ export default function ElectronicsPage() {
     { value: "price-high", label: "Price: High to Low" },
     { value: "rating", label: "Customer Rating" },
     { value: "newest", label: "Newest" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -126,17 +131,25 @@ export default function ElectronicsPage() {
                 <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
 
-              {/* View Mode Toggle */}
+              {/* View Toggle */}
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "grid"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "list"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -156,24 +169,52 @@ export default function ElectronicsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Filters */}
-          <div className={`lg:col-span-1 ${showFilters ? "block" : "hidden lg:block"}`}>
+          <div
+            className={`lg:col-span-1 ${
+              showFilters ? "block" : "hidden lg:block"
+            }`}
+          >
             <CategoryFilter categories={categories} />
           </div>
 
           {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">{filteredProducts.length} results</p>
+              <p className="text-gray-600">
+                {isLoading
+                  ? "Loading..."
+                  : `${filteredProducts.length} results`}
+              </p>
             </div>
 
-            <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
-              {visibleProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-2 md:grid-cols-3 gap-4"
+                  : "space-y-4"
+              }
+            >
+              {isLoading
+                ? Array(6)
+                    .fill(null)
+                    .map((_, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white border border-gray-200 rounded-lg p-4 animate-pulse"
+                      >
+                        <div className="w-full h-40 bg-gray-200 rounded mb-4" />
+                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                        <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
+                        <div className="h-4 bg-gray-300 rounded w-full" />
+                      </div>
+                    ))
+                : visibleProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
             </div>
 
             {/* Load More Button */}
-            {visibleCount < filteredProducts.length && (
+            {!isLoading && visibleCount < filteredProducts.length && (
               <div className="text-center mt-8">
                 <button
                   onClick={handleLoadMore}
@@ -189,5 +230,5 @@ export default function ElectronicsPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

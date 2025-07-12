@@ -1,10 +1,21 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Header from "../../../components/Layout/Header/Header";
 import Footer from "../../../components/Layout/Footer/Footer";
 import ProductCard from "../../../components/ProductCard/ProductCard";
 import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
 import { Search, Filter, Grid, List, ChevronDown, Home, Sofa, Bed } from "lucide-react";
+
+// Reusable skeleton card
+const SkeletonCard = () => (
+  <div className="animate-pulse bg-white p-4 border rounded-lg">
+    <div className="h-40 bg-gray-200 rounded mb-4"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+  </div>
+);
 
 export default function FurniturePage() {
   const [furnitureProducts, setFurnitureProducts] = useState([]);
@@ -14,6 +25,7 @@ export default function FurniturePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState("all");
   const [visibleCount, setVisibleCount] = useState(6);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchFurniture = async () => {
@@ -48,6 +60,8 @@ export default function FurniturePage() {
         setFurnitureProducts(transformed);
       } catch (err) {
         console.error("Failed to fetch furniture", err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchFurniture();
@@ -190,10 +204,12 @@ export default function FurniturePage() {
 
           <div className="lg:col-span-3">
             <div className="mb-4 text-gray-600">
-              Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} results
+              {isLoading
+                ? "Loading furniture..."
+                : `Showing ${Math.min(visibleCount, filtered.length)} of ${filtered.length} results`}
             </div>
 
-            {filtered.length === 0 ? (
+            {filtered.length === 0 && !isLoading ? (
               <div className="text-center py-12">
                 <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No furniture found</h3>
@@ -201,13 +217,15 @@ export default function FurniturePage() {
               </div>
             ) : (
               <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
-                {filtered.slice(0, visibleCount).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                {isLoading
+                  ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+                  : filtered.slice(0, visibleCount).map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
               </div>
             )}
 
-            {visibleCount < filtered.length && (
+            {!isLoading && visibleCount < filtered.length && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 6)}

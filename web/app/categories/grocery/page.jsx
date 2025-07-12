@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,6 +8,15 @@ import ProductCard from "../../../components/ProductCard/ProductCard";
 import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
 import { Search, Filter, Grid, List, ChevronDown, Truck } from "lucide-react";
 
+const SkeletonCard = () => (
+  <div className="animate-pulse bg-white p-4 border rounded-lg">
+    <div className="h-40 bg-gray-200 rounded mb-4"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+  </div>
+);
+
 export default function GroceryPage() {
   const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("featured");
@@ -14,6 +24,7 @@ export default function GroceryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [groceryProducts, setGroceryProducts] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchGroceryProducts = async () => {
@@ -41,6 +52,8 @@ export default function GroceryPage() {
         setGroceryProducts(transformed);
       } catch (err) {
         console.error("Failed to fetch grocery products", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -100,7 +113,7 @@ export default function GroceryPage() {
               <Truck className="w-8 h-8" />
               <div>
                 <h3 className="text-xl font-bold">Free Grocery Delivery</h3>
-                <p>On orders over $35. Same-day delivery available!</p>
+                <p>On orders above ₹499. Same-day delivery available!</p>
               </div>
             </div>
             <button className="bg-white text-green-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-100">
@@ -109,7 +122,7 @@ export default function GroceryPage() {
           </div>
         </div>
 
-        {/* Search and Filter Bar */}
+        {/* Search & Filters */}
         <div className="bg-white rounded-lg border p-4 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative flex-1 max-w-md">
@@ -172,16 +185,20 @@ export default function GroceryPage() {
 
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">{filteredProducts.length} results</p>
+              <p className="text-gray-600">
+                {isLoading ? "Loading..." : `${filteredProducts.length} results`}
+              </p>
             </div>
 
             <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
-              {visibleProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+                : visibleProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
             </div>
 
-            {visibleCount < filteredProducts.length && (
+            {!isLoading && visibleCount < filteredProducts.length && (
               <div className="text-center mt-8">
                 <button
                   onClick={handleLoadMore}

@@ -7,6 +7,16 @@ import ProductCard from "../../../components/ProductCard/ProductCard";
 import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
 import { Search, Filter, Grid, List, ChevronDown } from "lucide-react";
 
+// Skeleton loader for cards
+const SkeletonCard = () => (
+  <div className="animate-pulse bg-white p-4 border rounded-lg">
+    <div className="h-40 bg-gray-200 rounded mb-4"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+  </div>
+);
+
 export default function FashionPage() {
   const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("featured");
@@ -14,6 +24,7 @@ export default function FashionPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [fashionProducts, setFashionProducts] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchFashionProducts = async () => {
@@ -43,6 +54,8 @@ export default function FashionPage() {
         setFashionProducts(transformed);
       } catch (err) {
         console.error("Failed to fetch fashion products", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -52,6 +65,8 @@ export default function FashionPage() {
   const filteredProducts = fashionProducts.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
 
   const categories = [
     { name: "All Fashion", count: fashionProducts.length },
@@ -135,21 +150,13 @@ export default function FashionPage() {
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 ${
-                    viewMode === "grid"
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-600"
-                  }`}
+                  className={`p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-600"}`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 ${
-                    viewMode === "list"
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-600"
-                  }`}
+                  className={`p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "text-gray-600"}`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -167,34 +174,28 @@ export default function FashionPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div
-            className={`lg:col-span-1 ${
-              showFilters ? "block" : "hidden lg:block"
-            }`}
-          >
+          {/* Sidebar Filters */}
+          <div className={`lg:col-span-1 ${showFilters ? "block" : "hidden lg:block"}`}>
             <CategoryFilter categories={categories} />
           </div>
 
+          {/* Products Section */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-gray-600">
-                {filteredProducts.length} results
+                {isLoading ? "Loading..." : `${filteredProducts.length} results`}
               </p>
             </div>
 
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-2 md:grid-cols-3 gap-4"
-                  : "space-y-4"
-              }
-            >
-              {filteredProducts.slice(0, visibleCount).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+            <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+                : visibleProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
             </div>
 
-            {visibleCount < filteredProducts.length && (
+            {!isLoading && visibleCount < filteredProducts.length && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 6)}
