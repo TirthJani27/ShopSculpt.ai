@@ -48,7 +48,7 @@ export default function PaymentPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
           body: JSON.stringify({
             razorpay_order_id: response.razorpay_order_id,
@@ -70,6 +70,7 @@ export default function PaymentPage() {
       },
       prefill: {
         email: "customer@example.com",
+        contact:'9999999999',
       },
       theme: {
         color: "#F37254",

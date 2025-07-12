@@ -148,9 +148,97 @@ export default function ProductPage() {
                       Add to Cart
                     </button>
                     <button
-                      onClick={() => router.push("/payment")}
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors"
-                    >
+                      onClick={async () => {
+                        const token = localStorage.getItem("token");
+                        if (!token) return alert("Login required!");
+
+                        if (!window.Razorpay) {
+                          const script = document.createElement("script");
+                          script.src =
+                            "https://checkout.razorpay.com/v1/checkout.js";
+                          script.async = true;
+                          document.body.appendChild(script);
+                          await new Promise((resolve) => {
+                            script.onload = resolve;
+                          });
+                        }   
+                          const res = await fetch("/api/payment/order", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `${token}`,
+                            },
+                            body: JSON.stringify({
+                              cartItems: [
+                                {
+                                  id: product._id,
+                                  name: product.name,
+                                  price: product.price,
+                                  quantity: 1,
+                                },
+                              ],
+                            }),
+                          });
+                          
+                          const data = await res.json();
+                          const order = data.order;
+                          if (!order) return alert("Failed to create order");
+
+                          const options = {
+                            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                            amount: order.amount,
+                            currency: order.currency,
+                            name: "ShopSculpt",
+                            description: "Buy Now - Instant Checkout",
+                            order_id: order.id,
+                            handler: async function (response) {
+                              const verifyRes = await fetch(
+                                "/api/payment/verify",
+                                {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `${token}`,
+                                  },
+                                  body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id:
+                                      response.razorpay_payment_id,
+                                    razorpay_signature:
+                                      response.razorpay_signature,
+                                    cartItems: [
+                                      {
+                                        id: product._id,
+                                        name: product.name,
+                                        price: product.price,
+                                        quantity: 1,
+                                      },
+                                    ],
+                                  }),
+                                }
+                              );
+
+                              const verifyData = await verifyRes.json();
+
+                              if (verifyData.success) {
+                                alert("Payment Successful!");
+                                router.push("/success");
+                              } else {
+                                alert("Payment verification failed");
+                              }
+                            },
+                            prefill: {
+                              email: "customer@example.com",
+                            },
+                            theme: {
+                              color: "#F37254",
+                            },
+                          };
+
+                          const rzp = new window.Razorpay(options);
+                          rzp.open();
+                      }}
+                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 px-6 rounded-lg font-medium transition-colors">
                       Buy Now
                     </button>
                   </div>
