@@ -26,7 +26,7 @@ function averageRatings(product) {
     temp += product.reviews[i].rating;
   }
   temp = temp / product.reviews.length;
-  product.averageRating = temp;
+  product.averageRating = Math.round(temp).toFixed(1);
   product.reviewCount = product.reviews.length;
 }
 
