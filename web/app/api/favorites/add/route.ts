@@ -6,18 +6,18 @@ import { authUser } from "@/lib/middleware";
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
+
     const { isAuthorized, user } = await authUser(req);
     if (!isAuthorized || !user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { productId } = await req.json();
+    if (!productId)
+      return NextResponse.json({ error: "Missing productId" }, { status: 400 });
 
-    const fullUser = await User.findById(user._id);
-    if (!fullUser)
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    if (!fullUser.favorites.includes(productId)) {
-      fullUser.favorites.push(productId);
-      await fullUser.save();
+    if (!user.favorites.includes(productId)) {
+      user.favorites.push(productId);
+      await user.save();
     }
 
     return NextResponse.json({ success: true, message: "Added to favorites" });
