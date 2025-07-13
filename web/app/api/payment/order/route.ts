@@ -2,7 +2,7 @@ import Razorpay from "razorpay";
 import { NextRequest, NextResponse } from "next/server";
 import { authUser } from "@/lib/middleware";
 import dbConnect from "@/lib/dbConnect";
-
+import Product from "@/models/product.model";
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
@@ -16,9 +16,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const { cartItems } = await req.json();
+  const { cartItems, extraCharges } = await req.json();
+  const { discount = 0, platformFee = 0, securedPackagingFee = 0 } = extraCharges || {};
+
   // console.log("Product Card(s) Received:", cartItems);
-  // console.log("Authenticated User:", { id: user._id, email: user.email });
 
   if (!cartItems || cartItems.length === 0) {
     return NextResponse.json(
@@ -27,13 +28,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const amount = cartItems.reduce(
-    (sum: number, item: any) => sum + item.price * item.quantity,
-    0
-  );
+  let itemTotal = 0;
 
-  console.log(amount);
-  
+  for (const item of cartItems) {
+    const product = await Product.findById(item.productId);
+    if (!product) continue;
+
+    itemTotal += product.price * item.quantity;
+  }
+
+  let amount = itemTotal + platformFee + securedPackagingFee - discount;
 
   if (amount < 1) {
     return NextResponse.json(
@@ -42,17 +46,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const options = {
-    amount: amount * 100,
-    currency: "INR",
-    receipt: `receipt_${Date.now()}`,
-  };
-
   try {
+    const options = {
+      amount: amount * 100,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
+
     const order = await razorpay.orders.create(options);
     return NextResponse.json({ order });
   } catch (error) {
     console.error("Error creating Razorpay order:", error);
-    return NextResponse.json({ message: "Failed to create order" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Failed to create order" },
+      { status: 500 }
+    );
   }
 }

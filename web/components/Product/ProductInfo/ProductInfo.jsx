@@ -1,10 +1,4 @@
-/**
- * Product Information Component
- * Displays product details, features, specifications, and ratings
- * Responsive layout with expandable sections
- */
 "use client";
-import { useState } from "react";
 import { Star, Heart, Share2, Truck, Shield, RotateCcw } from "lucide-react";
 
 export default function ProductInfo({ product }) {

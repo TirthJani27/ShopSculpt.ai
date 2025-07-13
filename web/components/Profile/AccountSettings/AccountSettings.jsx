@@ -10,6 +10,45 @@ export default function AccountSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const indianStates = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Puducherry",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Lakshadweep",
+    "Andaman and Nicobar Islands",
+  ];
+
   // Interest categories with icons
   const interestCategories = [
     { id: "gym", label: "Gym Equipments", icon: "🏋️" },
@@ -147,18 +186,43 @@ export default function AccountSettings() {
   const validateProfileForm = () => {
     const newErrors = {};
 
+    // Name
     if (!profileData.name.trim()) {
       newErrors.name = "Name is required";
     } else if (profileData.name.trim().length < 2) {
       newErrors.name = "Name must be at least 2 characters";
     }
 
+    // Email
     if (!profileData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(profileData.email)) {
       newErrors.email = "Please enter a valid email";
     }
 
+    // Date of Birth
+    if (!profileData.dateOfBirth) {
+      newErrors.dateOfBirth = "Date of birth is required";
+    }
+
+    // Address
+    if (!profileData.address.trim()) {
+      newErrors.address = "Address is required";
+    }
+
+    // State
+    if (!profileData.state.trim()) {
+      newErrors.state = "State is required";
+    }
+
+    // Pin Code
+    if (!profileData.pinCode.trim()) {
+      newErrors.pinCode = "Pin code is required";
+    } else if (!/^\d{6}$/.test(profileData.pinCode)) {
+      newErrors.pinCode = "Pin code must be 6 digits";
+    }
+
+    // Phone is optional, but validate if present
     if (profileData.phone && !/^\+?[\d\s\-()]{10,}$/.test(profileData.phone)) {
       newErrors.phone = "Please enter a valid phone number";
     }
@@ -172,6 +236,7 @@ export default function AccountSettings() {
       newErrors.interests = "Please select at least 3 interests";
     }
 
+    // Persona
     if (profileData.persona.length < 3) {
       newErrors.persona = "Please select at least 3 persona";
     }
@@ -478,21 +543,29 @@ export default function AccountSettings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* State */}
                     <div>
-                      <label
-                        htmlFor="state"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        State
+                      <label className="block text-sm font-medium text-gray-700  mb-2">
+                        State *
                       </label>
-                      <input
-                        type="text"
-                        id="state"
+                      <select
                         name="state"
                         value={profileData.state}
                         onChange={handleProfileInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Enter your state"
-                      />
+                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          errors.state ? "border-red-300" : "border-gray-300"
+                        }`}
+                      >
+                        <option value="">Select your state</option>
+                        {indianStates.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.state && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.state}
+                        </p>
+                      )}
                     </div>
 
                     {/* Pin Code */}

@@ -1,3 +1,11 @@
+/**
+ * Enhanced Header Component
+ * Includes navigation, search, user authentication, and cart functionality
+ * Shows sign-in prompt for cart access when not logged in
+ * Responsive design for all device sizes
+ * Updated with Sports category
+ */
+
 "use client";
 import { useState } from "react";
 import Link from "next/link";
@@ -34,15 +42,15 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to sign out?")) {
-      logout();
-      window.location.href = "/";
-    }
+    logout();
+    setShowUserMenu(false);
+    router.push("/");
   };
 
   return (
     <>
       <header className="bg-blue-600 text-white sticky top-0 z-50">
+        {/* Top Information Bar */}
         <div className="bg-blue-700 py-1">
           <div className="max-w-7xl mx-auto px-4 flex justify-between items-center text-xs">
             <div className="flex items-center space-x-4">
@@ -51,7 +59,7 @@ export default function Header() {
               </span>
               <div className="flex items-center space-x-1">
                 <MapPin className="w-3 h-3" />
-                <span>Sacraasmento, 95829</span>
+                <span>Sacramento, 95829</span>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -61,7 +69,7 @@ export default function Header() {
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="hover:underline flex items-center space-x-1"
                   >
-                    <span>Hi, {user?.fullname?.firstname || "User"}</span>
+                    <span>Hi, {user?.name?.split(" ")[0] || "User"}</span>
                   </button>
                   {showUserMenu && (
                     <div className="absolute right-0 top-full mt-1 bg-white text-gray-900 rounded-lg shadow-lg py-2 w-48 z-50">
@@ -99,9 +107,6 @@ export default function Header() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center">
-              {/* <Link href="/" className="text-2xl font-bold mr-4 md:mr-8">
-                ShopSculpt
-              </Link> */}
               <Link
                 href="/"
                 className="flex flex-column mb-5 w-50 h-20 mt-6 mr-4 md:mr-8"
@@ -127,14 +132,14 @@ export default function Header() {
             {/* Right Side Icons */}
             <div className="flex items-center space-x-2 md:space-x-6">
               {/* Mobile Search Icon */}
-              <button className="md:hidden p-2 hover:bg-blue-500 rounded">
+              <button className=" hidden md:hidden p-2 hover:bg-blue-500 rounded">
                 <Search className="w-6 h-6" />
               </button>
 
               {/* Favorites/Wishlist */}
               <Link
                 href="/wishlist"
-                className="hidden sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded relative"
+                className="sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded relative"
               >
                 <Heart className="w-6 h-6" />
                 <span className="hidden lg:block">Wishlist</span>
@@ -148,7 +153,7 @@ export default function Header() {
               {/* User Account */}
               <Link
                 href={isLoggedIn ? "/profile" : "/auth/login"}
-                className="hidden sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded"
+                className="sm:flex items-center space-x-1 cursor-pointer hover:bg-blue-500 p-2 rounded"
               >
                 <User className="w-6 h-6" />
                 <span className="hidden lg:block">
@@ -171,16 +176,21 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Mobile Menu Toggle */}
               <button
-                className="md:hidden p-2 hover:bg-blue-500 rounded"
+                className="md:hidden p-2 hover:bg-blue-500 rounded transition-all duration-300 ease-in-out"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                {isMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                <div
+                  className={`transition-transform duration-300 ease-in-out transform ${
+                    isMenuOpen ? "rotate-90 scale-110" : "rotate-0 scale-100"
+                  }`}
+                >
+                  {isMenuOpen ? (
+                    <X className="w-6 h-6" />
+                  ) : (
+                    <Menu className="w-6 h-6" />
+                  )}
+                </div>
               </button>
             </div>
           </div>
@@ -202,7 +212,7 @@ export default function Header() {
 
         {/* Navigation Menu */}
         <nav
-          className={`bg-blue-700 border-t border-blue-500 ${
+          className={`bg-blue-700 border-t border-blue-500 delay-200 ${
             isMenuOpen ? "block" : "hidden md:block"
           }`}
         >
