@@ -402,7 +402,6 @@ export default function Header() {
                 aria-autocomplete="list"
                 aria-controls="search-dropdown"
               />
-                
             </form>
 
             {showDropdown && (
@@ -649,6 +648,64 @@ export default function Header() {
           </div>
         </div>
       )}
+      <nav
+        className={`bg-blue-700 border-t border-blue-500 delay-200 ${
+          isMenuOpen ? "block" : "hidden md:block"
+        }`}
+      >
+        <div className="max-w-7xl flex flex-col items-center mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-8 py-2 text-sm">
+            <Link
+              href="/"
+              className="py-2 md:py-0 cursor-pointer hover:underline flex items-center space-x-1"
+            >
+              <span>Home</span>
+            </Link>
+            <Link
+              href="/services"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Services
+            </Link>
+            <Link
+              href="/categories/grocery"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Grocery
+            </Link>
+            <Link
+              href="/categories/electronics"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Electronics
+            </Link>
+            <Link
+              href="/categories/fashion"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Fashion
+            </Link>
+            <Link
+              href="/categories/furniture"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Furniture
+            </Link>
+            <Link
+              href="/categories/sports"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Sports
+            </Link>
+            <Link
+              href="/categories/beauty"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Beauty
+            </Link>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 }
