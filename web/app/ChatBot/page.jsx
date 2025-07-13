@@ -4,11 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
 import ChatMessage from "../../components/ChatBot/ChatMessage";
 import Header from "../../components/Layout/Header/Header";
-import Footer from "../../components/Layout/Footer/Footer";
+
 
 export default function ChatBotPage() {
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hi! How can I help you today?" },
+    { sender: "bot", text: "Hello user! How may i assist you?" },
   ]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
@@ -37,10 +37,10 @@ export default function ChatBotPage() {
       <Header />
 
       <main className="flex-1 bg-gray-100 py-6 px-4 flex justify-center items-center">
-        <div className="w-full max-w-md bg-white rounded-xl shadow-md flex flex-col h-[80vh] sm:h-[70vh]">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-md flex flex-col h-[80vh] sm:h-[70vh] overflow-hidden">
           {/* Chat Header */}
-          <div className="bg-blue-600 text-white px-4 py-3 text-lg font-semibold">
-            ShopSclupt.ai 
+          <div className="bg-blue-600 text-white px-4 py-3 text-lg font-semibold rounded-t-2xl">
+            ShopSclupt.ai
           </div>
 
           {/* Chat Messages */}
@@ -52,7 +52,7 @@ export default function ChatBotPage() {
           </div>
 
           {/* Input Field */}
-          <div className="border-t px-3 py-2 bg-white flex items-center gap-2">
+          <div className="border-t px-3 py-2 bg-white flex items-center gap-2 rounded-b-2xl">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
