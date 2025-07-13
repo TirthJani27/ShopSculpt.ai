@@ -98,10 +98,9 @@ export default function Header() {
         <div className="bg-blue-700 py-1">
           <div className="max-w-7xl mx-auto px-4 flex justify-between items-center text-xs">
             <div className="flex items-center space-x-4">
-              <span className="hidden md:block">How do you want your items?</span>
+    
               <div className="flex items-center space-x-1">
-                <MapPin className="w-3 h-3" />
-                <span>Sacramento, 95829</span>
+                
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -238,7 +237,8 @@ export default function Header() {
               <Link href="/categories/fashion" className="py-2 md:py-0 cursor-pointer hover:underline">Fashion</Link>
               <Link href="/categories/furniture" className="py-2 md:py-0 cursor-pointer hover:underline">Furniture</Link>
               <Link href="/categories/sports" className="py-2 md:py-0 cursor-pointer hover:underline">Sports</Link>
-              <Link href="/categories/beauty" className="py-2 md:py-0 cursor-pointer hover:underline">Beauty</Link>
+              <Link href="/ChatBot" className="py-2 md:py-0 cursor-pointer hover:underline">Help</Link>
+              
             </div>
           </div>
         </nav>
