@@ -4,9 +4,19 @@ from typing import List
 from recommender import recommend_products
 from db import product_collection
 from bson import ObjectId  
+from fastapi.middleware.cors import CORSMiddleware
+from behavior.vectorizer import get_behavior_recommendations 
+from behavior.log_activity import router as log_activity_router
+
 app = FastAPI()
 
-from bson import ObjectId
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def clean_mongo_document(doc):
     if isinstance(doc, list):
@@ -21,8 +31,7 @@ def clean_mongo_document(doc):
         return new_doc
     else:
         return doc
-
-
+    
 class User(BaseModel):
     name: str
     interestCategory: List[str]
@@ -48,3 +57,13 @@ async def recommend(user: User):
 
     return {"recommendations": cleaned_products}
 
+class BehaviorInput(BaseModel):
+    user_id: str
+    top_n: int = 6
+
+@app.post("/recommend-behavior")
+async def behavior_recommend(user: BehaviorInput):
+    result = await get_behavior_recommendations(user.user_id, top_n=user.top_n)
+    return result
+
+app.include_router(log_activity_router)
