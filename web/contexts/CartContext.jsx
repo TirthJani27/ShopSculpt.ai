@@ -275,10 +275,24 @@ export function CartProvider({ children }) {
     }
 
     try {
-      const res = await axios.get("/api/cart");
+      const token = localStorage.getItem("token");
+      const res = await axios.get("/api/cart", {
+        headers: {
+          Authorization: token ? `${token}` : "",
+        },
+      });
+
       const itemIds = res.data.items?.map((item) => item._id) || [];
 
-      await Promise.all(itemIds.map((id) => axios.delete(`/api/cart/${id}`)));
+      await Promise.all(
+        itemIds.map((id) =>
+          axios.delete(`/api/cart/${id}`, {
+            headers: {
+              Authorization: token ? `${token}` : "",
+            },
+          })
+        )
+      );
 
       setCartItems([]);
       return { success: true, message: "Cart cleared" };

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const { isAuthorized, user } = await authUser(req);
-    if (!isAuthorized || !user)
+    if (!isAuthorized || !user || !user._id)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { productId, quantity = 1 } = await req.json();

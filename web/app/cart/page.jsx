@@ -13,8 +13,14 @@ import { useCart } from "../../contexts/CartContext";
 export default function CartPage() {
   const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
-  const { cartItems, updateQuantity, removeFromCart, cartTotal, cartCount } =
-    useCart();
+  const {
+    cartItems,
+    updateQuantity,
+    removeFromCart,
+    cartTotal,
+    cartCount,
+    clearCart,
+  } = useCart();
 
   const PLATFORM_FEE = 9;
   const PACKAGING_FEE = 19;
@@ -139,6 +145,7 @@ export default function CartPage() {
           {/* Right Column: Summary */}
           <div className="lg:col-span-1">
             <CartSummary
+              clearCart={clearCart}
               subtotal={subtotal}
               discount={discount}
               platformFee={PLATFORM_FEE}

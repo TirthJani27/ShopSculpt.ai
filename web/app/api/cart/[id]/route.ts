@@ -21,7 +21,7 @@ export async function DELETE(
     if (!cartItem.userId.equals(user._id))
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    await Cart.findByIdAndDelete(params.id);
+    await Cart.findByIdAndDelete(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("DELETE /cart/:id error:", error);

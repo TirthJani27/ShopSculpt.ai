@@ -12,6 +12,7 @@ export default function CartSummary({
   securedPackagingFee,
   total,
   itemCount,
+  clearCart,
 }) {
   const router = useRouter();
   const [cart, setCart] = useState([]);
@@ -40,80 +41,81 @@ export default function CartSummary({
   }, []);
 
   const handlePlaceOrder = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("Login required!");
+    // const token = localStorage.getItem("token");
+    // if (!token) return alert("Login required!");
 
-    if (!window.Razorpay) {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      document.body.appendChild(script);
-      await new Promise((resolve) => {
-        script.onload = resolve;
-      });
-    }
+    // if (!window.Razorpay) {
+    //   const script = document.createElement("script");
+    //   script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    //   script.async = true;
+    //   document.body.appendChild(script);
+    //   await new Promise((resolve) => {
+    //     script.onload = resolve;
+    //   });
+    // }
 
-    const res = await fetch("/api/payment/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${token}`,
-      },
-      body: JSON.stringify({
-        cartItems: cart,
-        extraCharges: {
-          discount,
-          platformFee,
-          securedPackagingFee,
-        },
-      }),
-    });
+    // const res = await fetch("/api/payment/order", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `${token}`,
+    //   },
+    //   body: JSON.stringify({
+    //     cartItems: cart,
+    //     extraCharges: {
+    //       discount,
+    //       platformFee,
+    //       securedPackagingFee,
+    //     },
+    //   }),
+    // });
 
-    const data = await res.json();
-    const order = data.order;
-    if (!order) return alert("Failed to create order");
+    // const data = await res.json();
+    // const order = data.order;
+    // if (!order) return alert("Failed to create order");
 
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: "ShopSculpt",
-      description: "Cart Checkout",
-      order_id: order.id,
-      handler: async function (response) {
-        const verifyRes = await fetch("/api/payment/verify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
-          },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            cartItems: cart,
-          }),
-        });
+    // const options = {
+    //   key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+    //   amount: order.amount,
+    //   currency: order.currency,
+    //   name: "ShopSculpt",
+    //   description: "Cart Checkout",
+    //   order_id: order.id,
+    //   handler: async function (response) {
+    //     const verifyRes = await fetch("/api/payment/verify", {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: `${token}`,
+    //       },
+    //       body: JSON.stringify({
+    //         razorpay_order_id: response.razorpay_order_id,
+    //         razorpay_payment_id: response.razorpay_payment_id,
+    //         razorpay_signature: response.razorpay_signature,
+    //         cartItems: cart,
+    //       }),
+    //     });
 
-        const verifyData = await verifyRes.json();
+    //     const verifyData = await verifyRes.json();
 
-        if (verifyData.success) {
-          alert("Payment Successful!");
-          router.push("/success");
-        } else {
-          alert("Payment verification failed");
-        }
-      },
-      prefill: {
-        email: "customer@example.com",
-      },
-      theme: {
-        color: "#F37254",
-      },
-    };
+    //     if (verifyData.success) {
+    //       alert("Payment Successful!");
+    //       router.push("/success");
+    //     } else {
+    //       alert("Payment verification failed");
+    //     }
+    //   },
+    //   prefill: {
+    //     email: "customer@example.com",
+    //   },
+    //   theme: {
+    //     color: "#F37254",
+    //   },
+    // };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+    // const rzp = new window.Razorpay(options);
+    // rzp.open();
+    clearCart();
   };
 
   return (

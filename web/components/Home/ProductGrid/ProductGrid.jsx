@@ -5,76 +5,81 @@ import ProductCard from "../../ProductCard/ProductCard";
 import CategorySection from "../../CategorySection/CategorySection";
 
 export default function ProductGrid() {
-  const [recommendedProducts, setRecommendedProducts] = useState([]);
-  const [groceryProducts, setGroceryProducts] = useState([]);
-  const [electronicsProducts, setElectronicsProducts] = useState([]);
+  const [products, setProducts] = useState({
+    recommended: [],
+    grocery: [],
+    electronics: [],
+  });
 
   useEffect(() => {
-    const fetchAllProducts = async () => {
+    const transformProducts = (items) =>
+      items.map((p) => {
+        const originalPrice = p.discount
+          ? p.price / (1 - p.discount / 100)
+          : p.price;
+
+        return {
+          id: p._id,
+          title: p.name,
+          price: p.price,
+          originalPrice,
+          image: p.images?.[0],
+          badge:
+            p.discount >= 30
+              ? "Hot Deal"
+              : p.discount > 0
+              ? `Save ${p.discount}%`
+              : "New",
+          ...p,
+        };
+      });
+
+    const fetchProducts = async () => {
       try {
-        // Fetch recommended products
-        const recRes = await fetch("/api/product/recommended");
-        const recommended = await recRes.json();
+        const [recRes, groceryRes, electronicsRes] = await Promise.all([
+          fetch("/api/product/recommended"),
+          fetch("/api/product/category/Grocery"),
+          fetch("/api/product/category/Electronic"),
+        ]);
 
-        // Fetch grocery category
-        const groceryRes = await fetch("/api/product/category/Grocery");
-        const grocery = await groceryRes.json();
+        const [recommended, grocery, electronics] = await Promise.all([
+          recRes.json(),
+          groceryRes.json(),
+          electronicsRes.json(),
+        ]);
 
-        // Fetch electronics category
-        const electronicsRes = await fetch("/api/product/category/Electronic");
-        const electronics = await electronicsRes.json();
-
-        const transform = (products) =>
-          products.map((p) => {
-            const originalPrice = p.discount
-              ? p.price / (1 - p.discount / 100)
-              : p.price;
-
-            return {
-              id: p._id,
-              title: p.name,
-              price: p.price,
-              originalPrice: originalPrice,
-              rating: p.reviews?.[0]?.rating || 4.5,
-              reviews: p.reviews?.length || 0,
-              image: p.images?.[0],
-              badge:
-                p.discount >= 30
-                  ? "Hot Deal"
-                  : p.discount > 0
-                  ? `Save ${p.discount}%`
-                  : "New",
-            };
-          });
-
-        setRecommendedProducts(transform(recommended));
-        setGroceryProducts(transform(grocery));
-        setElectronicsProducts(transform(electronics));
+        setProducts({
+          recommended: transformProducts(recommended),
+          grocery: transformProducts(grocery),
+          electronics: transformProducts(electronics),
+        });
       } catch (err) {
-        console.error("Failed to load products from DB:", err);
+        console.error("Failed to fetch product data:", err);
       }
     };
 
-    fetchAllProducts();
+    fetchProducts();
   }, []);
+
+  const { recommended, grocery, electronics } = products;
 
   const categories = [
     {
-      title: "Skechers up to 30% off",
-      subtitle: "Shop athletic shoes",
-      products: recommendedProducts.slice(0, 4),
-      bgColor: "bg-blue-50",
+      title: "Must-Have Deals This Week",
+      subtitle: "Editor’s picks across categories",
+      products: recommended.slice(4, 8),
+      bgColor: "bg-amber-50",
     },
     {
       title: "Home essentials",
       subtitle: "Upgrade your space",
-      products: groceryProducts.slice(0, 4),
+      products: grocery.slice(0, 4),
       bgColor: "bg-gray-50",
     },
     {
       title: "Electronics deals",
       subtitle: "Tech for less",
-      products: electronicsProducts.slice(0, 4),
+      products: electronics.slice(0, 4),
       bgColor: "bg-green-50",
     },
   ];
@@ -85,7 +90,7 @@ export default function ProductGrid() {
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">Featured Products</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {recommendedProducts.map((product) => (
+          {recommended.slice(0, 6).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -96,16 +101,13 @@ export default function ProductGrid() {
         <CategorySection key={index} category={category} />
       ))}
 
-      {/* Additional Product Grid */}
+      {/* Additional Products */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">More Great Deals</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {recommendedProducts.map((product, index) => (
-            <ProductCard
-              key={`more-${index}`}
-              product={{ ...product, id: `more-${index}` }}
-            />
-          ))}
+          {recommended.slice(6, 12).map((product, index) => {
+            return <ProductCard key={`deal-${index}`} product={product} />;
+          })}
         </div>
       </section>
     </div>

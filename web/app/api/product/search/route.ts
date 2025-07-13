@@ -3,24 +3,21 @@ import dbConnect from "@/lib/dbConnect";
 import Product from "@/models/product.model";
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const query = searchParams.get("q")?.trim();
+
+  if (!query) {
+    return NextResponse.json({ products: [] }, { status: 200 });
+  }
+
   try {
     await dbConnect();
 
-    const { searchParams } = new URL(req.url);
-    const name = searchParams.get("name");
-
-    if (!name) {
-      return NextResponse.json(
-        { error: "Name query is required" },
-        { status: 400 }
-      );
-    }
-
     const products = await Product.find({
-      name: { $regex: name, $options: "i" },
-    });
+      name: { $regex: query, $options: "i" },
+    }).limit(5);
 
-    return NextResponse.json({ products });
+    return NextResponse.json({ products }, { status: 200 });
   } catch (error) {
     console.error("Product search failed:", error);
     return NextResponse.json(

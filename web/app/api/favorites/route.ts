@@ -8,19 +8,25 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
     const { isAuthorized, user } = await authUser(req);
-    if (!isAuthorized || !user)
+
+    if (!isAuthorized || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const fullUser = await User.findById(user._id)
-      .populate({
-        path: "favorites",
-        model: Product,
-      })
-      .lean();
-    if (!fullUser)
+    }
+
+    const fullUser = await User.findById(user._id).populate({
+      path: "favorites",
+      model: Product,
+    });
+    if (!fullUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
-    
+    }
+
+    return NextResponse.json({
+      success: true,
+      favorites: fullUser.favorites || [],
+    });
   } catch (error) {
-    console.error("List to favorites failed:", error);
+    console.error("List favorites failed:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

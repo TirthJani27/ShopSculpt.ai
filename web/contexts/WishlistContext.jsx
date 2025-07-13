@@ -1,6 +1,8 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
+import axios from "axios";
 
 const WishlistContext = createContext();
 
@@ -8,88 +10,141 @@ export function WishlistProvider({ children }) {
   const { isLoggedIn, user, setUser } = useAuth();
   const [wishlistItems, setWishlistItems] = useState([]);
 
+  const storageKey =
+    isLoggedIn && user ? `favorites_${user._id}` : "favorites_guest";
+
+  // Load wishlist on init
   useEffect(() => {
     if (isLoggedIn && user) {
       const favorites = user.favorites || [];
       setWishlistItems(favorites);
-      localStorage.setItem(`favorites_${user._id}`, JSON.stringify(favorites));
+      localStorage.setItem(storageKey, JSON.stringify(favorites));
     } else {
-      setWishlistItems([]);
+      const stored = localStorage.getItem("favorites_guest");
+      setWishlistItems(stored ? JSON.parse(stored) : []);
     }
   }, [isLoggedIn, user]);
 
-  // Update localStorage when wishlistItems changes
+  // Keep localStorage updated
   useEffect(() => {
-    if (isLoggedIn && user) {
-      localStorage.setItem(
-        `favorites_${user._id}`,
-        JSON.stringify(wishlistItems)
-      );
-    }
-  }, [wishlistItems, isLoggedIn, user]);
+    localStorage.setItem(storageKey, JSON.stringify(wishlistItems));
+  }, [wishlistItems, storageKey]);
 
+  // Add to wishlist
   const addToWishlist = async (product) => {
-    if (!isLoggedIn) {
-      return {
-        success: false,
-        message: "Please sign in to add items to wishlist",
-      };
-    }
-    const isAlreadyInWishlist = wishlistItems.some(
-      (item) => item.id === product.id
+    const productId = product._id || product.id;
+    const exists = wishlistItems.some(
+      (item) => (item._id || item.id) === productId
     );
-    if (isAlreadyInWishlist) {
-      return { success: false, message: "Item already in wishlist" };
+    if (exists) {
+      return { success: false, message: "Already in wishlist" };
     }
+
+    if (!isLoggedIn) {
+      const updated = [...wishlistItems, product];
+      setWishlistItems(updated);
+      return { success: true, message: "Added to wishlist (local)" };
+    }
+
     try {
-      const res = await fetch("/api/favorites/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id }),
-      });
-      if (!res.ok) throw new Error("Failed to add to wishlist");
-      setWishlistItems((prev) => [
+      const res = await axios.post(
+        "/api/favorites/add",
+        {
+          productId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.status !== 200) throw new Error("Failed to add");
+
+      const updated = [...wishlistItems, product];
+      setWishlistItems(updated);
+      setUser((prev) => ({
         ...prev,
-        { ...product, addedAt: new Date().toISOString() },
-      ]);
+        favorites: updated,
+      }));
       return { success: true, message: "Added to wishlist" };
     } catch (err) {
-      return { success: false, message: err.message };
+      console.error("Wishlist Add Error:", err);
+      return { success: false, message: "Failed to add to wishlist" };
     }
   };
 
+  // Remove from wishlist
   const removeFromWishlist = async (productId) => {
+    if (!productId) return { success: false, message: "Invalid product ID" };
+
+    if (!isLoggedIn) {
+      const updated = wishlistItems.filter(
+        (item) => (item._id || item.id) !== productId
+      );
+      setWishlistItems(updated);
+      return { success: true, message: "Removed from wishlist (local)" };
+    }
+
     try {
-      const res = await fetch("/api/favorites/remove", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
-      });
-      if (!res.ok) throw new Error("Failed to remove from wishlist");
-      setWishlistItems((prev) => prev.filter((item) => item.id !== productId));
+      const res = await axios.post(
+        "/api/favorites/remove",
+        {
+          productId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.status !== 200) throw new Error("Failed to remove");
+
+      const updated = wishlistItems.filter(
+        (item) => (item._id || item.id) !== productId
+      );
+      setWishlistItems(updated);
+      setUser((prev) => ({
+        ...prev,
+        favorites: updated,
+      }));
       return { success: true, message: "Removed from wishlist" };
     } catch (err) {
-      return { success: false, message: err.message };
+      console.error("Wishlist Remove Error:", err);
+      return { success: false, message: "Failed to remove from wishlist" };
     }
   };
 
+  // Helpers
   const isInWishlist = (productId) => {
-    return wishlistItems.some((item) => item.id === productId);
+    return wishlistItems.some((item) => (item._id || item.id) === productId);
+  };
+
+  const toggleWishlist = async (product) => {
+    const productId = product._id || product.id;
+    if (isInWishlist(productId)) {
+      return await removeFromWishlist(productId);
+    } else {
+      return await addToWishlist(product);
+    }
   };
 
   const clearWishlist = () => {
     setWishlistItems([]);
+    localStorage.removeItem(storageKey);
   };
 
   return (
     <WishlistContext.Provider
       value={{
         wishlistItems,
+        wishlistCount: wishlistItems.length,
         addToWishlist,
         removeFromWishlist,
+        toggleWishlist,
         isInWishlist,
         clearWishlist,
-        wishlistCount: wishlistItems.length,
       }}
     >
       {children}
