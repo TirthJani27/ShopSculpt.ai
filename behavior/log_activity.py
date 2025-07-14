@@ -14,7 +14,7 @@ async def log_search(data: LogInput):
     await db["users"].update_one(
         {"_id": ObjectId(data.user_id)},
         {"$push": {"searchHistory": data.term}},
-        upsert=True
+        # upsert=True
     )
     return {"status": "search logged"}
 
@@ -23,7 +23,7 @@ async def log_cart(data: LogInput):
     await db["users"].update_one(
         {"_id": ObjectId(data.user_id)},
         {"$push": {"favorites": {"name": data.term}}},
-        upsert=True
+        # upsert=True
     )
     return {"status": "cart item logged"}
 
@@ -32,6 +32,6 @@ async def log_purchase(data: LogInput):
     await db["users"].update_one(
         {"_id": ObjectId(data.user_id)},
         {"$push": {"transactionHistory": {"productName": data.term}}},
-        upsert=True
+        # upsert=True
     )
     return {"status": "purchase logged"}

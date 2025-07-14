@@ -1,12 +1,14 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 from typing import List
 from recommender import recommend_products
-from db import product_collection
+from db import product_collection,db
 from bson import ObjectId  
 from fastapi.middleware.cors import CORSMiddleware
 from behavior.vectorizer import get_behavior_recommendations 
 from behavior.log_activity import router as log_activity_router
+from fastapi import HTTPException, status
+
 
 app = FastAPI()
 
@@ -33,7 +35,7 @@ def clean_mongo_document(doc):
         return doc
     
 class User(BaseModel):
-    name: str
+    email: EmailStr
     interestCategory: List[str]
     persona: List[str]
     top_n: int = 6
@@ -45,6 +47,10 @@ def convert_objectid_to_str(doc):
 
 @app.post("/recommend")
 async def recommend(user: User):
+    existing_user = await db["users"].find_one({"email": user.email})
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found. Please sign up or log in.")
+    
     products_cursor = product_collection.find({})
 
     products = []

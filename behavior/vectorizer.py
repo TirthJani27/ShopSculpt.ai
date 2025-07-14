@@ -14,36 +14,48 @@ db = client["test"]
 product_collection = db["products"]
 
 # 1. Fetch user logs from MongoDB
-async def fetch_user_behavior(user_id: str):
-    user = await db["users"].find_one({"_id": ObjectId(user_id)})
+async def fetch_user_behavior(user_id):
+    try:
+        user = await db["users"].find_one({"_id": ObjectId(user_id)})
+    except Exception as e:
+        raise ValueError(f"Invalid ObjectId: {e}")
 
     if not user:
-        raise ValueError("User not found")
-
-    search_terms = user.get("searchHistory", [])
-    favorites = [p.get("name", "") for p in user.get("favorites", [])]
-    purchases = [t.get("productName", "") for t in user.get("transactionHistory", [])]
+        raise ValueError("User not found in DB")
 
     return {
-        "searches": search_terms,
-        "cart": favorites,
-        "purchase": purchases
+        "search": user.get("searchHistory", []),
+        "favorites": user.get("favorites", []),
+        "purchased": user.get("transactionHistory", [])
     }
 
 # 2. Action weights
 ACTION_WEIGHTS = {
-    "searches": 1,
-    "cart": 3,
-    "purchase": 4
+    "search": 1,
+    "favorites": 2,
+    "purchased": 3
 }
 
 # 3. Convert logs to weighted text
 def create_weighted_user_text(user_logs):
-    all_terms = []
-    for action, terms in user_logs.items():
-        weight = ACTION_WEIGHTS.get(action, 1)
-        for term in terms:
-            all_terms.extend([term] * weight)
+    def safe_extract(item, key):
+        if isinstance(item, str):
+            return item
+        elif isinstance(item, dict):
+            return item.get(key, "")
+        return str(item)
+
+    search_terms = [safe_extract(item, "query") for item in user_logs.get("search", [])]
+    favorite_terms = [safe_extract(item, "product_name") for item in user_logs.get("favorites", [])]
+    purchase_terms = [safe_extract(item, "product_name") for item in user_logs.get("purchased", [])]
+
+    all_terms = (
+        search_terms * ACTION_WEIGHTS["search"] +
+        favorite_terms * ACTION_WEIGHTS["favorites"] +
+        purchase_terms * ACTION_WEIGHTS["purchased"]
+    )
+
+    all_terms = [term for term in all_terms if isinstance(term, str) and term.strip()]
     return " ".join(all_terms)
 
 # 4. Fetch all products
