@@ -129,16 +129,14 @@ export default function RecommendedProduct() {
 
                     <button
                       onClick={(e) => handleWishlistClick(e, product)}
-                      className={`absolute top-2 right-2 p-2 rounded-full shadow-md transition-all ${
-                        inWishlist
+                      className={`absolute top-2 right-2 p-2 rounded-full shadow-md transition-all ${inWishlist
                           ? "bg-red-500 text-white"
                           : "bg-white text-gray-600 hover:bg-gray-100 opacity-0 group-hover:opacity-100"
-                      }`}
+                        }`}
                     >
                       <Heart
-                        className={`w-4 h-4 ${
-                          inWishlist ? "fill-current" : ""
-                        }`}
+                        className={`w-4 h-4 ${inWishlist ? "fill-current" : ""
+                          }`}
                       />
                     </button>
 
@@ -152,11 +150,10 @@ export default function RecommendedProduct() {
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-3 h-3 ${
-                                i < Math.floor(product.averageRating || 4)
+                              className={`w-3 h-3 ${i < Math.floor(product.averageRating || 4)
                                   ? "text-yellow-400 fill-current"
                                   : "text-gray-300"
-                              }`}
+                                }`}
                             />
                           ))}
                           <span className="text-xs text-gray-600">
@@ -182,13 +179,12 @@ export default function RecommendedProduct() {
                     </Link>
 
                     <button
-                      onClick={(e) => handleAddToCart(e, product)}
-                      disabled={isAddingToCart}
-                      className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${
-                        inCartAlready
+                      onClick={handleAddToCart}
+                      disabled={isAddingToCart || inCartAlready}
+                      className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${inCartAlready
                           ? "bg-green-600 hover:bg-green-700 text-white"
                           : "bg-blue-600 hover:bg-blue-700 text-white"
-                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        } disabled:disabled:cursor-not-allowed`}
                     >
                       {isAddingToCart ? (
                         <>

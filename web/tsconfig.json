@@ -36,6 +36,6 @@
     "lib/dbConnect.js",
     "app/api/seed/generateDummyReviews.ts",
     "app/api/seed/generateDummyReview.js"
-  ],
+, "app/payment/page.jsx"  ],
   "exclude": ["node_modules"]
 }

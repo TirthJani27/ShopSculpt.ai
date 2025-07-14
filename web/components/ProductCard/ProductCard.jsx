@@ -6,9 +6,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import { useCart } from "../../contexts/CartContext";
 
-/**
- * Hook to truncate text if it overflows
- */
 function useTruncateIfOverflow(text, maxLength = 40) {
   const [displayText, setDisplayText] = useState(text);
   const spanRef = useRef(null);
@@ -52,34 +49,44 @@ export default function ProductCard({ product }) {
   const inCartAlready = isInCart(product.id);
   const { displayText, spanRef } = useTruncateIfOverflow(title, 45);
 
-  
-  const randomRating = useMemo(() => (Math.random() * 2 + 3).toFixed(1), []);
-  const randomReviews = useMemo(() => Math.floor(Math.random() * 799 + 1), []);
-
-  const showToastMessage = (message) => {
+  const triggerToast = (message) => {
     setToastMessage(message);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
 
-  const handleWishlistClick = (e) => {
+  const handleWishlistClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isLoggedIn) return showToastMessage("Please sign in to add to wishlist");
+
+    if (!isLoggedIn) {
+      triggerToast("Please sign in to add items to wishlist");
+      return;
+    }
+
     const result = inWishlist
-      ? removeFromWishlist(product.id)
-      : addToWishlist(product);
-    showToastMessage(result.message);
+      ? await removeFromWishlist(product.id)
+      : await addToWishlist(product);
+    triggerToast(result.message);
   };
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isLoggedIn) return showToastMessage("Please sign in to add to cart");
+
+    if (!isLoggedIn) {
+      triggerToast("Please sign in to add items to cart");
+      return;
+    }
+
+    if (inCartAlready) {
+      triggerToast("Item already in cart");
+      return;
+    }
+
     setIsAddingToCart(true);
-    await new Promise((r) => setTimeout(r, 500));
-    const result = addToCart(product);
-    showToastMessage(result.message);
+    const result = await addToCart(product);
+    triggerToast(result.message);
     setIsAddingToCart(false);
   };
 
@@ -124,22 +131,23 @@ export default function ProductCard({ product }) {
               {displayText}
             </h3>
 
-            {/* ⭐ Random Rating display */}
-            <div className="flex items-center space-x-1">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-3 h-3 ${
-                    i < Math.floor(randomRating)
-                      ? "text-yellow-400 fill-current"
-                      : i < randomRating
-                      ? "text-yellow-300"
-                      : "text-gray-300"
-                  }`}
-                />
-              ))}
-              <span className="text-xs text-gray-600">({randomReviews})</span>
-            </div>
+            {
+              <div className="flex items-center space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-3 h-3 ${
+                      i < Math.floor(product.averageRating)
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+                <span className="text-xs text-gray-600">
+                  ({product.totalReviews})
+                </span>
+              </div>
+            }
 
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-gray-900">
@@ -156,12 +164,12 @@ export default function ProductCard({ product }) {
 
         <button
           onClick={handleAddToCart}
-          disabled={isAddingToCart}
+          disabled={isAddingToCart || inCartAlready}
           className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${
             inCartAlready
               ? "bg-green-600 hover:bg-green-700 text-white"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
+              :"bg-blue-600 hover:bg-blue-700 text-white"
+          } disabled: disabled:cursor-not-allowed`}
         >
           {isAddingToCart ? (
             <>

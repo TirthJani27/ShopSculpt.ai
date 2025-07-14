@@ -1,139 +1,167 @@
-/**
- * Cart Item Component
- * Individual cart item with quantity controls, pricing, and remove functionality
- */
-"use client"
-import { useState } from "react"
-import Link from "next/link"
-import { Minus, Plus, Heart, Trash2 } from "lucide-react"
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { Minus, Plus, Heart, Trash2, Star } from "lucide-react";
 
 export default function CartItem({ item, onUpdateQuantity, onRemove }) {
-  const [quantity, setQuantity] = useState(item.quantity)
-  const [isRemoving, setIsRemoving] = useState(false)
+  const [quantity, setQuantity] = useState(item.quantity);
+  const [isRemoving, setIsRemoving] = useState(false);
 
-  const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 0) {
-      setQuantity(newQuantity)
-      onUpdateQuantity(item.id, newQuantity)
-    }
-  }
+  const pid = item._id || item.id;
+
+  const handleQuantityChange = async (newQty) => {
+    if (newQty < 1 || newQty > 5) return;
+    setQuantity(newQty);
+    await onUpdateQuantity(pid, newQty);
+  };
 
   const handleRemove = async () => {
-    setIsRemoving(true)
-    // Add a small delay for better UX
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    onRemove(item.id)
-  }
+    setIsRemoving(true);
+    await onRemove(pid);
+    setIsRemoving(false);
+  };
 
-  const discountAmount = ((item.originalPrice || item.price) - item.price) * quantity
-  const discountPercentage = item.originalPrice
-    ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)
-    : 0
+  // Calculate original price if only discount is provided
+  const originalPrice = item.originalPrice
+    ? item.originalPrice
+    : item.discount
+    ? Math.round(item.price / (1 - item.discount / 100))
+    : item.price;
+
+  const discountPercent = Math.round(
+    ((originalPrice - item.price) / originalPrice) * 100
+  );
 
   return (
-    <div className={`bg-white rounded-lg border p-4 md:p-6 transition-opacity ${isRemoving ? "opacity-50" : ""}`}>
+    <div
+      className={`bg-white rounded-lg border p-4 md:p-6 transition-opacity duration-300 ${
+        isRemoving ? "opacity-50 pointer-events-none" : ""
+      }`}
+    >
       <div className="flex flex-col md:flex-row gap-4">
         {/* Product Image */}
         <div className="flex-shrink-0">
           <img
-            src={item.image || "/placeholder.svg"}
+            src={item.images?.[0] || "/placeholder.svg"}
             alt={item.name}
             className="w-full md:w-32 h-32 object-cover rounded-lg"
           />
         </div>
 
-        {/* Product Details */}
+        {/* Product Info */}
         <div className="flex-1 space-y-3">
+          {/* Name & Link */}
           <div>
             <Link
-              href={`/product/${item.id}`}
+              href={`/product/${pid}`}
               className="text-lg font-semibold text-gray-900 hover:text-blue-600 line-clamp-2"
             >
               {item.name}
             </Link>
-            {item.variant && <p className="text-sm text-gray-600">{item.variant}</p>}
-            <p className="text-sm text-gray-600">
-              Seller: <span className="font-medium">{item.seller}</span>
-            </p>
+            {item.variant && (
+              <p className="text-sm text-gray-600">{item.variant}</p>
+            )}
+            {item.seller && (
+              <p className="text-sm text-gray-600">
+                Seller: <span className="font-medium">{item.seller}</span>
+              </p>
+            )}
           </div>
 
-          {/* Pricing */}
+          {/* Rating */}
+          {typeof item.averageRating === "number" && (
+            <div className="flex items-center space-x-1 text-sm text-yellow-600">
+              <Star className="w-4 h-4 fill-yellow-400" />
+              <span>{item.averageRating.toFixed(1)} / 5</span>
+            </div>
+          )}
+
+          {/* Price & Discount */}
           <div className="flex items-center space-x-3">
-            <span className="text-xl font-bold text-gray-900">${item.price.toLocaleString()}</span>
-            {item.originalPrice && item.originalPrice > item.price && (
+            <span className="text-xl font-bold text-gray-900">
+              ₹{item.price.toLocaleString()}
+            </span>
+
+            {originalPrice > item.price && (
               <>
-                <span className="text-sm text-gray-500 line-through">${item.originalPrice.toLocaleString()}</span>
-                <span className="text-sm text-green-600 font-medium">{discountPercentage}% off</span>
+                <span className="text-sm text-gray-500 line-through">
+                  ₹{originalPrice.toLocaleString()}
+                </span>
+                <span className="text-sm text-green-600 font-medium">
+                  {discountPercent}% off
+                </span>
               </>
             )}
           </div>
 
-          {/* Offers */}
-          {item.offers && <p className="text-sm text-green-600 font-medium">{item.offers}</p>}
-
           {/* Delivery Info */}
           <div className="flex items-center space-x-4 text-sm">
-            <span className="text-gray-600">Delivery by {item.deliveryDate}</span>
-            {item.inStock ? (
-              <span className="text-green-600 font-medium">In Stock</span>
-            ) : (
-              <span className="text-red-600 font-medium">Out of Stock</span>
+            {item.deliveryDate && (
+              <span className="text-gray-600">
+                Delivery by {item.deliveryDate}
+              </span>
+            )}
+
+            {/* Free delivery tag */}
+            {item.price >= 500 && (
+              <span className="text-green-700 font-semibold">
+                Free Delivery
+              </span>
             )}
           </div>
 
-          {/* Actions */}
+          {/* Quantity and Actions */}
           <div className="flex items-center justify-between pt-3 border-t">
-            {/* Quantity Controls */}
             <div className="flex items-center space-x-3">
+              {/* Quantity Controls */}
               <div className="flex items-center border rounded-lg">
                 <button
                   onClick={() => handleQuantityChange(quantity - 1)}
-                  className="p-2 hover:bg-gray-100 rounded-l-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={quantity <= 1 || isRemoving}
+                  className="p-2 hover:bg-gray-100 rounded-l-lg disabled:opacity-50"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="px-4 py-2 font-medium min-w-[3rem] text-center">{quantity}</span>
+                <span className="px-4 py-2 font-medium min-w-[3rem] text-center">
+                  {quantity}
+                </span>
                 <button
                   onClick={() => handleQuantityChange(quantity + 1)}
-                  className="p-2 hover:bg-gray-100 rounded-r-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={quantity >= 5 || isRemoving}
+                  className="p-2 hover:bg-gray-100 rounded-r-lg disabled:opacity-50"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Max Quantity Alert */}
+              {/* Max Qty Warning */}
               {quantity >= 5 && (
                 <span className="text-sm text-red-500 font-medium">
                   Max limit reached
                 </span>
               )}
 
-              <button
-                className="text-gray-600 hover:text-blue-600 font-medium text-sm disabled:opacity-50"
-                disabled={isRemoving}
-              >
-                SAVE FOR LATER
-              </button>
-
+              {/* Remove Item */}
               <button
                 onClick={handleRemove}
                 disabled={isRemoving}
-                className="flex items-center space-x-1 text-gray-600 hover:text-red-600 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center space-x-1 text-gray-600 hover:text-red-600 font-medium text-sm"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>{isRemoving ? "REMOVING..." : "REMOVE"}</span>
               </button>
             </div>
 
-            {/* Wishlist */}
-            <button className="p-2 text-gray-400 hover:text-red-500 disabled:opacity-50" disabled={isRemoving}>
+            {/* Wishlist Button */}
+            <button
+              disabled={isRemoving}
+              className="p-2 text-gray-400 hover:text-red-500"
+            >
               <Heart className="w-5 h-5" />
             </button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

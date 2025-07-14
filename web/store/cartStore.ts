@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type CartItem = {
   id: string;
@@ -17,31 +18,40 @@ type CartState = {
   getTotal: () => number;
 };
 
-export const useCartStore = create<CartState>((set, get) => ({
-  cart: [],
-  addToCart: (item) =>
-    set((state) => {
-      const existing = state.cart.find((i) => i.id === item.id);
-      if (existing) {
-        return {
-          cart: state.cart.map((i) =>
-            i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      cart: [],
+      addToCart: (item) =>
+        set((state) => {
+          const existing = state.cart.find((i) => i.id === item.id);
+          if (existing) {
+            return {
+              cart: state.cart.map((i) =>
+                i.id === item.id
+                  ? { ...i, quantity: i.quantity + 1 }
+                  : i
+              ),
+            };
+          }
+          return { cart: [...state.cart, { ...item, quantity: 1 }] };
+        }),
+      removeFromCart: (id) =>
+        set((state) => ({
+          cart: state.cart.filter((item) => item.id !== id),
+        })),
+      updateQuantity: (id, quantity) =>
+        set((state) => ({
+          cart: state.cart.map((item) =>
+            item.id === id ? { ...item, quantity } : item
           ),
-        };
-      }
-      return { cart: [...state.cart, { ...item, quantity: 1 }] };
+        })),
+      clearCart: () => set({ cart: [] }),
+      getTotal: () =>
+        get().cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
     }),
-  removeFromCart: (id) =>
-    set((state) => ({
-      cart: state.cart.filter((item) => item.id !== id),
-    })),
-  updateQuantity: (id, quantity) =>
-    set((state) => ({
-      cart: state.cart.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      ),
-    })),
-  clearCart: () => set({ cart: [] }),
-  getTotal: () =>
-    get().cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-}));
+    {
+      name: "cart-storage",
+    }
+  )
+);

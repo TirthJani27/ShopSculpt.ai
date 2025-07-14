@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Header from "../../../components/Layout/Header/Header";
-import Footer from "../../../components/Layout/Footer/Footer";
-import ProductCard from "../../../components/ProductCard/ProductCard";
-import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
-import { Search, Filter, Grid, List, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react"
+import Header from "../../../components/Layout/Header/Header"
+import Footer from "../../../components/Layout/Footer/Footer"
+import ProductCard from "../../../components/ProductCard/ProductCard"
+import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter"
+import { Search, Filter, Grid, List, ChevronDown } from "lucide-react"
 
 export default function BeautyPage() {
-  const [viewMode, setViewMode] = useState("grid");
-  const [sortBy, setSortBy] = useState("featured");
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [beautyProducts, setBeautyProducts] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(6);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [viewMode, setViewMode] = useState("grid")
+  const [sortBy, setSortBy] = useState("featured")
+  const [showFilters, setShowFilters] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [beautyProducts, setBeautyProducts] = useState([])
+  const [visibleCount, setVisibleCount] = useState(6)
+  const [isLoading, setIsLoading] = useState(true) // ✅ Added this line
 
   useEffect(() => {
     const fetchBeautyProducts = async () => {
       try {
-        const res = await fetch("/api/product/category/Beauty");
-        const data = await res.json();
+        const res = await fetch("/api/product/category/Beauty")
+        const data = await res.json()
         const transformed = data.map((p) => ({
           id: p._id,
           title: p.name,
@@ -38,32 +38,32 @@ export default function BeautyPage() {
               ? `Save ${p.discount}%`
               : "New Arrival",
           category: p.category || "General",
-        }));
-        setBeautyProducts(transformed);
+        }))
+        setBeautyProducts(transformed)
       } catch (err) {
-        console.error("Failed to fetch beauty products", err);
+        console.error("Failed to fetch beauty products", err)
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false) // ✅ Stop loading after fetch
       }
-    };
+    }
 
-    fetchBeautyProducts();
-  }, []);
+    fetchBeautyProducts()
+  }, [])
 
   const filteredProducts = beautyProducts.filter((p) =>
     p.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
   const categories = [
     { name: "All Beauty", count: beautyProducts.length },
     ...Array.from(
       beautyProducts.reduce((map, product) => {
-        const cat = product.category || "Uncategorized";
-        map.set(cat, (map.get(cat) || 0) + 1);
-        return map;
+        const cat = product.category || "Uncategorized"
+        map.set(cat, (map.get(cat) || 0) + 1)
+        return map
       }, new Map())
     ).map(([name, count]) => ({ name, count })),
-  ];
+  ]
 
   const sortOptions = [
     { value: "featured", label: "Featured" },
@@ -71,7 +71,7 @@ export default function BeautyPage() {
     { value: "price-high", label: "Price: High to Low" },
     { value: "rating", label: "Customer Rating" },
     { value: "newest", label: "New Arrivals" },
-  ];
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -170,9 +170,7 @@ export default function BeautyPage() {
           {/* Products Grid */}
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">
-                {isLoading ? "Loading..." : `${filteredProducts.length} results`}
-              </p>
+              <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
             <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
@@ -195,7 +193,7 @@ export default function BeautyPage() {
                   ))}
             </div>
 
-            {!isLoading && visibleCount < filteredProducts.length && (
+            {visibleCount < filteredProducts.length && (
               <div className="text-center mt-8">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 6)}
@@ -211,5 +209,5 @@ export default function BeautyPage() {
 
       <Footer />
     </div>
-  );
+  )
 }

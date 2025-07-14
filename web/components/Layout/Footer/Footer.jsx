@@ -11,7 +11,7 @@ export default function Footer() {
             <h3 className="font-bold mb-4">Get to Know Us</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="hover:underline">
+                <a href="/services" className="hover:underline">
                   About ShopSculpt
                 </a>
               </li>
@@ -117,7 +117,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:underline">
+                <a href="/ChatBot" className="hover:underline">
                   Help
                 </a>
               </li>
