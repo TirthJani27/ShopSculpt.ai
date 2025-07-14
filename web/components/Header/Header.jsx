@@ -68,7 +68,6 @@ export default function Header() {
       <nav className="bg-blue-600 border-t border-blue-500">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center space-x-8 py-2 text-sm">
-            <span className="cursor-pointer hover:underline">Departments</span>
             <span className="cursor-pointer hover:underline">Services</span>
             <span className="cursor-pointer hover:underline">
               Grocery & essentials
@@ -76,8 +75,7 @@ export default function Header() {
             <span className="cursor-pointer hover:underline">Electronics</span>
             <span className="cursor-pointer hover:underline">Furniture</span>
             <span className="cursor-pointer hover:underline">Fashion</span>
-            <span className="cursor-pointer hover:underline">Auto & tires</span>
-            <span className="cursor-pointer hover:underline">Pharmacy</span>
+            <span className="cursor-pointer hover:underline">Beauty</span>
           </div>
         </div>
       </nav>

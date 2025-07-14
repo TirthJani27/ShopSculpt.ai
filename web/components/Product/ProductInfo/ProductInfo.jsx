@@ -1,13 +1,36 @@
-/**
- * Product Information Component
- * Displays product details, features, specifications, and ratings
- * Responsive layout with expandable sections
- */
 "use client";
 import { useState } from "react";
 import { Star, Heart, Share2, Truck, Shield, RotateCcw } from "lucide-react";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useWishlist } from "../../../contexts/WishlistContext";
 
 export default function ProductInfo({ product }) {
+  const { isLoggedIn } = useAuth();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
+  const inWishlist = isInWishlist(product.id);
+
+  const showToastTemporarily = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleWishlistClick = async () => {
+    if (!isLoggedIn) {
+      showToastTemporarily("Please sign in to manage your wishlist");
+      return;
+    }
+
+    const result = inWishlist
+      ? await removeFromWishlist(product.id)
+      : await addToWishlist(product);
+    showToastTemporarily(result.message);
+  };
+
   const renderStars = (rating) => {
     return [...Array(5)].map((_, i) => (
       <Star
@@ -22,7 +45,7 @@ export default function ProductInfo({ product }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       {/* Product Title */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -46,13 +69,25 @@ export default function ProductInfo({ product }) {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
-          <button className="flex items-center space-x-2 text-gray-600 hover:text-red-500">
-            <Heart className="w-5 h-5" />
-            <span className="text-sm">Add to Wishlist</span>
+          <button
+            onClick={handleWishlistClick}
+            className={`flex items-center space-x-2 text-sm ${
+              inWishlist
+                ? "text-red-500 font-semibold"
+                : "text-gray-600 hover:text-red-500"
+            }`}
+          >
+            <Heart
+              className={`w-5 h-5 ${
+                inWishlist ? "fill-red-500 text-red-500" : ""
+              }`}
+            />
+            <span>{inWishlist ? "Wishlisted" : "Add to Wishlist"}</span>
           </button>
-          <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-500">
+
+          <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-500 text-sm">
             <Share2 className="w-5 h-5" />
-            <span className="text-sm">Share</span>
+            <span>Share</span>
           </button>
         </div>
       </div>
@@ -112,6 +147,13 @@ export default function ProductInfo({ product }) {
           </div>
         </div>
       </div>
+
+      {/* Toast */}
+      {showToast && (
+        <div className="fixed bottom-4 right-4 z-50 bg-gray-900 text-white px-4 py-2 rounded shadow-md">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }

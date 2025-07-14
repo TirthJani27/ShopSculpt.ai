@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"; 
 import dbConnect from "@/lib/dbConnect";
 import Product from "@/models/product.model";
 
@@ -23,4 +23,4 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+} 

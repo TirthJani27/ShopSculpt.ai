@@ -43,12 +43,6 @@ const userSchema = new mongoose.Schema(
     },
     searchHistory: [searchHistorySchema],
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-    cart: [
-      {
-        productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-        quantity: { type: Number, default: 1 },
-      },
-    ],
     transactionHistory: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Transaction" },
     ],

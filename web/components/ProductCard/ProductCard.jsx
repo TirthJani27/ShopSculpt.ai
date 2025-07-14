@@ -6,9 +6,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import { useCart } from "../../contexts/CartContext";
 
-/**
- * Custom hook that shortens text only when it overflows the container
- */
 function useTruncateIfOverflow(text, maxLength = 40) {
   const [displayText, setDisplayText] = useState(text);
   const spanRef = useRef(null);
@@ -54,25 +51,25 @@ export default function ProductCard({ product }) {
 
   const { displayText, spanRef } = useTruncateIfOverflow(title, 45);
 
-  const showToastMessage = (message) => {
+  const triggerToast = (message) => {
     setToastMessage(message);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
 
-  const handleWishlistClick = (e) => {
+  const handleWishlistClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!isLoggedIn) {
-      showToastMessage("Please sign in to add items to wishlist");
+      triggerToast("Please sign in to add items to wishlist");
       return;
     }
 
     const result = inWishlist
-      ? removeFromWishlist(product.id)
-      : addToWishlist(product);
-    showToastMessage(result.message);
+      ? await removeFromWishlist(product.id)
+      : await addToWishlist(product);
+    triggerToast(result.message);
   };
 
   const handleAddToCart = async (e) => {
@@ -80,14 +77,18 @@ export default function ProductCard({ product }) {
     e.stopPropagation();
 
     if (!isLoggedIn) {
-      showToastMessage("Please sign in to add items to cart");
+      triggerToast("Please sign in to add items to cart");
+      return;
+    }
+
+    if (inCartAlready) {
+      triggerToast("Item already in cart");
       return;
     }
 
     setIsAddingToCart(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const result = addToCart(product);
-    showToastMessage(result.message);
+    const result = await addToCart(product);
+    triggerToast(result.message);
     setIsAddingToCart(false);
   };
 
@@ -132,21 +133,23 @@ export default function ProductCard({ product }) {
               {displayText}
             </h3>
 
-            {rating && (
+            {
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
                     className={`w-3 h-3 ${
-                      i < Math.floor(rating)
+                      i < Math.floor(product.averageRating)
                         ? "text-yellow-400 fill-current"
                         : "text-gray-300"
                     }`}
                   />
                 ))}
-                <span className="text-xs text-gray-600">({reviews})</span>
+                <span className="text-xs text-gray-600">
+                  ({product.totalReviews})
+                </span>
               </div>
-            )}
+            }
 
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-gray-900">
@@ -163,7 +166,7 @@ export default function ProductCard({ product }) {
 
         <button
           onClick={handleAddToCart}
-          disabled={isAddingToCart}
+          disabled={isAddingToCart || inCartAlready}
           className={`w-full py-2 px-4 rounded text-sm font-medium transition-colors mt-3 flex items-center justify-center space-x-1 ${
             inCartAlready
               ? "bg-green-600 hover:bg-green-700 text-white"
