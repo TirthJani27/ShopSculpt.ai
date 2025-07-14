@@ -1,3 +1,8 @@
+
+
+
+
+
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -30,7 +35,6 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCartPrompt, setShowCartPrompt] = useState(false);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -100,7 +104,7 @@ export default function Header() {
         id: product._id || product.id,
         name: product.name || "Unknown Product",
         category: product.category || "General",
-        price: product.price ? `$${product.price}` : "N/A",
+        price: product.price ? `₹${product.price}` : "N/A",
         popular: product.popular || false,
         image: product.images?.[0] || product.image || null,
       }));
@@ -146,6 +150,25 @@ export default function Header() {
     router.push(`/search?q=${encodeURIComponent(query)}`);
   };
 
+  const handleProductClick = (product) => {
+    if (!product?.id) return;
+    setSearchTerm(product.name);
+    setShowDropdown(false);
+    addToRecentSearches(product);
+    saveSearchToBackend(product);
+    router.push(`/product/${product.id}`);
+  };
+
+  const handleRecentItemClick = (item) => {
+    setSearchTerm(item.name);
+    setShowDropdown(false);
+    if (item.type === "product" && item.id) {
+      router.push(`/product/${item.id}`);
+    } else {
+      router.push(`/search?q=${encodeURIComponent(item.name)}`);
+    }
+  };
+
   const saveSearchToBackend = async (searchItem) => {
     if (!user || !searchItem) return;
     try {
@@ -170,25 +193,6 @@ export default function Header() {
     }
   };
 
-  const handleProductClick = (product) => {
-    if (!product?.id) return;
-    setSearchTerm(product.name);
-    setShowDropdown(false);
-    addToRecentSearches(product);
-    saveSearchToBackend(product);
-    router.push(`/product/${product.id}`);
-  };
-
-  const handleRecentItemClick = (item) => {
-    setSearchTerm(item.name);
-    setShowDropdown(false);
-    if (item.type === "product" && item.id) {
-      router.push(`/product/${item.id}`);
-    } else {
-      router.push(`/search?q=${encodeURIComponent(item.name)}`);
-    }
-  };
-
   const handleClickOutside = useCallback((event) => {
     if (searchRef.current && !searchRef.current.contains(event.target)) {
       setShowDropdown(false);
@@ -209,6 +213,11 @@ export default function Header() {
     }
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) handleSearch(searchTerm);
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -217,11 +226,6 @@ export default function Header() {
     } catch (err) {
       console.error("Logout failed:", err);
     }
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) handleSearch(searchTerm);
   };
 
   return (

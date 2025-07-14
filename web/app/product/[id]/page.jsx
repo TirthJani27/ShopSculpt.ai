@@ -1,8 +1,7 @@
-
 "use client";
+
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { create } from "zustand";
 import axios from "axios";
 
 import Header from "../../../components/Layout/Header/Header";
@@ -11,7 +10,7 @@ import ProductImageGallery from "../../../components/Product/ProductImageGallery
 import ProductInfo from "../../../components/Product/ProductInfo/ProductInfo";
 import ProductReviews from "../../../components/Product/ProductReviews/ProductReviews";
 import RelatedProducts from "../../../components/Product/RelatedProducts/RelatedProducts";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useCart } from "../../../contexts/CartContext";
 
 // Helpers
@@ -43,8 +42,8 @@ export default function ProductPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get(`http://localhost:3000/api/product/${id}`);
-        const res2 = await axios.get(`http://localhost:3000/api/reviews/${id}`);
+        const res = await axios.get(`/api/product/${id}`);
+        const res2 = await axios.get(`/api/reviews/${id}`);
 
         const fullProduct = {
           id,
@@ -52,18 +51,16 @@ export default function ProductPage() {
           reviews: res2.data.reviews,
         };
 
-        discounted(prod);
-        averageRatings(prod);
-        setProduct(prod);
-
-        //  Store viewed product ID in localStorage
-        const viewed = JSON.parse(localStorage.getItem("viewedProducts")) || [];
-        if (!viewed.includes(id)) {
-          const updated = [...viewed, id].slice(-10); // keep only last 10
-          localStorage.setItem("viewedProducts", JSON.stringify(updated));
-        }
         applyDiscount(fullProduct);
         calculateAverageRating(fullProduct);
+
+        
+        const viewed = JSON.parse(localStorage.getItem("viewedProducts")) || [];
+        if (!viewed.includes(id)) {
+          const updated = [...viewed, id].slice(-10); // Keep only last 10
+          localStorage.setItem("viewedProducts", JSON.stringify(updated));
+        }
+
         setProduct(fullProduct);
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -75,38 +72,11 @@ export default function ProductPage() {
     if (id) fetchData();
   }, [id]);
 
+
   if (loading || !product) {
     return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-        }}
-      >
-        <div
-          style={{
-            width: 60,
-            height: 60,
-            border: "6px solid #f3f3f3",
-            borderTop: "6px solid #3498db",
-            borderRadius: "50%",
-            animation: "spin 1s linear infinite",
-          }}
-        />
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -129,7 +99,10 @@ export default function ProductPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Product Images */}
           <div className="lg:col-span-1">
-            <ProductImageGallery images={product.images} productName={product.name} />
+            <ProductImageGallery
+              images={product.images}
+              productName={product.name}
+            />
           </div>
 
           {/* Product Info */}
