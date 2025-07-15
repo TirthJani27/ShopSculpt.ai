@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Header from "../../../components/Layout/Header/Header"
-import Footer from "../../../components/Layout/Footer/Footer"
-import ProductCard from "../../../components/ProductCard/ProductCard"
-import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter"
-import { Search, Filter, Grid, List, ChevronDown, Trophy } from "lucide-react"
+import { useEffect, useState } from "react";
+import Header from "../../../components/Layout/Header/Header";
+import Footer from "../../../components/Layout/Footer/Footer";
+import ProductCard from "../../../components/ProductCard/ProductCard";
+import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
+import { Search, Filter, Grid, List, ChevronDown, Trophy } from "lucide-react";
 
 export default function SportsPage() {
-  const [viewMode, setViewMode] = useState("grid")
-  const [sortBy, setSortBy] = useState("featured")
-  const [showFilters, setShowFilters] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sportsProducts, setSportsProducts] = useState([])
-  const [visibleCount, setVisibleCount] = useState(6)
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortBy, setSortBy] = useState("featured");
+  const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sportsProducts, setSportsProducts] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     const fetchSportsProducts = async () => {
       try {
-        const res = await fetch("/api/product/category/Gym Related")
-        const data = await res.json()
+        const res = await fetch("/api/product/category/Gym Related");
+        const data = await res.json();
         const transformed = data.map((p) => ({
           id: p._id,
           title: p.name,
@@ -37,30 +37,31 @@ export default function SportsPage() {
               ? `Save ${p.discount}%`
               : "Popular",
           category: p.category || "General",
-        }))
-        setSportsProducts(transformed)
+          ...p,
+        }));
+        setSportsProducts(transformed);
       } catch (err) {
-        console.error("Failed to fetch sports products", err)
+        console.error("Failed to fetch sports products", err);
       }
-    }
+    };
 
-    fetchSportsProducts()
-  }, [])
+    fetchSportsProducts();
+  }, []);
 
   const filteredProducts = sportsProducts.filter((p) =>
     p.title.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
   const categories = [
     { name: "All Sports", count: sportsProducts.length },
     ...Array.from(
       sportsProducts.reduce((map, product) => {
-        const cat = product.category || "Uncategorized"
-        map.set(cat, (map.get(cat) || 0) + 1)
-        return map
+        const cat = product.category || "Uncategorized";
+        map.set(cat, (map.get(cat) || 0) + 1);
+        return map;
       }, new Map())
     ).map(([name, count]) => ({ name, count })),
-  ]
+  ];
 
   const sortOptions = [
     { value: "featured", label: "Featured" },
@@ -68,7 +69,7 @@ export default function SportsPage() {
     { value: "price-high", label: "Price: High to Low" },
     { value: "rating", label: "Customer Rating" },
     { value: "newest", label: "New Arrivals" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -81,8 +82,12 @@ export default function SportsPage() {
             <span>Home</span> <span className="mx-2">/</span>{" "}
             <span className="text-gray-900">Sports</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Sports & Outdoors</h1>
-          <p className="text-gray-600">Gear up for your favorite sports and outdoor activities</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Sports & Outdoors
+          </h1>
+          <p className="text-gray-600">
+            Gear up for your favorite sports and outdoor activities
+          </p>
         </div>
 
         {/* Sports Banner */}
@@ -140,13 +145,21 @@ export default function SportsPage() {
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "grid"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "list"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -166,7 +179,11 @@ export default function SportsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Filters */}
-          <div className={`lg:col-span-1 ${showFilters ? "block" : "hidden lg:block"}`}>
+          <div
+            className={`lg:col-span-1 ${
+              showFilters ? "block" : "hidden lg:block"
+            }`}
+          >
             <CategoryFilter categories={categories} />
           </div>
 
@@ -176,7 +193,13 @@ export default function SportsPage() {
               <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
-            <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-2 md:grid-cols-3 gap-4"
+                  : "space-y-4"
+              }
+            >
               {filteredProducts.slice(0, visibleCount).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -198,5 +221,5 @@ export default function SportsPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

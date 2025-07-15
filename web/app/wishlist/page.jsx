@@ -84,9 +84,9 @@ export default function WishlistPage() {
           <>
             {/* Wishlist Items Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {wishlistItems.map((item) => (
+              {wishlistItems.map((item, i) => (
                 <WishlistItem
-                  key={item._id || item.id}
+                  key={i}
                   item={item}
                   onRemove={removeFromWishlist}
                 />

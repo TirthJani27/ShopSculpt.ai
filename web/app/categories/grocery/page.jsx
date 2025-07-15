@@ -37,6 +37,7 @@ export default function GroceryPage() {
               ? `Save ${p.discount}%`
               : "Fresh",
           category: p.category || "General",
+          ...p,
         }));
         setGroceryProducts(transformed);
       } catch (err) {
@@ -142,13 +143,21 @@ export default function GroceryPage() {
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "grid"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "list"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -166,7 +175,11 @@ export default function GroceryPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className={`lg:col-span-1 ${showFilters ? "block" : "hidden lg:block"}`}>
+          <div
+            className={`lg:col-span-1 ${
+              showFilters ? "block" : "hidden lg:block"
+            }`}
+          >
             <CategoryFilter categories={categories} />
           </div>
 
@@ -175,7 +188,13 @@ export default function GroceryPage() {
               <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
-            <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-2 md:grid-cols-3 gap-4"
+                  : "space-y-4"
+              }
+            >
               {visibleProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

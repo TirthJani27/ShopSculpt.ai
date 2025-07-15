@@ -38,6 +38,7 @@ export default function FashionPage() {
               ? `Save ${p.discount}%`
               : "Trending",
           category: p.category || "General",
+          ...p,
         }));
 
         setFashionProducts(transformed);
@@ -177,9 +178,7 @@ export default function FashionPage() {
 
           <div className="lg:col-span-3">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-gray-600">
-                {filteredProducts.length} results
-              </p>
+              <p className="text-gray-600">{filteredProducts.length} results</p>
             </div>
 
             <div

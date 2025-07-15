@@ -4,7 +4,16 @@ import Header from "../../../components/Layout/Header/Header";
 import Footer from "../../../components/Layout/Footer/Footer";
 import ProductCard from "../../../components/ProductCard/ProductCard";
 import CategoryFilter from "../../../components/Category/CategoryFilter/CategoryFilter";
-import { Search, Filter, Grid, List, ChevronDown, Home, Sofa, Bed } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Grid,
+  List,
+  ChevronDown,
+  Home,
+  Sofa,
+  Bed,
+} from "lucide-react";
 
 export default function FurniturePage() {
   const [furnitureProducts, setFurnitureProducts] = useState([]);
@@ -37,13 +46,7 @@ export default function FurniturePage() {
               ? `Save ${p.discount}%`
               : "New",
           category: p.category || "General",
-          room: p.tags?.includes("Living Room") ? "living-room" :
-                p.tags?.includes("Bedroom") ? "bedroom" :
-                p.tags?.includes("Dining Room") ? "dining-room" :
-                p.tags?.includes("Office") ? "office" :
-                p.tags?.includes("Kids") ? "kids" :
-                p.tags?.includes("Outdoor") ? "outdoor" :
-                "other",
+          ...p,
         }));
         setFurnitureProducts(transformed);
       } catch (err) {
@@ -72,7 +75,9 @@ export default function FurniturePage() {
   ];
 
   const filtered = furnitureProducts.filter((p) => {
-    const matchSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchSearch = p.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const matchRoom = selectedRoom === "all" || p.room === selectedRoom;
     return matchSearch && matchRoom;
   });
@@ -99,7 +104,9 @@ export default function FurniturePage() {
             <span className="text-gray-900">Furniture</span>
           </nav>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Furniture</h1>
-          <p className="text-gray-600">Find the perfect furniture for your home</p>
+          <p className="text-gray-600">
+            Find the perfect furniture for your home
+          </p>
         </div>
 
         {/* Room Filter Tabs */}
@@ -159,13 +166,21 @@ export default function FurniturePage() {
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 ${viewMode === "grid" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "grid"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 ${viewMode === "list" ? "bg-blue-600 text-white" : "text-gray-600"}`}
+                  className={`p-2 ${
+                    viewMode === "list"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600"
+                  }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -184,23 +199,38 @@ export default function FurniturePage() {
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className={`lg:col-span-1 ${showFilters ? "block" : "hidden lg:block"}`}>
+          <div
+            className={`lg:col-span-1 ${
+              showFilters ? "block" : "hidden lg:block"
+            }`}
+          >
             <CategoryFilter categories={categories} />
           </div>
 
           <div className="lg:col-span-3">
             <div className="mb-4 text-gray-600">
-              Showing {Math.min(visibleCount, filtered.length)} of {filtered.length} results
+              Showing {Math.min(visibleCount, filtered.length)} of{" "}
+              {filtered.length} results
             </div>
 
             {filtered.length === 0 ? (
               <div className="text-center py-12">
                 <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No furniture found</h3>
-                <p className="text-gray-600">Try another room or different search term</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No furniture found
+                </h3>
+                <p className="text-gray-600">
+                  Try another room or different search term
+                </p>
               </div>
             ) : (
-              <div className={viewMode === "grid" ? "grid grid-cols-2 md:grid-cols-3 gap-4" : "space-y-4"}>
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-2 md:grid-cols-3 gap-4"
+                    : "space-y-4"
+                }
+              >
                 {filtered.slice(0, visibleCount).map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

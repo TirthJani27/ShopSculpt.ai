@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"; 
+import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Product from "@/models/product.model";
 
@@ -11,9 +11,8 @@ export async function GET(
     const { id } = await params;
     const product = await Product.findById(id);
 
-    if (!product) {
+    if (!product)
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
 
     return NextResponse.json({ product });
   } catch (error) {
@@ -23,4 +22,4 @@ export async function GET(
       { status: 500 }
     );
   }
-} 
+}

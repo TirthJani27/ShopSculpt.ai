@@ -25,7 +25,9 @@ export default function ElectronicsPage() {
           id: p._id,
           title: p.name,
           price: p.price,
-          originalPrice: p.discount ? p.price / (1 - p.discount / 100) : p.price,
+          originalPrice: p.discount
+            ? p.price / (1 - p.discount / 100)
+            : p.price,
           rating: p.reviews?.[0]?.rating || 4.5,
           reviews: p.reviews?.length || 0,
           image: p.images?.[0] || "/placeholder.svg",
@@ -36,7 +38,8 @@ export default function ElectronicsPage() {
               ? `Save ${p.discount}%`
               : "Best Seller",
           category: p.category || "General",
-        }))
+          ...p,
+        }));
 
         setElectronicsProducts(transformed)
       } catch (err) {

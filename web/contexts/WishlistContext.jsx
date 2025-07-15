@@ -9,125 +9,161 @@ const WishlistContext = createContext();
 export function WishlistProvider({ children }) {
   const { isLoggedIn, user, setUser } = useAuth();
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const storageKey =
     isLoggedIn && user ? `favorites_${user._id}` : "favorites_guest";
 
-  // Load wishlist on init
-  useEffect(() => {
-    if (isLoggedIn && user) {
-      const favorites = user.favorites || [];
-      setWishlistItems(favorites);
-      localStorage.setItem(storageKey, JSON.stringify(favorites));
-    } else {
-      const stored = localStorage.getItem("favorites_guest");
-      setWishlistItems(stored ? JSON.parse(stored) : []);
+  // Sync from backend if needed
+  const syncFavoritesFromBackend = async () => {
+    if (!isLoggedIn || !user) return;
+    try {
+      const res = await axios.get("/api/favorites", {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (res.status === 200 && Array.isArray(res.data.favorites)) {
+        const ids = res.data.favorites;
+        setWishlistItems(ids);
+        localStorage.setItem(storageKey, JSON.stringify(ids));
+        setUser((prev) => ({
+          ...prev,
+          favorites: ids,
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to sync favorites:", err);
     }
+  };
+
+  // Load from localStorage or user.favorites
+  useEffect(() => {
+    if (isLoggedIn === undefined) return;
+
+    const init = () => {
+      if (isLoggedIn && user) {
+        const localIds = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        const userIds = Array.isArray(user.favorites) ? user.favorites : [];
+
+        const useIds = userIds.length > 0 ? userIds : localIds;
+
+        setWishlistItems(useIds);
+        localStorage.setItem(storageKey, JSON.stringify(useIds));
+
+        if (userIds.length === 0 && localIds.length > 0) {
+          setUser((prev) => ({
+            ...prev,
+            favorites: localIds,
+          }));
+        }
+
+        if (useIds.length === 0) syncFavoritesFromBackend();
+      } else {
+        // Guest
+        const guestIds = JSON.parse(
+          localStorage.getItem("favorites_guest") || "[]"
+        );
+        setWishlistItems(guestIds);
+      }
+
+      setIsLoaded(true);
+    };
+
+    init();
   }, [isLoggedIn, user]);
 
-  // Keep localStorage updated
   useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(wishlistItems));
-  }, [wishlistItems, storageKey]);
+    if (isLoaded) {
+      localStorage.setItem(storageKey, JSON.stringify(wishlistItems));
+    }
+  }, [wishlistItems, storageKey, isLoaded]);
 
-  // Add to wishlist
-  const addToWishlist = async (product) => {
-    const productId = product._id || product.id;
-    const exists = wishlistItems.some(
-      (item) => (item._id || item.id) === productId
-    );
-    if (exists) {
+  // Add to wishlist (IDs only)
+  const addToWishlist = async (productId) => {
+    if (!productId || isInWishlist(productId)) {
       return { success: false, message: "Already in wishlist" };
     }
 
+    const updated = [...wishlistItems, productId];
+    setWishlistItems(updated);
+
     if (!isLoggedIn) {
-      const updated = [...wishlistItems, product];
-      setWishlistItems(updated);
-      return { success: true, message: "Added to wishlist (local)" };
+      return { success: true, message: "Added to guest wishlist" };
     }
 
     try {
       const res = await axios.post(
         "/api/favorites/add",
-        {
-          productId,
-        },
+        { productId },
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         }
       );
-      if (res.status !== 200) throw new Error("Failed to add");
 
-      const updated = [...wishlistItems, product];
-      setWishlistItems(updated);
-      setUser((prev) => ({
-        ...prev,
-        favorites: updated,
-      }));
-      return { success: true, message: "Added to wishlist" };
+      if (res.data.success) {
+        setUser((prev) => ({
+          ...prev,
+          favorites: res.data.favorites || updated,
+        }));
+        return { success: true, message: res.data.message };
+      }
+
+      return { success: false, message: res.data.message };
     } catch (err) {
-      console.error("Wishlist Add Error:", err);
-      return { success: false, message: "Failed to add to wishlist" };
+      console.error("Add to wishlist error:", err);
+      return { success: false, message: "Failed to add" };
     }
   };
 
   // Remove from wishlist
   const removeFromWishlist = async (productId) => {
-    if (!productId) return { success: false, message: "Invalid product ID" };
+    if (!productId) return { success: false, message: "Invalid ID" };
+
+    const updated = wishlistItems.filter((id) => id !== productId);
+    setWishlistItems(updated);
 
     if (!isLoggedIn) {
-      const updated = wishlistItems.filter(
-        (item) => (item._id || item.id) !== productId
-      );
-      setWishlistItems(updated);
-      return { success: true, message: "Removed from wishlist (local)" };
+      return { success: true, message: "Removed from guest wishlist" };
     }
 
     try {
       const res = await axios.post(
         "/api/favorites/remove",
-        {
-          productId,
-        },
+        { productId },
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         }
       );
-      if (res.status !== 200) throw new Error("Failed to remove");
 
-      const updated = wishlistItems.filter(
-        (item) => (item._id || item.id) !== productId
-      );
-      setWishlistItems(updated);
-      setUser((prev) => ({
-        ...prev,
-        favorites: updated,
-      }));
-      return { success: true, message: "Removed from wishlist" };
+      if (res.data.success) {
+        setUser((prev) => ({
+          ...prev,
+          favorites: res.data.favorites || updated,
+        }));
+        return { success: true, message: res.data.message };
+      }
+
+      return { success: false, message: res.data.message };
     } catch (err) {
-      console.error("Wishlist Remove Error:", err);
-      return { success: false, message: "Failed to remove from wishlist" };
+      console.error("Remove from wishlist error:", err);
+      return { success: false, message: "Failed to remove" };
     }
   };
 
-  // Helpers
-  const isInWishlist = (productId) => {
-    return wishlistItems.some((item) => (item._id || item.id) === productId);
-  };
+  const isInWishlist = (productId) => wishlistItems.includes(productId);
 
-  const toggleWishlist = async (product) => {
-    const productId = product._id || product.id;
-    if (isInWishlist(productId)) {
-      return await removeFromWishlist(productId);
-    } else {
-      return await addToWishlist(product);
-    }
+  const toggleWishlist = async (productId) => {
+    return isInWishlist(productId)
+      ? await removeFromWishlist(productId)
+      : await addToWishlist(productId);
   };
 
   const clearWishlist = () => {
@@ -145,6 +181,8 @@ export function WishlistProvider({ children }) {
         toggleWishlist,
         isInWishlist,
         clearWishlist,
+        syncFavoritesFromBackend,
+        isLoaded,
       }}
     >
       {children}

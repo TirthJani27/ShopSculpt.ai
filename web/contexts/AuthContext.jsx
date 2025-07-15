@@ -2,18 +2,12 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-/**
- * AuthContext
- * Manages single user authentication state across the application
- * Provides login, logout, and session persistence via localStorage
- */
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user from localStorage on initial mount
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem("user");
@@ -36,9 +30,6 @@ export function AuthProvider({ children }) {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  /**
-   * Logout user and clear session-related data from localStorage
-   */
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
@@ -58,10 +49,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-/**
- * useAuth
- * Custom hook to access authentication context
- */
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

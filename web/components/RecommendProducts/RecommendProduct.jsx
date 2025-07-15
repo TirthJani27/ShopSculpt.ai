@@ -40,6 +40,8 @@ export default function RecommendedProduct() {
       try {
         const res = await fetch("/api/product/recommended");
         const data = await res.json();
+        console.log("This is data coming", data);
+
         setProducts(data);
       } catch (err) {
         console.error("Failed to fetch products:", err);
@@ -77,10 +79,13 @@ export default function RecommendedProduct() {
     }
 
     setIsAddingToCart(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const result = addToCart(product);
-    showToastMessage(result.message);
-    setIsAddingToCart(false);
+    try {
+      const result = addToCart(product);
+      showToastMessage(result.message);
+      setIsAddingToCart(false);
+    } catch {
+      showToastMessage("Error Occured");
+    }
   };
 
   return (
@@ -160,7 +165,7 @@ export default function RecommendedProduct() {
                             />
                           ))}
                           <span className="text-xs text-gray-600">
-                            ({product.reviews?.length || 0})
+                            ({product.totalReviews || 0})
                           </span>
                         </div>
 
