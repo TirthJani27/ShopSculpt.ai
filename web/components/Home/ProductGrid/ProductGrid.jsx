@@ -70,7 +70,7 @@ export default function ProductGrid() {
   const categories = [
     {
       title: "Must-Have Deals This Week",
-      subtitle: "Editor’s picks across categories",
+      subtitle: "Editor's picks across categories",
       products: recommended.slice(4, 8),
       bgColor: "bg-amber-50",
     },

@@ -1,8 +1,4 @@
 
-
-
-
-
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -603,6 +599,12 @@ export default function Header() {
               className="py-2 md:py-0 cursor-pointer hover:underline"
             >
               Electronics
+            </Link>
+            <Link
+              href="/categories/mobile"
+              className="py-2 md:py-0 cursor-pointer hover:underline"
+            >
+              Mobiles
             </Link>
             <Link
               href="/categories/fashion"
